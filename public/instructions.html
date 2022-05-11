@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+
+  <link href="vendo/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
+  <link
+    href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+    rel="stylesheet" />
+  <link href="css/sb-admin-2.min.css" rel="stylesheet" />
+  <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/loginModal.css" />
+  <link rel="stylesheet" href="instructions.css" />
+
+  <title>eGovERA&copy;</title>
+</head>
+
+<body id="page-top">
+  <div id="wrapper">
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled" id="accordionSidebar"></ul>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+      <div id="content">
+        <div class="container-fluid padding-top-20">
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Overview & Guidelines</h1>
+            <img src="img/european_commission.svg_.png" alt="European Commission" style="width: 100px;"
+              class="ml-auto mr-2">
+            <div id="login-btn"></div>
+            <div id="google_translate_element"></div>
+          </div>
+
+          <div class="row">
+            <div class="col-xl-4 col-lg d-flex align-items-stretch">
+              <div class="card shadow mb-4" style="display: block">
+                <a href="#collapseCardExample" class="d-block card-header py" data-toggle="collapse" role="button"
+                  aria-expanded="true" aria-controls="collapseCardExample">
+                  <h6 class="m-0 font-weight-bold text-primary text-center">
+                    Guidelines
+                  </h6>
+                </a>
+                <div class="collapse show">
+                  <div class="card-body">
+                    <p class="font-size-14">
+                      <b><a href="./survey/survey.html">Step 1.Scope and Capability Assessment:</a></b>
+
+                      The user scopes the public policy domains by selecting one or more policy domains.
+                      To complete the survey users need to identify a MS's priority for each
+                      <a target="_blank"
+                        href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
+                        title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">digital
+                        business capabilities</a>
+
+                      and the current MS's ability to deliver each
+                      <span
+                        title="An Architecture building block is a constituent component of the overall architecture that describes a single aspect of a specific Digital Public Service.">Architecture
+                        Building Block.</span>
+
+                      The survey results are then available in a json file to be used in the next step.
+
+
+                      <br /><br />
+                      <b><a href="./roadmap/roadmaptest.html">Step 2. eGovernment Roadmap:</a></b>
+                      The user upload the json file produced in Step 1 to
+                      analyse the survey’s results in 4 different charts:
+                    <ol style="font-size: 14px;">
+                      <li>
+                        A quadrant graph where survey
+                        users need to identify a MS's priority for each <a target="_blank"
+                          href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
+                          title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">digital
+                          business capabilities</a> (dBusCap) are positioned according to MS's
+                        ability to support them and the
+                        <span
+                          title="It reports the strategic priority assigned to the digital business capability by the national digital agenda of the country.">National
+                          Digital Strategic Fit</span>
+                        of that dBusCap. The user can
+                        also decide to change the x axis value and visualize the
+                        <span
+                          title="It refers to the expected beneficial impact (cost discounted) provided by the target prospective ability (*) to support the digital business capability. (*) default is the highest possible prospective ability">Expected
+                          Public Value</span>
+                        instead of
+                        <span
+                          title="It reports the strategic priority assigned to the digital business capability by the national digital agenda of the country.">National
+                          Digital Strategic Fit</span> in the chart;
+                      </li>
+                      <li>
+                        A chart showing all the <span
+                          title="A digital public service is an interoperable service digitally provisioned by or on behalf of a public administration in fulfilment of public policy goals servicing to users either citizens, businesses or other public administrations. A European public service comprises any public service exposed to a cross-border dimension and supplied by public administrations, either to one another or to businesses and citizens in the Union. One or more Digital Public Service can realize one Digital Business Capability">
+                          Digital Public Service</span> related to the dBusCap selected;
+                      </li>
+                      <li>
+                        A digital transformation roadmap in which the user can select the different orientation for
+                        dBusCap
+                        implementation;
+                      </li>
+                      <li>
+
+                        Α chart showing the <span
+                          title=" An Architecture building block is a constituent component of the overall architecture that describes a single aspect of a specific Digital Public Service">Architectural
+                          Building Blocks</span> to implement to enable the dBusCap.
+                      </li>
+                    </ol>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl col-lg pb-4">
+              <div class="card shadow h-100">
+                <a href="#collapseCardExample3" class="d-block card-header py" data-toggle="collapse" role="button"
+                  aria-expanded="true" aria-controls="collapseCardExample3">
+                  <h6 class="m-0 font-weight-bold text-primary text-center">
+                    eGovERA&copy; v1.0.0 beta
+                  </h6>
+                </a>
+                <div class="collapse show" id="eGovERA">
+                  <div class="card-body">
+                    <h5><b>What is eGovERA&copy;?</b></h5>
+                    <div class="font-size-14">
+
+                      <p>
+                        <a href="https://ec.europa.eu/info/departments/structural-reform-support_en" class="tag-styles">
+                          DG REFORM</a>
+
+
+                        requested the support of DG DIGIT, D2 to help EU Member States to make
+                        <span
+                          title="A digital public service is an interoperable service digitally provisioned by or on behalf of a public administration in fulfilment of public policy goals servicing to users either citizens, businesses or other public administrations. A European public service comprises any public service exposed to a cross-border dimension and supplied by public administrations, either to one another or to businesses and citizens in the Union. One or more Digital Public Service can realize one Digital Business Capability">
+                          Digital Public Services</span>
+                        portfolio management decisions (priorities?, where to invest?, etc.)
+                        and identifying digital transformation roadmaps. eGovERA&copy; is a suit of solutions
+                        providing this support and delivered with the funding of the
+                        <a class="tag-styles" href="https://ec.europa.eu/isa2/isa2_en">ISA2</a>
+
+                        European program
+                        and under the context of the European Interoperability Architecture action.
+                      </p>
+
+                    </div>
+                    <h5><b>Who is eGovERA&copy; for?</b></h5>
+                    <div class="font-size-14">
+                      <ul class="font-size-14">
+                        <li>
+                          <b>The CIO of a Member State (e.g. Head of MS’s
+                            DigitalAgency),</b>
+                          who needs to plan and optimise the investment in
+                          e-Government for the following years, to be
+                          distributed in different policy areas, while
+                          focusing on the modernisation of the MS’s
+
+
+                          <span
+                            title="A digital public service is an interoperable service digitally provisioned by or on behalf of a public administration in fulfilment of public policy goals servicing to users either citizens, businesses or other public administrations. A European public service comprises any public service exposed to a cross-border dimension and supplied by public administrations, either to one another or to businesses and citizens in the Union. One or more Digital Public Service can realize one Digital Business Capability">
+                            Digital Public Services.</span>
+                        </li>
+                        <li>
+                          <b>The public administrations’ services Portfolio
+                            Manager,</b>
+                          working on planning the long-term modernisation
+                          programmes of specific
+
+
+                          <span
+                            title="A digital public service is an interoperable service digitally provisioned by or on behalf of a public administration in fulfilment of public policy goals servicing to users either citizens, businesses or other public administrations. A European public service comprises any public service exposed to a cross-border dimension and supplied by public administrations, either to one another or to businesses and citizens in the Union. One or more Digital Public Service can realize one Digital Business Capability">
+                            Digital Public Services</span> for citizens and businesses
+                          or of infrastructure services, who needs to have
+                          guidance in identifying the priority actions and
+                          their sequence.
+                        </li>
+                        <li>
+                          <b>The enterprise or solution architect</b> working
+                          in the implementation of
+
+                          <span
+                            title="A digital public service is an interoperable service digitally provisioned by or on behalf of a public administration in fulfilment of public policy goals servicing to users either citizens, businesses or other public administrations. A European public service comprises any public service exposed to a cross-border dimension and supplied by public administrations, either to one another or to businesses and citizens in the Union. One or more Digital Public Service can realize one Digital Business Capability">
+                            Digital Public Services</span> in a specific policy domain
+                          or in cross-domain infrastructure services, who
+                          needs to have a European reference model to plan the
+                          implementation phases.
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="row">
+            <div class="col-xl-4 col-lg-4 d-flex align-items-stretch">
+              <div class="card shadow mb-4 w-100">
+                <a href="#collapseCardExample" class="d-block card-header py" data-toggle="collapse" role="button"
+                  aria-expanded="true" aria-controls="collapseCardExample">
+                  <h6 class="m-0 font-weight-bold text-primary text-center">
+                    eGovERA&copy; components and main definitions
+                  </h6>
+                </a>
+                <div class="collapse show" id="quickHowTo">
+                  <div class="card-body">
+                    <div class="font-size-14">
+                      <p>
+                        The eGovERA&copy; main components are the following:
+                      </p>
+                      <ol>
+                        <li>
+                          <b>eGovERA&copy; eGovernment Business Capabilities
+                            Assessment:</b>
+                          this component represents a user friendly and guided survey that help Member States in the
+                          prioritisation of the
+                          <a target="_blank"
+                            href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
+                            title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">digital
+                            business capabilities</a>
+                          for the selected policy domains. The survey is composed by different sections, the first
+                          section let the user describe each <a target="_blank"
+                            href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
+                            title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">digital
+                            business capabilities</a> by the following parameters:
+                          <ul class="dashed-list">
+                            <li>
+                              <span
+                                title="It reports the strategic priority assigned to the digital business capability by the national digital agenda of the country.">National
+                                Digital Strategic Fit</span>
+                            </li>
+                            <li>
+                              <span
+                                title="It measures the current ability to support the digital business capability">Ability
+                                to support the dBusCap</span>
+                            </li>
+                            <li>
+                              <span
+                                title="It refers to the expected beneficial impact (cost discounted) provided by the target prospective ability (*) to support the digital business capability. (*) default is the highest possible prospective ability">Expected
+                                Public Value
+                              </span>
+                            </li>
+
+                            <li>
+                              <span
+                                title="It refers to the estimated amount (in millions of EUR) required to reach the target prospective ability of the Architectural Building Block to support the digital business capability">Estimated
+                                budget (in millions of EUR)</span>
+                            </li>
+                          </ul>
+                        </li>
+                        <li>
+                          <b>eGovERA&copy; eGovernment Portfolio Management
+                            Decision Support:
+                          </b>
+                          this component supports the Member States in the visualisation of the survey results,
+                          providing useful features to prioritise the selected
+                          <a
+                          target="_blank"
+                          href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
+                          title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">digital
+                          business capabilities</a>
+                          adjusting the
+                          <span
+                            title="It reports the strategic priority assigned to the digital business capability by the national digital agenda of the country.">National
+                            Digital Strategic Fit</span>
+
+                          <span
+                            title="It refers to the expected beneficial impact (cost discounted) provided by the target prospective ability (*) to support the digital business capability. (*) default is the highest possible prospective ability">
+                            Expected Public Value
+                          </span>
+                          and
+                          <span title="It measures the current ability to support the digital business capability">
+                            "Ability to support the dBusCap"
+                          </span>
+
+                          values for the different policy domains.
+                        </li>
+                        <li>
+                          <b>eGovERA&copy; digital transformation roadmap:</b>
+                          this component supports the Member States in the
+                          visualisation of a strategic roadmap for the
+                          development of a selected
+                          <a
+                          target="_blank"
+                          href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
+                          title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">digital
+                          business capabilities</a>
+                          , specifying the operative steps to be followed to
+                          increase the digital maturity of the survey
+                          users need to identify a MS's priority for each  <a
+                          target="_blank"
+                          href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
+                          title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">digital
+                          business capabilities</a>.
+                        </li>
+                      </ol>
+                      <p>
+                        The successive sections of the survey let the user assess the
+                        assess the
+                        <span title="It measures the current ability to support the digital business capability">
+                          "Ability to support the dBusCap"</span>
+                        for each <span
+                          title=" An Architecture building block is a constituent component of the overall architecture that describes a single aspect of a specific Digital Public Service.">Architecture
+                          Building Block</span> composing the survey
+                        users need to identify a MS's priority for each <a
+                        target="_blank"
+                        href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
+                        title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">digital
+                        business capabilities</a>.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl col-lg">
+              <div class="card shadow mb-4">
+                <a href="#collapseCardExample3" class="d-block card-header py" data-toggle="collapse" role="button"
+                  aria-expanded="true" aria-controls="collapseCardExample3">
+                  <h6 class="m-0 font-weight-bold text-primary text-center">
+                    eGovERA&copy; Ontology
+                  </h6>
+                </a>
+                <div class="collapse show">
+                  <div class="card-body">
+                    <div class="font-size-14">
+                      <p>
+                        The <b>Ontology</b> describes the overall conceptual model behind the definition of a roadmap
+                        for the
+                        effective implementation of <b>e-Government</b> <span
+                          title="A digital public service is an interoperable service digitally provisioned by or on behalf of a public administration in fulfilment of public policy goals servicing to users either citizens, businesses or other public administrations. A European public service comprises any public service exposed to a cross-border dimension and supplied by public administrations, either to one another or to businesses and citizens in the Union. One or more Digital Public Service can realize one Digital Business Capability">Digital
+                          Public Services</span>. According
+                        to the
+                        eGovERA&copy; scope, each policy domain (e.g. Health, Tax, Business Agnostic) digitalisation
+                        strictly
+                        depends on the maturity of the needed  <a
+                        target="_blank"
+                        href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
+                        title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">digital
+                        business capabilities</a> within an
+                        organisation.
+                        <a
+                        target="_blank"
+                        href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
+                        title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">digital
+                        business capabilities</a> are the key skills and capabilities a Company or a
+                        Government
+                        requires to transform itself into a sustainable and successful business by considering
+                        <span
+                          title="A digital public service is an interoperable service digitally provisioned by or on behalf of a public administration in fulfilment of public policy goals servicing to users either citizens, businesses or other public administrations. A European public service comprises any public service exposed to a cross-border dimension and supplied by public administrations, either to one another or to businesses and citizens in the Union. One or more Digital Public Service can realize one Digital Business Capability">Digital
+                          Public Services</span> as the enabling component.
+                        Each  <a
+                        target="_blank"
+                        href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
+                        title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">digital
+                        business capabilities</a> it is guided by dedicated <b>principles</b>, which
+                        summarize the overall
+                        objective that the Organization aims to achieve.
+
+                      </p>
+                      <p>Each business capabilities it is guided by dedicated <b>principles</b>, which summarize the
+                        overall objective that the Organization aims to achieve.</p>
+                      <p>
+                        An <span
+                          title="A digital public service is an interoperable service digitally provisioned by or on behalf of a public administration in fulfilment of public policy goals servicing to users either citizens, businesses or other public administrations. A European public service comprises any public service exposed to a cross-border dimension and supplied by public administrations, either to one another or to businesses and citizens in the Union. One or more Digital Public Service can realize one Digital Business Capability">Digital
+                          Public Services</span>
+                        is a digital service provisioned by or on behalf
+                        of a
+                        public administration in fulfilment of a public policy goals servicing to users either
+                        citizens,
+                        businesses or other public administrations. One or more
+
+                        can realize one
+                        <a
+                        target="_blank"
+                        href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
+                        title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">digital
+                        business capabilities</a>. Each survey
+                        users need to identify a MS's priority for each  <a
+                        target="_blank"
+                        href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
+                        title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">digital
+                        business capabilities</a> is supported by dedicated
+                        <span
+                          title="A digital public service is an interoperable service digitally provisioned by or on behalf of a public administration in fulfilment of public policy goals servicing to users either citizens, businesses or other public administrations. A European public service comprises any public service exposed to a cross-border dimension and supplied by public administrations, either to one another or to businesses and citizens in the Union. One or more Digital Public Service can realize one Digital Business Capability">
+                          Digital Public Services</span>
+                        which are in turn composed of specific <span
+                          title=" An Architecture building block is a constituent component of the overall architecture that describes a single aspect of a specific Digital Public Service.">Architectural
+                          Building Blocks</span>. An
+                        <span
+                          title=" An Architecture building block is a constituent component of the overall architecture that describes a single aspect of a specific Digital Public Service.">Architectural
+                          Building Blocks</span> is a constituent component of the overall architecture that
+                        describes a single aspect of a specific <span
+                          title="A digital public service is an interoperable service digitally provisioned by or on behalf of a public administration in fulfilment of public policy goals servicing to users either citizens, businesses or other public administrations. A European public service comprises any public service exposed to a cross-border dimension and supplied by public administrations, either to one another or to businesses and citizens in the Union. One or more Digital Public Service can realize one Digital Business Capability">
+                          Digital Public Service</span>.
+                      </p>
+                      <p>
+                        As a result, this is a relational model on which each element it is interconnected and the
+                        relationships that compose those elements (Policy domain, survey
+                        users need to identify a MS's priority for each  <a
+                        target="_blank"
+                        href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
+                        title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">digital
+                        business capabilities</a>, <span
+                          title="A digital public service is an interoperable service digitally provisioned by or on behalf of a public administration in fulfilment of public policy goals servicing to users either citizens, businesses or other public administrations. A European public service comprises any public service exposed to a cross-border dimension and supplied by public administrations, either to one another or to businesses and citizens in the Union. One or more Digital Public Service can realize one Digital Business Capability">
+                          Digital Public Service</span> and ABBs) provide the overall data model.
+                      </p>
+                    </div>
+                    <div class="image">
+                      <img src="img/ontology.jpg" alt="EGovERA relational data model" />
+                    </div>
+                    <div class="font-size-14">
+
+                      <p>
+                        The eGovERA&copy; Ontology describes the knowledge representation of eGovERA&copy;. The
+                        eGovERA&copy ontology components are:
+                      </p>
+                      <ul>
+                        <li>
+                          <span class="ontology-categories">[Domain] Policy domain:</span>
+                          scope to which the Digital Public Services apply (e.g. Health, Tax,
+                          Business Agnostic)
+                        </li>
+                        <li><span class="ontology-categories">[SubDomain] Policy subdomain:</span>
+                          a specific area of the policy domain that well classify the
+                          Digital Business capabilities and related Digital Public Services </li>
+                        <li><span class="ontology-categories">[DigitalBusinessCapability] Digital business
+                            capability:</span>
+                          the Digital Capabilities are the
+                          key skills and capabilities of an organizational body (i.e. public administration) requires to
+                          deliver [public] value sustainably and efficiently using digital technologies as the enabling
+                          component.</li>
+                        <li> <span class="ontology-categories">[Principle] Architecture principle:</span>
+                          it defines the underlying general rules and guidelines
+                          for the use and deployment of all IT resources and assets across the enterprise. They reflect
+                          a level of consensus among the various elements of the enterprise and form the basis for
+                          making future IT decisions.</li>
+                        <li><span class="ontology-categories">[Category] Architecture principle category:</span>
+                          a Architecture principle category defines a
+                          specific group of Architecture Principles.</li>
+                        <li><span class="ontology-categories">[BCxP]</span>
+                          the Architecture Principles applicable to each Digital Business Capability </li>
+                        <li><span class="ontology-categories">[DigitalPublicService] Digital public service:</span>
+                          a digital public service is an interoperable
+                          service digitally provisioned by or on behalf of a public administration in fulfilment of
+                          public policy goals servicing to users either citizens, businesses or other public
+                          administrations. A European public service comprises any public service exposed to a
+                          cross-border dimension and supplied by public administrations, either to one another or to
+                          businesses and citizens in the Union. One or more Digital Public Service can realize one
+                          Digital Business Capability.</li>
+                        <li><span class="ontology-categories">[DPSxBC] Digital Public Services (DPS)</span>
+                          needed to realise each Digital Business Capability
+                          (BC)</li>
+                        <li><span class="ontology-categories">[ArchitectureBuildingBlock] Architecture Building
+                            Block:</span>
+                          an Architecture Building Block
+                          (ABB) is a constituent of the architecture model that describes a single aspect of the overall
+                          model. An Architecture Building Block describes generic characteristics and functionalities.
+                          Architecture Building Blocks are used to describe reference architectures, solution
+                          architecture templates or solution architectures of a specific solutions.</li>
+                        <li><span class="ontology-categories">[ABBxDPS] the Architecture Building Blocks (ABB)</span>
+                          to be implemented for a specific Digital
+                          Public Service (DPS)</li>
+                      </ul>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="footer"></div>
+    </div>
+  </div>
+
+  <div class="scroll-to-top rounded">
+    <div class="scroll-to-top-icon-container">
+      <i class="fas fa-angle-up"></i>
+    </div>
+    <div class="scroll-to-top-text-container">
+      <span>Go to Top</span>
+    </div>
+  </div>
+
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Select "Logout" below if you are ready to end your current session.
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">
+            Cancel
+          </button>
+          <a class="btn btn-primary" href="login.html">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=fetch"></script>
+
+  <script type="text/javascript" src="./vendo/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="vendo/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <script type="text/javascript" src="vendo/jquery-easing/jquery.easing.min.js"></script>
+
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement(
+        {
+          pageLanguage: "en",
+          layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        },
+        "google_translate_element"
+      );
+    }
+  </script>
+
+  <script type="text/javascript"
+    src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+  <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
+  <script src="JSBuild/requests.js"></script>
+  <script src="JSBuild/authentication.js"></script>
+  <script src="JSBuild/customElements.js"></script>
+
+  <script src="JSBuild/loginModal.js"></script>
+  <script src="JSBuild/loginButton.js"></script>
+  <script src="JSBuild/authenticationModal.js"></script>
+
+  <script src="js/sb-admin-2.min.js"></script>
+</body>
+
+</html>
