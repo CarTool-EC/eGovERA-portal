@@ -33,15 +33,15 @@ function footer() {
   ]);
 
   const copyrightContainer = customElement("div");
-  copyrightContainer.innerHTML = "Copyright &copy; European Commission 2021";
+  copyrightContainer.innerHTML = "Copyright &copy; European Commission 2023";
 
   const fileContainer = customElement("div");
   const fileLink = customElement("a", [], {
-    href: "copyright/ISA Product License v1 3.pdf",
+    href: "../copyright/ISA Product License v1 3.pdf",
     download: "ISA Product License v1 3.pdf",
   });
 
-  fileLink.innerText = "ISA Product License v1 3";
+  fileLink.innerText = "ISA Product License v1.4";
 
   fileContainer.appendChild(fileLink);
 
@@ -64,10 +64,14 @@ function sideNavBar() {
     ["sidebar-brand", "d-flex", "align-items-center"],
     {
       href: "../instructions.html",
+      style: "position: relative;",
     }
   );
 
   unorderList.appendChild(sidebarBrand);
+  window.addEventListener("scroll", function () {
+    sidebarBrand.style.top = window.pageYOffset + "px";
+  });
 
   const sidebarDiv = customElement("div", ["sidebar-brand-icon"]);
 
@@ -75,10 +79,12 @@ function sideNavBar() {
 
   const faLandMark = customElement("i", ["fas", "fa-landmark"], {
     style: "padding-left: 20px;",
+   
   });
 
   sidebarDiv.appendChild(faLandMark);
 
+  
   const lowerCaseDiv = customElement(
     "div",
     ["sidebar-brand-text", "text-lowercase"],
@@ -107,6 +113,7 @@ function sideNavBar() {
 
   const instructionsLi = customElement("li", ["nav-item"], {
     id: "nav-item-1",
+    style: "position: relative;",
   });
 
   const instructionsLink = customElement("a", ["nav-link"], {
@@ -119,6 +126,14 @@ function sideNavBar() {
 
   instructionsLink.appendChild(instructionsIcon);
 
+  const sidebarBrandText = customElement("a", ["sidebar-brand-pageText"],{style:"font-size: .65rem; padding-left 13px; color:white; text-align:center;position: relative;"});
+  sidebarBrandText.innerHTML = "eGovERA Upscale Solution";
+  unorderList.appendChild(sidebarBrandText);
+  window.addEventListener("scroll", function () {
+    sidebarBrandText.style.top = window.pageYOffset + "px";
+  });
+
+
   const instructionsSpan = customElement("span");
   const instructionsSpanText = document.createTextNode("Overview & Guidelines");
 
@@ -126,19 +141,36 @@ function sideNavBar() {
   instructionsLink.appendChild(instructionsSpan);
 
   unorderList.appendChild(instructionsLi);
+  window.addEventListener("scroll", function () {
+    instructionsLi.style.top = window.pageYOffset + "px";
+  });
 
-  const instructionsDivider = customElement("hr", ["sidebar-divider"]);
 
+ 
+
+  const instructionsDivider = customElement("hr", ["sidebar-divider"], {
+    style: "position: relative;",
+  });
+  
   unorderList.appendChild(instructionsDivider);
+  
+  window.addEventListener("scroll", function () {
+    instructionsDivider.style.top = window.pageYOffset + "px";
+  });
 
   const headingDiv = customElement("div", ["sidebar-heading"]);
-  const headingText = document.createTextNode("Steps to follow");
-  headingDiv.appendChild(headingText);
+  // const headingText = document.createTextNode("Steps to follow");
+  // headingDiv.appendChild(headingText);
 
   unorderList.appendChild(headingDiv);
 
+  window.addEventListener("scroll", function () {
+    headingDiv.style.top = window.pageYOffset + "px";
+  });
+
   const capabilityAssessmentLi = customElement("li", ["nav-item"], {
     id: "nav-item-2",
+    style: "position: relative;",
   });
   const capabilityAssessmentLink = customElement("a", ["nav-link"], {
     href: "../survey/survey.html",
@@ -151,17 +183,20 @@ function sideNavBar() {
   const capabilityAssessmentSpanText = document.createTextNode(
     "1. Capability assessment"
   );
-
-  capabilityAssessmentSpan.appendChild(capabilityAssessmentSpanText);
-
+  
   capabilityAssessmentLi.appendChild(capabilityAssessmentLink);
   capabilityAssessmentLink.appendChild(capabilityAssessmentIcon);
   capabilityAssessmentLink.appendChild(capabilityAssessmentSpan);
-
+  capabilityAssessmentSpan.appendChild(capabilityAssessmentSpanText);
   unorderList.appendChild(capabilityAssessmentLi);
+  
+  window.addEventListener("scroll", function () {
+    capabilityAssessmentLi.style.top = window.pageYOffset + "px";
+  });
 
   const decisionSupportLi = customElement("li", ["nav-item"], {
     id: "nav-item-3",
+    style: "position: relative;",
   });
   const decisionSupportLink = customElement("a", ["nav-link"], {
     href: "../roadmap/roadmaptest.html",
@@ -180,24 +215,37 @@ function sideNavBar() {
 
   unorderList.appendChild(decisionSupportLi);
 
+  window.addEventListener("scroll", function () {
+    decisionSupportLi.style.top = window.pageYOffset + "px";
+  });
+
   if (sessionStorage.getItem("role") === "admin") {
     const backOfficeLi = customElement("li", ["nav-item"], {
       id: "nav-item-4",
+      style: "position: relative;",
     });
+  
+    unorderList.appendChild(backOfficeLi);
+  
+    window.addEventListener("scroll", function () {
+      backOfficeLi.style.top = window.pageYOffset + "px";
+    });
+  
     const backOfficeLink = customElement("a", ["nav-link"], {
       href: "../backoffice/backOffice.html",
     });
     const backOfficeIcon = customElement("i", ["fas", "fa-user-shield"]);
     const backOfficeSpan = customElement("span");
     const backOfficeSpanText = document.createTextNode("3. Back Office");
-
+  
     backOfficeSpan.appendChild(backOfficeSpanText);
-
+  
     backOfficeLi.appendChild(backOfficeLink);
     backOfficeLink.appendChild(backOfficeIcon);
     backOfficeLink.appendChild(backOfficeSpan);
-
+    
     unorderList.appendChild(backOfficeLi);
+
   }
   const backOfficeDiveder = customElement("hr", ["sidebar-divider"]);
 
@@ -209,12 +257,12 @@ function sideNavBar() {
     "d-md-inline",
   ]);
 
-  const togglerBtn = customElement("button", ["rounded-circle", "border-0"], {
-    id: "sidebarToggle",
-    "data-target": "#accordionSidebar",
-  });
+  // const togglerBtn = customElement("button", ["rounded-circle", "border-0"], {
+  //   id: "sidebarToggle",
+  //   "data-target": "#accordionSidebar",
+  // });
 
-  togglerDiv.appendChild(togglerBtn);
+  //togglerDiv.appendChild(togglerBtn);
   unorderList.appendChild(togglerDiv);
 
   const url = location.href;
@@ -236,6 +284,11 @@ function sideNavBar() {
     } else {
     }
   }
+  
+ 
+  
+
+
 }
 
 sideNavBar();

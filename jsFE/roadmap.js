@@ -1,4 +1,7 @@
 import "regenerator-runtime/runtime";
+import 'chartjs-plugin-annotation';
+import { Grid } from "gridjs";
+
 
 let demo = true;
 google.charts.load("current", {
@@ -16,6 +19,7 @@ let network2Nodes;
 let toogleInfra = true;
 let busOrientation = 1;
 let bcList = {};
+let customBBs = [];
 let DPSs = {};
 let viewsInfra = [];
 let viewBCmc = [];
@@ -36,11 +40,12 @@ let selectedBC;
 let clickedBC;
 let clickedDPSs = [];
 let maxBudget = 0;
-
+let currentBBTableBody;
 let fileContent = {};
 let inputBCJSON;
 let inputBBJSON;
 let inputDPSJSON;
+let myChart;
 const hAxisLabes = {
   1: "National Digital Strategy Fit",
   5: "Expected Public Value",
@@ -65,14 +70,15 @@ const policyImages = {
   "business agnostic": "../img/tech.png",
 };
 
-const natDigStrategicFitTooltip = `It reports the strategic priority assigned to the digital business capability by the national digital agenda of the country.`;
+const natDigStrategicFitTooltip = `It reports the strategic priority assigned to the Digital Business Capability by the national digital agenda of the country.`;
 
-const expPubValueTooltip = `It refers to the expected beneficial impact (cost discounted) provided by the target prospective ability (*) to support the digital business capability. (*) default is the highest possible prospective ability`;
+const expPubValueTooltip = `It refers to the expected beneficial impact (cost discounted) provided by the target prospective ability (*) to support the Digital Business Capability. (*) default is the highest possible prospective ability`;
 
-const abToSuppDbusCapTooltip = `It measures the current ability to support the digital business capability`;
+const abToSuppDbusCapTooltip = `It measures the current ability to support the Digital Business Capability`;
 
-const budgetTooltip = `It refers to the estimated amount (in millions of EUR) required to reach the target prospective ability of the Architectural Building Block to support the digital business capability`;
+const budgetTooltip = `It refers to the estimated amount (in millions of EUR) required to reach the target prospective ability of the Architectural Building Block to support the Digital Business Capability (to fulfill the GAP)`;
 
+const optimalAvgTooltip = `It measures the perspective ability to support a Digital Business Capability`
 /**
  *
  * Create an object from the array of DPS and group them by id
@@ -198,6 +204,7 @@ let groupBCByID = (array) => {
     let view4 = createView("technical-infrastructure", idTIdom, policy);
     let priority = null;
     let avgAbility = null;
+    let prospectiveAbility = null;
 
     views.push(view0);
     views.push(view1);
@@ -215,11 +222,630 @@ let groupBCByID = (array) => {
       avgAbility,
       bbs,
       dps,
+      prospectiveAbility,
     };
 
     return obj;
   }, {});
 };
+
+// *********************************************************
+// PDF Creation Functionality (with jspdf & jspdf.autotalbe)
+// *********************************************************
+
+/**
+ * Adds the explanatory texts in the PDF
+ * 
+ * @param {Object} pdf PDF Object
+ * @param {Number} startX x coordinate  
+ * @param {Number} startY y coordinate
+ * @param {Number} sentenceNum key for the addExplanatoryText
+ */
+function addExplanatoryText(pdf, startX, startY, sentenceNum) {
+  const explanatorySentences = {
+    1: ["The quadrant represents the",
+      "scores assigned to the evaluated digital",
+      "business capability/ies, according to the",
+      "following parameters:",
+      "   • National Strategy Fit",
+      "   • Ability to support the dBusCap",
+      "   • Target Perspective Ability to Support",
+      "     dBusCap",
+      "   • Expected Public Value and the",
+      "   • Estimated budget (in millions EUR)",],
+    2: ["In addition to the information visible from the quadrant, in the following table you can find a summary of the Capability ",
+      "Assessment Results. In particular, the below table shows the current MS's ability to support the evaluated digital ",
+      "business capability/ies and the target ability to support the evaluated Digital Business Capabilities. As a result, the ",
+      "estimated budget aims to fulfil the GAP between the 'AS IS ability' and the target prospective ability. Moreover, the ",
+      "scores are reported per area/view (legal, organisation, semantic, technical-application and technical infrastructure).",
+      "Finally, you find a summary of the assigned parameters (National Digital fit, Expected Public Value and Estimated ",
+      "Budget) to evaluated Digital Business Capability/ies."],
+    3: ["The following table sumarises the selected Digital Business Capabilities"],
+    4: ["Below, you have a summary table and a graphical representation of all the Digital Public Services in",
+      "scope, meaning the ones supporting the selected Digital Business Capability"],
+    5: ["The following graph represents the MS's Digital Transformation Roadmap, by which the user can",
+      "select the different orientation for the implementation of the selected digital bysiness capability"],
+    6: ["The following table summarises the selected Digital Business Capabilities"],
+    7: ["Below you can see the graphical representation of the functionalities (i.e. Skills, expertise, experience",
+      "etc.) supporting the selected Digital Business Capability, based on the MS's orientation (legal,",
+      "organizational, semantic and technical) priority chosen. The content of the nodes (expressed by the",
+      "blue color) is variable because it reflects the relation between the ABBs and the ability to support",
+      "the selected Digital Business Capability"],
+    8: ["The following is a table containing the list of the functionalities (i.e. Skills, expertise, experience, etc.)",
+      "needed to implement the selected Digital Business Capability"],
+  };
+
+  // Gap between lines
+  let lineGap;
+  // set font parameters
+  if (sentenceNum === 2) {
+    pdf.setFontSize(10);
+    lineGap = 5;
+  } else {
+    pdf.setFontSize(12);
+    lineGap = 7;
+  }
+  pdf.setFontType('italic');
+  pdf.setTextColor(0, 0, 0); // black
+
+  // Add the sentences into the PDF
+  let text = explanatorySentences[sentenceNum];
+  let y = startY;
+  for (let i = 0; i < text.length; i++) {
+    pdf.text(text[i], startX, y);
+    y = y + lineGap;
+  }
+}
+
+/**
+ * Creates the header and footer for the PDF
+ * 
+ * @param {*} pdf PDF Object
+ * @param {*} title PDF's title
+ */
+function addPageTemplate(pdf, titleNum) {
+  // Title's object
+  const titleInfo = {
+    1: { title: "Introduction", coordinates: [88, 20] },
+    2: { title: "Portfolio Management Decision Support", coordinates: [45, 20] },
+    3: { title: "Digital Transformation Roadmap Decision Support", coordinates: [30, 20] },
+    4: { title: "eGovERA© Building Blocks", coordinates: [65, 20] },
+  };
+
+  // Add top right icon
+  const rightIcon = new Image();
+  rightIcon.src = "../img/ec2.png";
+  const rightIconCoords = [180, 1, 25, 18]; // x, y, width, height
+  pdf.addImage(rightIcon, 'png', ...rightIconCoords);
+
+  // Add top left icon and sentence
+  const leftIcon = new Image();
+  leftIcon.src = "../img/egovera-icon2.png";
+  const leftIconCoords = [4, 2, 12, 11];
+  pdf.addImage(leftIcon, 'png', ...leftIconCoords);
+  const topSentCoords = [15, 10]; // x, y
+  const topSentence = "eGovERA ©";
+  pdf.setTextColor(0, 0, 0); // black
+  pdf.setFontType('normal');
+  pdf.setFontSize(15);
+  pdf.text(topSentence, ...topSentCoords);
+
+  // Add bottom left sentence
+  const leftSentCoords = [10, 292]; // x, y
+  const leftSentence = "Copyright © European Commission 2022";
+  pdf.setFontSize(10);
+  pdf.setTextColor(192, 192, 192);
+  pdf.setFontType('italic');
+  pdf.text(leftSentence, ...leftSentCoords);
+
+  // Add bottom right sentence and underline
+  const rightSentCoords = [160, 292]; // x, y
+  const rightSentence = "ISA product license v1.4";
+  pdf.setFontSize(10);
+  pdf.setTextColor(102, 178, 255); // light blue
+  pdf.text(rightSentence, ...rightSentCoords);
+  pdf.setLineWidth(0.1);
+  pdf.setDrawColor(102, 178, 255); // light blue
+  pdf.line(160, 293, 198, 293) // startX, startY, endX, endY
+
+  // Add title
+  const titleCoords = titleInfo[titleNum].coordinates;
+  const titleSentence = titleInfo[titleNum].title;
+  pdf.setFontSize(17);
+  pdf.setTextColor(0, 153, 0); // green
+  pdf.setFontType('bold');
+  pdf.text(titleSentence, ...titleCoords);
+}
+
+/**
+ * Creates the Introductory Page for the PDF
+ * 
+ * @param {Object} pdf PDF Object
+ */
+function addIntroductoryPage(pdf) {
+  //pdf.addPage();
+  addPageTemplate(pdf, 1);
+
+  // Add sentence1
+  const sentence1 = "DG DIGIT";
+  const sentence1Coords = [90, 60];
+  pdf.setFontSize(20);
+  pdf.setTextColor(0, 0, 0); // black
+  pdf.setFontType('bold');
+  pdf.text(sentence1, ...sentence1Coords);
+
+  // Add sentence2
+  const sentence2 = "Unit.D2";
+  const sentence2Coords = [93, 70];
+  pdf.text(sentence2, ...sentence2Coords);
+
+  // Add sentence3
+  const sentence3 = "eGovERA © portal";
+  const sentence3Coords = [52, 100];
+  pdf.setFontSize(35);
+  pdf.setTextColor(51, 153, 255); // blue
+  pdf.text(sentence3, ...sentence3Coords);
+
+  // Add sentence4
+  const sentence4 = "Decision support section";
+  const sentence4Coords = [49, 130];
+  pdf.setTextColor(0, 153, 0); // light green
+  pdf.setFontSize(27);
+  pdf.text(sentence4, ...sentence4Coords);
+
+  // Add sentence5
+  const sentence5 = "PDF export results";
+  const sentence5Coords = [65, 145];
+  pdf.text(sentence5, ...sentence5Coords);
+
+  // Add user's information 
+  pdf.setTextColor(0, 0, 0); // black
+  pdf.setFontSize(12);
+  pdf.setFontType('bold');
+  pdf.text("User name and surname:", 10, 250);
+  pdf.text("Organisation:", 10, 258);
+  pdf.text("Country:", 10, 266);
+  pdf.text("Contact E-mail:", 10, 274);
+  pdf.setFontType('normal');
+  pdf.text(fileContent.fullName, 62, 250);
+  pdf.text(fileContent.organisation, 39, 258);
+  pdf.text(fileContent.country, 29, 266);
+  pdf.text(fileContent.email, 43, 274);
+}
+
+// Start the loading functionality for the PDF Download button
+function startLoader(textId, buttonId) {
+  document.querySelector(`#${textId}`).classList.add('download-btn-text-hidden');
+  document.querySelector(`#${buttonId}`).classList.add('button-loader');
+}
+
+// Stop the loading functionality for the PDF Download button
+function stopLoader(textId, buttonId) {
+  document.querySelector(`#${textId}`).classList.remove('download-btn-text-hidden');
+  document.querySelector(`#${buttonId}`).classList.remove('button-loader');
+}
+
+// When the pdf download button is clicked
+document.getElementById('pdfButton').addEventListener('click', createPDF);
+
+/**
+ * Structure the PDF
+ */
+function createPDF() {
+  // Create the PDF Object
+  var pdf = new jsPDF();
+  var pdfName = 'decision-support.pdf';
+
+  startLoader("pdfButtonTxt", "pdfButton");
+
+  // Add to the PDF Object the Portfolio Management Table and Graph
+  html2canvas(document.querySelector('[aria-label="A chart."]')).then(canvas => {
+    if (!(canvas.height === 0) && !(canvas.width === 0)) {
+
+      addIntroductoryPage(pdf);
+
+      // Add the Graph of the Portofolio Management Section
+      pdf.addPage();
+      addPageTemplate(pdf, 2);
+      addExplanatoryText(pdf, 15, 55, 1);
+      addExplanatoryText(pdf, 15, 160, 2);
+      let img = canvas.toDataURL('image/url');
+      pdf.addImage(img, 'png', 95, 30, 105, 120);
+
+      // Add the Table of the Portofolio Management Section
+      var titles = [
+        ["ID"],
+        ["Policy Domain"],
+        ["Digital Business Capability"],
+        ["National Digital Strategy Fit"],
+        ["Target Prospective Ability to support the dBusCap"],
+        ["Estimated budget (in millions EUR)"],
+        ["Expected Public Value"],
+        ["Overall ability to support the dBusCap"],
+        ["View Name"],
+        ["Ability to support the dBusCap per view"]
+      ];
+
+      // If dBusCap selected
+      let currentBcList;
+      if (selectedValue) {
+        currentBcList = { [selectedValue]: bcList[selectedValue] };
+      } else {
+        currentBcList = bcList;
+      }
+
+      let data = [];
+      let count = 0;
+      // Populate the rows of the table
+      for (let key in currentBcList) {
+        for (let viewKey in currentBcList[key]['views']) {
+          let row = [
+            currentBcList[key]['views'][viewKey]['name'],
+            currentBcList[key]['views'][viewKey]['avgAbility'],
+          ];
+          if (count % 5 === 0) {
+            row.unshift({
+              rowSpan: 5,
+              content: currentBcList[key]['id'],
+              styles: { valign: 'middle', halign: 'center' },
+            }, {
+              rowSpan: 5,
+              content: currentBcList[key]['policy'],
+              styles: { valign: 'middle', halign: 'center' },
+            }, {
+              rowSpan: 5,
+              content: currentBcList[key]['name'],
+              styles: { valign: 'middle', halign: 'center' },
+            }, {
+              rowSpan: 5,
+              content: currentBcList[key]['prospectiveAbility'],
+              styles: { valign: 'middle', halign: 'center' },
+            }, {
+              rowSpan: 5,
+              content: currentBcList[key]['priority'],
+              styles: { valign: 'middle', halign: 'center' },
+            }, {
+              rowSpan: 5,
+              content: currentBcList[key]['budget'],
+              styles: { valign: 'middle', halign: 'center' },
+            }, {
+              rowSpan: 5,
+              content: currentBcList[key]['expRandom'],
+              styles: { valign: 'middle', halign: 'center' },
+            }, {
+              rowSpan: 5,
+              content: currentBcList[key]['avgAbility'],
+              styles: { valign: 'middle', halign: 'center' },
+            }
+            );
+          }
+          data.push(row);
+          count++;
+        }
+      }
+      pdf.autoTable(
+        titles,
+        data,
+        {
+          columnStyles: {
+            0: { cellWidth: 17 },
+            1: { cellWidth: 16 },
+            2: { cellWidth: 16 },
+            3: { cellWidth: 16 },
+            4: { cellWidth: 18 },
+            5: { cellWidth: 18 },
+            6: { cellWidth: 19 },
+            7: { cellWidth: 20 },
+            8: { cellWidth: 25 },
+            9: { columnWidth: 14 },
+          },
+          theme: 'grid',
+          headStyles: { fillColor: [8, 161, 88], fontSize: 7, halign: 'center', valign: 'middle', },
+          margin: { right: 20 },
+          startY: 200,
+          margin: { top: 30 },
+          didDrawPage: function () { addPageTemplate(pdf, 2) },
+        }
+      );
+
+      // Add the Information for the first section of the Digital Transformation Roadmap
+      html2canvas(document.querySelector('#dps-network-info')).then(canvas => {
+        if (!(canvas.height === 0) && !(canvas.width === 0)) {
+          pdf.addPage();
+          addPageTemplate(pdf, 3);
+          addExplanatoryText(pdf, 15, 35, 3);
+          addExplanatoryText(pdf, 15, 93, 4);
+
+          var titles1 = [
+            ["Selected Digital Business Capability"]
+          ];
+          var titles2 = [
+            ["Table of Digital Public Services in scope"]
+          ];
+          var data1 = [
+            [
+              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[0].textContent.split(":")[0],
+              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[0].textContent.split(":")[1],
+            ],
+            [
+              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[1].textContent.split(":")[0],
+              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[1].textContent.split(":")[1],
+            ],
+            [
+              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[2].textContent.split(":")[0],
+              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[2].textContent.split(":")[1],
+            ],
+            [
+              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[3].textContent.split(":")[0],
+              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[3].textContent.split(":")[1],
+            ],
+          ];
+          var data2 = [];
+          let liItemsArr = [];
+          var liItems = document.getElementById("dps-select-info").getElementsByTagName('li');
+          for (let i = 0; i < liItems.length; i++) {
+            if (clickedDPSs.length !== 0) {
+              let id = liItems[i].textContent.split("-")[0].trim()
+              for (let j = 0; j < clickedDPSs.length; j++) {
+                if (id === clickedDPSs[j]) {
+                  liItemsArr.push(liItems[i].textContent);
+                }
+              }
+            } else {
+              liItemsArr.push(liItems[i].textContent);
+            }
+          }
+
+          // Create rows of three liItems
+          let num = 0;
+          for (let i = 0; i < Math.floor(liItemsArr.length / 3) + 1; i++) {
+            let currRow = [];
+            for (let j = 0; j < 3; j++) {
+              if (num < liItemsArr.length) {
+                currRow.push(liItemsArr[num]);
+              }
+              num += 1;
+            }
+            if (currRow.length > 0) {
+              data2.push(currRow);
+            }
+          }
+
+          pdf.autoTable({
+            startY: 42,
+            head: [[{ content: titles1, colSpan: 2, styles: { halign: 'center', fillColor: [8, 161, 88], }, },],],
+            body: data1,
+            theme: "grid",
+            talbeWidth: 900,
+          });
+
+          pdf.autoTable({
+            startY: 105,
+            head: [[{ content: titles2, colSpan: 3, styles: { halign: 'center', fillColor: [8, 161, 88], }, },],],
+            body: data2,
+            theme: "grid",
+          });
+
+          // Add the Graph for the first section of the Digital Transformation Roadmap
+          html2canvas(document.querySelector('#dps-network-div')).then(canvas => {
+            if (!(canvas.height === 0) && !(canvas.width === 0)) {
+              // set the space between the table and the graph
+              let decreasedSpace = 0;
+              switch (data2.length) {
+                case 1:
+                  decreasedSpace = 45;
+                  break;
+                case 2:
+                  decreasedSpace = 35;
+                  break;
+                case 3:
+                  decreasedSpace = 24;
+                  break;
+                case 4:
+                  decreasedSpace = 11;
+                  break;
+                case 5:
+                  decreasedSpace = 0;
+                  break;
+              }
+              let img = canvas.toDataURL('image/url');
+              let imgProps = pdf.getImageProperties(img);
+              let pdfWidth = pdf.internal.pageSize.getWidth();
+              let pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+              pdf.addImage(img, 'png', 14, 180 - decreasedSpace, pdfWidth - 24, pdfHeight);
+
+              const graphTitle1 = "Graphical representation of the Digital Public services in scope";
+              pdf.autoTable({
+                startY: 174 - decreasedSpace,
+                head: [[{ content: graphTitle1, styles: { halign: 'center', fillColor: [8, 161, 88], }, },],],
+                margin: { right: 10 },
+              });
+
+              // Add the Information for the second section of the Digital Transformation Roadmap
+              html2canvas(document.querySelector('#network_control')).then(canvas => {
+                if (!(canvas.height === 0) && !(canvas.width === 0)) {
+                  pdf.addPage();
+                  addPageTemplate(pdf, 3);
+                  addExplanatoryText(pdf, 15, 35, 5);
+
+                  let title = [["Implementation orientation for the digital transformation"]];
+                  let data = [
+                    ["Legal Orientation: a member state has a legal orientation when its first priority, in the digital public service design, is to address and implement legal requirements"],
+                    ["Organizational/Governance Orientation: a member state has a governance orientation when its first priority, in the digital public service design, is to address the possible channels for the public service delivery, and the definition of Governance model"],
+                    ["Semantic/Intergration Orientation: a member state has a semantic/intergration orientation when its first priority, in the digital public service design, is to address the possible source of data (e.g. base registry), how data will be exchanged and to define guidelines and agreements for the sharing data"],
+                    ["Technical Orientation: a member state has a legal orientation when its first priority, in the digital public service design, is to reuse/share software components (e.g. registry services), to address exchanging capabilities of data (e.g. interfaces) and to define technical interoperability agreements"],
+                  ];
+
+                  pdf.autoTable({
+                    startY: 160,
+                    head: [[{ content: title, styles: { halign: 'center', fillColor: [8, 161, 88], }, fontStyle: 'bold', },],],
+                    body: data,
+                    theme: "grid",
+                  });
+
+                  // Add the Graph for the second section of the Digital Transformation Roadmap
+                  html2canvas(document.querySelector('#network_div')).then(canvas => {
+                    if (!(canvas.height === 0) && !(canvas.width === 0)) {
+                      let img = canvas.toDataURL('image/url');
+                      let imgProps = pdf.getImageProperties(img);
+                      let pdfWidth = pdf.internal.pageSize.getWidth();
+                      let pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                      pdf.addImage(img, 'png', 14, 51, pdfWidth - 24, pdfHeight);
+
+                      // Add the title
+                      let graphTitle2 = "Steps of the Digital Transformation Roadmap";
+                      pdf.autoTable({
+                        startY: 48,
+                        head: [[{ content: graphTitle2, styles: { halign: 'center', fillColor: [8, 161, 88], }, },],],
+                        margin: { right: 10 },
+                      });
+
+                      // Add the Information for the third section of the Digital Transformation Roadmap
+                      html2canvas(document.querySelector('#graph3_info')).then(canvas => {
+                        if (!(canvas.height === 0) && !(canvas.width === 0)) {
+                          pdf.addPage();
+                          addPageTemplate(pdf, 3);
+                          addExplanatoryText(pdf, 15, 35, 6);
+                          addExplanatoryText(pdf, 15, 90, 7);
+                          var titles1 = [
+                            ["Digital Business Capability"],
+                          ];
+                          var data1 = [
+                            [
+                              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[0].textContent.split(":")[0],
+                              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[0].textContent.split(":")[1]
+                            ],
+                            [
+                              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[1].textContent.split(":")[0] + " domain",
+                              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[1].textContent.split(":")[1],
+                            ],
+                            [
+                              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[2].textContent.split(":")[0],
+                              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[2].textContent.split(":")[1],
+                            ],
+                            [
+                              "Estimated Budget (in millions EUR)",
+                              `${maxBudget}`
+                            ],
+                          ];
+
+                          pdf.autoTable({
+                            startY: 40,
+                            head: [[{ content: titles1, colSpan: 2, styles: { halign: 'center', fillColor: [8, 161, 88], }, },],],
+                            body: data1,
+                            theme: "grid",
+                            talbeWidth: 900,
+                          });
+                        }
+                        // Add the Graph for the third section of the Digital Transformation Roadmap
+                        html2canvas(document.querySelector('#network_div2')).then(canvas => {
+                          if (!(canvas.height === 0) && !(canvas.width === 0)) {
+                            let img = canvas.toDataURL('image/url');
+                            let imgProps = pdf.getImageProperties(img);
+                            let pdfWidth = pdf.internal.pageSize.getWidth();
+                            let pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                            pdf.addImage(img, 'png', 14, 132, pdfWidth - 24, pdfHeight);
+
+                            let graphTitle3 = "Functionalities supporting the Digital Business Capability";
+                            pdf.autoTable({
+                              startY: 125,
+                              head: [[{ content: graphTitle3, styles: { halign: 'center', fillColor: [8, 161, 88], }, },],],
+                              margin: { right: 10 },
+                            });
+                          }
+
+                          // Add the Building Blocks Table
+                          html2canvas(document.querySelector('#bb-div')).then(canvas => {
+                            if (!(canvas.height === 0) && !(canvas.width === 0)) {
+                              pdf.addPage();
+                              addPageTemplate(pdf, 4);
+                              addExplanatoryText(pdf, 15, 35, 8);
+                              var titles = [
+                                ["ID"],
+                                ["View"],
+                                ["Area"],
+                                ["Name"],
+                                ["Description"],
+                                ["Ability to support the dBusCap"],
+                                ["ID's succesors"],
+                              ];
+
+                              var data = [];
+                              for (let key in currentBBTableBody) {
+                                var row = [
+                                  currentBBTableBody[key]['id'],
+                                  currentBBTableBody[key]['view'],
+                                  currentBBTableBody[key]['area'],
+                                  currentBBTableBody[key]['abb'],
+                                  currentBBTableBody[key]['description'],
+                                  currentBBTableBody[key]['ability'],
+                                  currentBBTableBody[key]['successors'],
+                                ];
+                                data.push(row);
+                              }
+
+                              pdf.autoTable(
+                                titles,
+                                data,
+                                {
+                                  startY: 50,
+                                  headStyles: { fillColor: [8, 161, 88], },
+                                  rowPageBreak: 'auto',
+                                  bodyStyles: { valign: 'top' },
+                                  columnStyles: {
+                                    0: { cellWidth: 15 },
+                                    1: { cellWidth: 12 },
+                                    2: { cellWidth: 20 },
+                                    3: { cellWidth: 25 },
+                                    4: { cellWidth: 60 },
+                                    5: { cellWidth: 10 },
+                                    6: { cellWidth: 20 },
+                                    text: { cellWidth: 'auto' },
+                                  },
+                                  theme: 'grid',
+                                  margin: { top: 30 },
+                                  didDrawPage: function () { addPageTemplate(pdf, 4) },
+                                }
+                              );
+                              stopLoader("pdfButtonTxt", "pdfButton");
+                              pdf.save(pdfName);
+                            } else {
+                              stopLoader("pdfButtonTxt", "pdfButton");
+                              pdf.save(pdfName);
+                            }
+                          });
+                        });
+                      });
+                    } else {
+                      stopLoader("pdfButtonTxt", "pdfButton");
+                      pdf.save(pdfName);
+                    }
+                  });
+                } else {
+                  stopLoader("pdfButtonTxt", "pdfButton");
+                  pdf.save(pdfName);
+                }
+              });
+            } else {
+              stopLoader("pdfButtonTxt", "pdfButton");
+              pdf.save(pdfName);
+            }
+          });
+        } else {
+          stopLoader("pdfButtonTxt", "pdfButton");
+          pdf.save(pdfName);
+        }
+      });
+    } else {
+      stopLoader("pdfButtonTxt", "pdfButton");
+      window.alert("Select a JSON file");
+    }
+  });
+}
+
+// ******************************
+// PDF Creation Functionality END
+// ******************************
 
 function groupBy(obj, key, keyToKeep) {
   if (keyToKeep) {
@@ -324,22 +950,539 @@ fileSelector.addEventListener("change", function (event) {
   this.parentElement.classList.add("d-none");
 });
 
+
+let editedData = [];
+let currentlyFilteredDBC = 'all';
+let quadChart;
+
 /**
  *
  */
 function callBackForRequest(response, json) {
-  inputBCJSON = response.dBusCaps;
-  inputBBJSON = response.abb;
-  inputDPSJSON = response.dPubSer;
-  initInputfromJSON();
-  readSurveyResult(json);
-  createBusinessCapabilityTable();
-  drawBusinessCapabilityChart();
-  resizeQuandrant();
+  // inputBCJSON = response.dBusCaps;
+  // inputBBJSON = response.abb;
+  // inputDPSJSON = response.dPubSer;
+  // initInputfromJSON();
+  //readSurveyResult(json);
+  // createBusinessCapabilityTable();
+  // drawBusinessCapabilityChart();
+  // resizeQuandrant();
+
+  const tableData = processSurveyResult(json);
+  let originalData = [...tableData];
+  editedData = [...tableData];
+  updateTotalBudget();
+
+
+
+  const tableGrid = new Grid({
+    columns: [
+      { id: 'dbc', name: 'DBC' },
+      // { id: 'policy', name: 'Policy Domain' },
+      { id: 'strategicFit', name: 'Strategic Fit', attributes: { "contenteditable": "true" }, tooltip: "Hola que tal" },
+      { id: 'dbcSupportAbility', name: 'DBC Support Ability', attributes: { "contenteditable": "true" } },
+      { id: 'supportTargetAbility', name: 'Support Target Ability', attributes: { "contenteditable": "true" } },
+      { id: 'expPublicValue', name: 'Expected Public Value', attributes: { "contenteditable": "true" } },
+      { id: 'budget', name: 'Estimated Budget (mill €)', attributes: { "contenteditable": "true" } }
+    ],
+    data: editedData
+  });
+  populateDBCDropdown(editedData);
+
+
+  tableGrid.render(document.getElementById('myGridTable'));
+
+
+
+  document.getElementById('myGridTable').addEventListener('input', function (e) {
+    const cell = e.target;
+    const rowIndex = cell.parentElement.rowIndex - 1;
+
+
+    if (cell.hasAttribute('contenteditable') && cell.getAttribute('contenteditable') === "true") {
+      const validValue = cell.textContent.replace(/[^0-5]/g, '');
+
+
+      if (validValue.length > 1 || validValue > 5) {
+        cell.textContent = '';
+      } else {
+        cell.textContent = validValue;
+      }
+
+      switch (cell.cellIndex) {
+        case 1:
+          editedData[rowIndex].strategicFit = parseFloat(cell.textContent) || 0;
+          break;
+        case 2:
+          editedData[rowIndex].dbcSupportAbility = parseFloat(cell.textContent) || 0;
+          break;
+        case 3:
+          editedData[rowIndex].supportTargetAbility = parseFloat(cell.textContent) || 0;
+          break;
+        case 4:
+          editedData[rowIndex].expPublicValue = parseFloat(cell.textContent) || 0;
+          break;
+        case 5:
+          editedData[rowIndex].budget = parseFloat(cell.textContent) || 0;
+          updateTotalBudget();
+          break;
+        default:
+          break;
+      }
+
+      console.log("Dato editado!");
+
+      if (currentlyFilteredDBC === 'all' || currentlyFilteredDBC === editedData[rowIndex].dbc) {
+        const updatedData = prepareChartData(editedData);
+        const datasetIndex = myChart.data.datasets.findIndex(dataset => dataset.label === editedData[rowIndex].dbc);
+        const updateQuadData = prepareQuadChartData(editedData);
+        quadChart.data = updateQuadData;
+        quadChart.update();
+
+        if (datasetIndex !== -1) {
+          myChart.data.datasets[datasetIndex] = updatedData.datasets[datasetIndex];
+          myChart.update();
+        }
+
+      }
+    }
+  });
+
+
+
+  var chartData = prepareChartData(editedData);
+  var quadrantCharData = prepareQuadChartData(editedData);
+  renderChart(chartData);
+  renderQuadrantChart(quadrantCharData);
+
+}
+
+function prepareChartData(tableData) {
+  // Las etiquetas para el gráfico serán las diferentes dimensiones que mencionaste
+  const labels = ["Strategic Fit", "DBC Support Ability", "Support Target Ability", "Expected Public Value", "Estimated Budget (mill €)"];
+
+  const datasets = tableData.map(entry => {
+    return {
+      label: entry.dbc,
+      backgroundColor: "rgba(172,194,132,0.2)",
+      borderColor: "#" + Math.floor(Math.random() * 16777215).toString(16),
+      pointBackgroundColor: "#fff",
+      pointBorderColor: "#9DB86D",
+      data: [
+        parseFloat(entry.strategicFit) || 0,
+        parseFloat(entry.dbcSupportAbility) || 0,
+        parseFloat(entry.supportTargetAbility) || 0,
+        parseFloat(entry.expPublicValue) || 0,
+        parseFloat(entry.budget) || 0
+      ]
+    }
+  });
+  console.log("Prepared chart data:", { labels: labels, datasets: datasets }); // Debug
+
+  return {
+    labels: labels,
+    datasets: datasets
+  };
+}
+
+function renderChart(data) {
+  if (!myChart) {
+    var ctx = document.getElementById('myChart').getContext('2d');
+    myChart = new Chart(ctx, {
+      type: 'radar',
+      data: data,
+      options: {
+        scale: {
+          ticks: {
+            beginAtZero: true
+          },
+          pointLabels: {
+            fontSize: 14
+          },
+        }
+      }
+    });
+  } else {
+    myChart.data.labels = data.labels;
+    myChart.data.datasets = data.datasets;
+    myChart.update();
+  }
+}
+//plugin quadrant block
+const quadrantLinesDEPRECATED = {
+  id: 'quadrantLinesBCK',
+  beforeDraw(chart) {
+    const ctx = chart.ctx;
+    const chartArea = chart.chartArea;
+
+    // Obtiene las posiciones de pixel para el valor 2.5 en ambos ejes
+    const midX = chart.scales['x'].getPixelForValue(2.5);
+    const midY = chart.scales['y'].getPixelForValue(2.5);
+
+    ctx.save();
+
+    // Define el estilo de línea
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 1;
+
+    // Dibuja la línea vertical
+    ctx.beginPath();
+    ctx.moveTo(midX, chartArea.top);
+    ctx.lineTo(midX, chartArea.bottom);
+    ctx.stroke();
+
+    // Dibuja la línea horizontal
+    ctx.beginPath();
+    ctx.moveTo(chartArea.left, midY);
+    ctx.lineTo(chartArea.right, midY);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+};
+
+const quadrantLines = {
+  id: 'quadrantLines',
+
+  beforeDatasetsDraw(chart, args, pluginOptions) {
+    const ctx = chart.ctx;
+    const xAxis = chart.scales["x-axis-0"];
+    const yAxis = chart.scales["y-axis-0"];
+
+    drawScatterArbitraryLine(2.5, 2.5, 0, 5);
+    drawScatterArbitraryLine(0, 5, 2.5, 2.5);
+
+    function drawScatterArbitraryLine (xS, xE, yS, yE) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(xAxis.getPixelForValue(xS), yAxis.getPixelForValue(yS));
+      ctx.lineTo(xAxis.getPixelForValue(xE), yAxis.getPixelForValue(yE));
+      ctx.stroke();
+      ctx.closePath();
+      ctx.restore();
+    }
+  }
+};
+
+//config quadrant block
+const quadConfig = {
+  type: "bubble",
+  data: {},
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    layout: {
+      padding: {
+        top: 50,
+        right: 50
+      }
+    },
+    scales: {
+      xAxes: [{
+        title: {
+          color: 'red',
+          display: true,
+          text: 'Strategic Fit'
+        },
+        gridLines: {
+          display: false,
+        },
+        ticks: {
+          beginAtZero: true,
+          min: 0,
+          max: 5,
+          stepSize: 1,
+        }
+      }],
+      yAxes: [{
+        title: {
+          display: true,
+          text: "DBC Support Ability"
+        },
+        gridLines: {
+          display: false,
+        },
+        ticks: {
+          beginAtZero: true,
+          min: 0,
+          max: 5,
+          stepSize: 1,
+        }
+      }],
+    },
+  },
+  plugins: [quadrantLines],
+};
+
+const configDEPRECATED = {
+  type: "scatter",
+  data: {},
+  options: {
+    scales: {
+      x: {
+        title: {
+          color: 'red',
+          display: true,
+          text: 'Strategic Fit'
+        },
+        autoSkip: false,
+        beginAtZero: true,
+        min: 0,
+        max: 5,
+        ticks: {
+          stepSize: 1
+        }
+      },
+      y: {
+        axis: "y",
+        autoSkip: false,
+        title: {
+          display: true,
+          text: "DBC Support Ability"
+        },
+        beginAtZero: true,
+        min: 0,
+        max: 5,
+        ticks: {
+          stepSize: 1
+        }
+      }
+    },
+    plugins: {
+      tooltip: {
+        enabled: true,
+        callbacks: {
+          title: function (context) {
+            return context[0].dataset.label;
+          },
+        }
+      },
+      annotation: {
+        annotations: [
+          {
+            type: 'line',
+            mode: 'horizontal',
+            scaleID: 'y',
+            value: 2.5,
+            borderColor: 'red',
+            borderWidth: 1
+          },
+          {
+            type: 'line',
+            mode: 'vertical',
+            scaleID: 'x',
+            value: 2.5,
+            borderColor: 'red',
+            borderWidth: 1
+          }
+        ]
+      },
+      quadrants: {
+        topLeft: "purple",
+        topRight: "grey",
+        bottomRight: "green",
+        bottomLeft: "yellow",
+      }
+    }
+  },
+};
+
+function updateXAxis(choice) {
+  if (choice === 'Strategic Fit') {
+    quadChart.options.scales.x.title.display = true;
+    quadChart.options.scales.x.title.text = 'Strategic Fit';
+  } else if (choice === 'Expected Public Value') {
+    quadChart.options.scales.x.title.display = true;
+    quadChart.options.scales.x.title.text = 'Expected Public Value';
+  }
+  quadChart.update(); // Actualiza el gráfico después de realizar cambios en las opciones.
+}
+
+
+
+function renderQuadrantChart(chartData) {
+  quadConfig.data = chartData;
+  if (!quadChart) {
+    quadChart = new Chart(document.getElementById("quadrantChart").getContext("2d"), quadConfig);
+  } else {
+    quadChart.data = quadConfig.data;
+    quadChart.update();
+  }
+  //console.log(quadChart.config);
+}
+
+
+//data quadrant block
+function prepareQuadChartData(tableData, xAxisField = 'strategicFit') {
+  const datasets = tableData.map(entry => {
+    return {
+      label: entry.dbc,
+      borderColor: "#" + Math.floor(Math.random() * 16777215).toString(16),
+      backgroundColor: "#" + Math.floor(Math.random() * 16777215).toString(16),
+      data: [{
+        x: parseFloat(entry[xAxisField]) || 0,  // Usa el campo seleccionado para el eje X
+        y: parseFloat(entry.dbcSupportAbility) || 0,
+        r: parseFloat(entry.budget) + 6.0 || 0,
+      }],
+      // Si necesitas más propiedades para el conjunto de datos, agréguelas aquí
+      hoverRadius: 8.0,
+    }
+  });
+
+  console.log("Prepared quadrant chart data:", { datasets: datasets }); // Debug
+
+  return {
+    datasets: datasets
+  };
+}
+
+document.getElementById('xAxisSelector').addEventListener('change', function (e) {
+  const selectedValue = e.target.value;
+
+  // Actualiza el conjunto de datos según el valor seleccionado
+  const quadrantCharData = prepareQuadChartData(editedData, selectedValue);
+
+  // Vuelve a dibujar el gráfico con el nuevo conjunto de datos
+  updateXAxis(this.value);
+  renderQuadrantChart(quadrantCharData);
+});
+
+function processSurveyResult(json) {
+  const dataEntries = json.data;
+  const tableData = [];
+  const processedTopics = {};
+
+  for (let key in dataEntries) {
+    const parts = key.split(" - ");
+    const topic = parts[0];
+    const detail = parts[1];
+
+
+    if (!processedTopics[topic]) {
+      processedTopics[topic] = {
+        dbc: topic,
+        policy: "Business Agnostic",
+        strategicFit: "",
+        dbcSupportAbility: "",
+        supportTargetAbility: "",
+        expPublicValue: "",
+        budget: ""
+      };
+    }
+
+    switch (detail) {
+      case "Target Prospective Ability":
+        processedTopics[topic].supportTargetAbility = dataEntries[key].toString();
+        break;
+      case "Total Score":
+        processedTopics[topic].dbcSupportAbility = dataEntries[key].toString();
+        break;
+      case "Expected Public Value":
+        processedTopics[topic].expPublicValue = dataEntries[key].toString();
+        break;
+      case "Estimated Budget (mill €)":
+        processedTopics[topic].budget = dataEntries[key].toString();
+        break;
+      case "Rating":
+        processedTopics[topic].strategicFit = dataEntries[key].toString();
+        break;
+    }
+  }
+
+
+  for (let topic in processedTopics) {
+    tableData.push(processedTopics[topic]);
+  }
+  return tableData;
+}
+
+function populateDBCDropdown(data) {
+  const dropdown = document.getElementById('dbcFilter');
+
+  data.forEach(entry => {
+    const option = document.createElement('option');
+    option.value = entry.dbc;
+    option.textContent = entry.dbc;
+    dropdown.appendChild(option);
+  });
+}
+
+
+
+document.getElementById('dbcFilter').addEventListener('change', function (e) {
+  console.log("Dropdown change detected:", e.target.value);
+
+  const selectedValue = e.target.value;
+  applyDBCFilters(selectedValue);
+});
+
+function applyDBCFilters(filterValue) {
+  let filteredData = editedData;
+  currentlyFilteredDBC = filterValue;
+
+
+  console.log("Values in editedData:", editedData.map(entry => entry.dbc));
+  console.log("Trying to match filterValue:", filterValue);
+
+  if (filterValue !== 'all') {
+    filteredData = editedData.filter(entry => entry.dbc === filterValue);
+  }
+
+
+  const chartData = prepareChartData(filteredData);
+  const quadChartData = prepareQuadChartData(filteredData);
+  renderChart(chartData);
+  renderQuadrantChart(quadChartData);
+}
+
+document.getElementById('applyFilters').addEventListener('click', function () {
+  applyAllFilters();
+});
+
+function applyAllFilters() {
+  const filterValues = {
+    strategicFit: document.getElementById('filter-strategicFit').value,
+    expPublicValue: document.getElementById('filter-expPublicValue').value,
+    dbcSupportAbility: document.getElementById('filter-dbcSupportAbility').value,
+    budget: document.getElementById('filter-budget').value
+  };
+
+  let filteredData = editedData.filter(entry =>
+    entry.strategicFit <= filterValues.strategicFit &&
+    entry.expPublicValue <= filterValues.expPublicValue &&
+    entry.dbcSupportAbility <= filterValues.dbcSupportAbility &&
+    entry.budget <= filterValues.budget
+  );
+
+  const chartData = prepareChartData(filteredData);
+  const quadrantCharData = prepareQuadChartData(filteredData);
+  renderChart(chartData);
+  renderQuadrantChart(quadrantCharData);
+}
+
+document.querySelectorAll('input[type="range"]').forEach(input => {
+  input.addEventListener('input', function () {
+    document.getElementById('value-' + input.id.replace('filter-', '')).textContent = input.value;
+  });
+});
+
+function resetFilters() {
+  document.getElementById('dbcFilter').value = 'all';
+
+  const initialChartData = prepareChartData(editedData);
+  const initialQuadChartData = prepareQuadChartData(editedData);
+  renderChart(initialChartData);
+  renderQuadrantChart(initialQuadChartData);
+}
+document.getElementById('resetFilters').addEventListener('click', resetFilters);
+
+function updateTotalBudget() {
+  const total = editedData.reduce((acc, entry) => acc + (parseFloat(entry.budget) || 0), 0);
+  document.getElementById("totalBudgetValue").innerText = total.toFixed(1);
 }
 
 async function draw(json) {
-  document.getElementById("reset-work").classList.remove("d-none");
+  // document.getElementById("reset-work").classList.remove("d-none");
   bcList = {};
   viewsInfra = [];
   $("#listBCs").collapse("show");
@@ -349,7 +1492,6 @@ async function draw(json) {
   response = await response.json();
   callBackForRequest(response, json);
 }
-
 /**
  *
  * @param {String} name
@@ -413,7 +1555,6 @@ const createBcListObject = () => {
   let ABBs = groupABBByID(inputBBJSON);
   DPSs = groupDPSsByID(inputDPSJSON);
   let DBCs = groupBCByID(inputBCJSON);
-
   let tempDPSs = { ...DPSs };
   let tempDBCs = { ...DBCs };
 
@@ -453,18 +1594,17 @@ const createBcListObject = () => {
       });
     });
   });
-
   return tempDBCs;
 };
 
-document.getElementById("reset-work").addEventListener("click", function () {
-  document.getElementById("bb-div").classList.add("d-none");
-  selectedBC = null;
-  clickedDPSs = [];
-  $("#networkBBs").collapse("hide");
-  document.querySelector("#bbTable").innerHTML = "";
-  init(fileContent);
-});
+// document.getElementById("reset-work").addEventListener("click", function () {
+//   document.getElementById("bb-div").classList.add("d-none");
+//   selectedBC = null;
+//   clickedDPSs = [];
+//   $("#networkBBs").collapse("hide");
+//   document.querySelector("#bbTable").innerHTML = "";
+//   init(fileContent);
+// });
 
 function quadrantWidth() {
   const quadrant = document.querySelector("#quadrant_div");
@@ -486,6 +1626,7 @@ const mapFilterResultstoBcList = (json) => {
     "Expected Public Value": "expRandom",
     "Ability to support the dBusCap": "abbRandom",
     "Ability to deliver": "ability",
+    "Target Prospective Average Ability": "prospectiveAbility",
     budget: "budget",
   };
 
@@ -498,7 +1639,6 @@ const mapFilterResultstoBcList = (json) => {
 
     for (let bcIdx = 0; bcIdx < busCaps.length; bcIdx++) {
       const { id, ...answers } = busCaps[bcIdx];
-
       if (tempBcList[id]) {
         for (let answer in answers) {
           if (!answers.selectedBC) break;
@@ -552,13 +1692,48 @@ const randomizeQuandrantValues = () => {
 function readSurveyResult(json) {
   mapFilterResultstoBcList(json);
 
+  // Go through the survey json file to get the items with the new id
+  // New id: id_abb - id_dBusCap
+  const { fullName, organisation, email, country, ...surveyResults } = json;
+  var buildingBlocks = [];
+  for (let policy in surveyResults) {
+    // For every policy keep the abbs objects
+    for (let i = 0; i < surveyResults[policy].BB.length; i++) {
+      buildingBlocks.push(surveyResults[policy].BB[i]);
+    }
+  }
+
+  // Initialize customBBs
+  customBBs = buildingBlocks;
+
+  // Initialize the bbs.ability for every dBusCap
+  for (let index = 0; index < buildingBlocks.length; index++) {
+    let abbId = buildingBlocks[index]['id'].split("-")[0].replace(" ", "");
+    let dBusCapId = buildingBlocks[index]['id'].split("-")[1].replace(" ", "");
+    let a = buildingBlocks[index]['Ability to support the dBusCap'];
+    try {
+      bcList[dBusCapId]['bbs'].find(function (el) {
+        return el.id === abbId;
+      })['ability'] = a;
+    }
+    catch {
+      console.log("No match found!")
+    }
+  }
+
   for (var z in bcList) {
-    var bbs = bcList[z].bbs;
+    // filter the abbs to keep only the ones with the current dBusCap id 
+    var filteredBuildingBlocksByAbbId = buildingBlocks.filter(ob => {
+      return z === ob.id.split("-")[1].replace(" ", "");
+    });
+
+    // Calculate current dBusCap ability to support.
     var count = 0;
     var average = 0;
-    for (var i in bbs) {
+    for (let i = 0; i < filteredBuildingBlocksByAbbId.length; i++) {
+      let ability = filteredBuildingBlocksByAbbId[i]['Ability to support the dBusCap'];
       count += 1;
-      average += bbs[i].ability;
+      average += ability;
     }
 
     average /= count;
@@ -713,7 +1888,7 @@ function drawBusinessCapabilityChart(height) {
         labelStacking: "horizontal",
       },
       minValue: 1,
-      maxValue: 10,
+      maxValue: 5,
     }
   );
   budgetSlider = controlWrapper("NumberRangeFilter", "budget_filtering_div", {
@@ -761,8 +1936,8 @@ function drawBusinessCapabilityChart(height) {
       maxValue: 5,
       ticks: [
         { v: 0, f: "low" },
-        { v: 5, f: "med" },
-        { v: 10, f: "high" },
+        { v: 2.5, f: "med" },
+        { v: 5, f: "high" },
       ],
     },
     bubble: {
@@ -826,7 +2001,7 @@ const scrollToElement = (selector) => {
     {
       scrollTop: $(selector).offset().top - 40,
     },
-    2000
+    500
   );
 };
 
@@ -858,7 +2033,7 @@ function selectHandler(e) {
   var item = selection[0];
   if (item == null) return;
   document.getElementById("bb-div").classList.remove("d-none");
-  selectedValue = data.getValue(item.row, 0);
+  selectedValue = chartBubble.getDataTable().getValue(item.row, 0);
 
   clickedDPSs = [];
 
@@ -958,7 +2133,7 @@ function selectHTMLWithOptions(options, attribuesList) {
   for (let i = 0; i < options.length; i++) {
     let policy = options[i];
     let option = document.createElement("option");
-    option.setAttribute("value", policy );
+    option.setAttribute("value", policy);
     option.text = policy;
     select.appendChild(option);
   }
@@ -1164,11 +2339,17 @@ function createBusinessCapabilityTable() {
     budgetTooltip
   );
 
+  const optimalAvg = thWithSpanNode(
+    "Target Prospective Ability to support the dBusCap",
+    optimalAvgTooltip
+  );
+
   row.appendChild(id);
   row.appendChild(th2);
   row.appendChild(name);
   row.appendChild(dStrategicFit);
   row.appendChild(abilityToSupport);
+  row.appendChild(optimalAvg);
   row.appendChild(publicValue);
   row.appendChild(budgetAlloc);
 
@@ -1209,7 +2390,7 @@ function createBusinessCapabilityTable() {
       const natDigStrFitContainer = containerWithSelectAndSpan(natDigStrFit, 5);
       row.insertCell().appendChild(natDigStrFitContainer);
 
-      let abiToSupdBusCap = selectHTMLWithOptions(range(1, 10), {
+      let abiToSupdBusCap = selectHTMLWithOptions(range(1, 5), {
         priority: "mySelect",
         bc: bc.id,
       });
@@ -1227,8 +2408,29 @@ function createBusinessCapabilityTable() {
       });
 
 
-      const abiToSupdBusCapContainer = containerWithSelectAndSpan(abiToSupdBusCap, 10);
+      const abiToSupdBusCapContainer = containerWithSelectAndSpan(abiToSupdBusCap, 5);
       row.insertCell().appendChild(abiToSupdBusCapContainer);
+
+      // Insert prospective Average value
+      let prospAbility = selectHTMLWithOptions(range(1, 5), {
+        priority: "mySelect",
+        bc: bc.id,
+      });
+      prospAbility.value = Number(bc.prospectiveAbility).toFixed(0);
+
+      // functionality when the user selects another value from the dropdown list
+      prospAbility.addEventListener("change", function () {
+        for (let y in bcList) {
+          if (bcList[y].id == this.getAttribute("bc")) {
+            bcList[y].prospectiveAbility = Number(this.value);
+            filteringHandler();
+            return;
+          }
+        }
+      });
+
+      const prospectiveAbilityContainer = containerWithSelectAndSpan(prospAbility, 5);
+      row.insertCell().appendChild(prospectiveAbilityContainer);
 
       let expPubVal = selectHTMLWithOptions(range(1, 5), {
         priority: "mySelect",
@@ -1287,6 +2489,8 @@ function createBusinessCapabilityTable() {
     });
     policySumParag.innerHTML = policy;
     row.insertCell().appendChild(policySumParag);
+
+    row.insertCell().appendChild(document.createTextNode(""));
 
     row.insertCell().appendChild(document.createTextNode(""));
 
@@ -1610,23 +2814,23 @@ function drawViewsPredecessorsChart(bc, dpss = []) {
     "circularImage",
     "bc.png",
     "ID:" +
-      bc.id +
-      ", " +
-      bc.name +
-      ", \nNational Digital Strategy Fit: " +
-      bc.priority +
-      " out of 5, \nAbility to support the dBusCap: " +
-      bc.avgAbility +
-      " out of 10",
+    bc.id +
+    ", " +
+    bc.name +
+    ", \nNational Digital Strategy Fit: " +
+    bc.priority +
+    " out of 5, \nAbility to support the dBusCap: " +
+    bc.avgAbility +
+    " out of 5",
     "ID:" +
-      bc.id +
-      ", " +
-      bc.name +
-      ", \nNational Digital Strategy Fit: " +
-      bc.priority +
-      " out of 5, \nAbility to support the dBusCap: " +
-      bc.avgAbility +
-      " out of 10",
+    bc.id +
+    ", " +
+    bc.name +
+    ", \nNational Digital Strategy Fit: " +
+    bc.priority +
+    " out of 5, \nAbility to support the dBusCap: " +
+    bc.avgAbility +
+    " out of 5",
     color,
     100,
     10
@@ -1702,7 +2906,7 @@ function drawViewsPredecessorsChart(bc, dpss = []) {
           CA(bc.policy) +
           ",\n" +
           currentAvgAbility.toFixed(1) +
-          " out of 10";
+          " out of 5";
       }
       let node = createDigitalTransformNode(
         id,
@@ -1959,7 +3163,6 @@ function drawViewsPredecessorsChart(bc, dpss = []) {
     params.event = "[original event]";
     var selectedNodeID = this.getNodeAt(params.pointer.DOM);
     if (selectedNodeID <= idBCdom) {
-      console.log("business capability node");
     } else if (selectedNodeID == idBCinf) {
       selectedView = viewBCmc;
 
@@ -1986,10 +3189,8 @@ function drawViewsPredecessorsChart(bc, dpss = []) {
           newView.bbs = abbs;
 
           document.getElementById("viewDetail").innerHTML =
-            "<i>Policy: </i>" +
-            CA(selectedView.policy) +
-            "<br><i>Name: </i>" +
-            CA(selectedView.name);
+            `<i>Policy:  ${CA(selectedView.policy)}</i>` +
+            `<br><i>Name: ${CA(selectedView.name)}</i>`;
 
           const tableBBs = abbs.filter((abb) => !abb.hidden);
           createBuildingBlocksTable({ bbs: tableBBs });
@@ -2016,10 +3217,8 @@ function drawViewsPredecessorsChart(bc, dpss = []) {
           drawIntraViewsPredecessorsChart(newView);
 
           document.getElementById("viewDetail").innerHTML =
-            "<i>Policy: </i>" +
-            CA(selectedView.policy) +
-            "<br><i>Name: </i>" +
-            CA(selectedView.name);
+            `<i>Policy:  ${CA(selectedView.policy)}</i>` +
+            `<br><i>Name: ${CA(selectedView.name)}</i>`;
           document.getElementById("bbDetail").innerHTML =
             "<i>please select a builidng block</i>";
           $("#networkBBs2").fadeIn();
@@ -2112,7 +3311,7 @@ function drawIntraViewsPredecessorsChart(view) {
     if (view.name == "Buisness Capabilities (mission critial)") {
       image = "bc.png";
     } else {
-      image = "rank/" + Math.round(bb.ability) + ".png";
+      image = "rank/old-" + Math.round(bb.ability) + ".png";
     }
 
     var label = ` ${CA(bb.abb || "")
@@ -2193,7 +3392,7 @@ function drawIntraViewsPredecessorsChart(view) {
     },
     physics: {
       forceAtlas2Based: {
-        springLength: -10,
+        springLength: -5,
       },
       minVelocity: 0.75,
       solver: "forceAtlas2Based",
@@ -2210,18 +3409,14 @@ function drawIntraViewsPredecessorsChart(view) {
       if (bbs[x].id == selectedNodeID) {
         if (bbs[x].area == null) {
           document.getElementById("bbDetail").innerHTML =
-            "<i>ID: </i>" +
-            bbs[x].id +
-            "<br><i>name: </i>" +
-            bbs[x].abb +
+            `<i>ID: ${bbs[x].id}</i>` +
+            `<br><i>name: ${bbs[x].abb}</i>` +
             "</i>";
           "<br><i>Ability to support the dBusCap: " + bbs[x].ability + "</i>";
         } else {
           document.getElementById("bbDetail").innerHTML =
-            "<i>ID: </i>" +
-            bbs[x].id +
-            "<br><i>Area: </i>" +
-            bbs[x].area +
+            `<i>ID: ${bbs[x].id}</i>` +
+            `<br><i>Area: ${bbs[x].area}</i>` +
             "<br><i>Ability to support the dBusCap: " +
             bbs[x].ability +
             "</i>";
@@ -2247,7 +3442,7 @@ function drawIntraViewsPredecessorsChart(view) {
   });
 }
 
-function filterBBTableByID() {}
+function filterBBTableByID() { }
 
 /**
  * 
@@ -2281,8 +3476,33 @@ function createBuildingBlocksTable(bc) {
   table.appendChild(body);
 
   var bbs = Array.from(new Set(bc.bbs));
+  currentBBTableBody = bbs;
+
+  var dBusCapId = bc['id'];
+
+  if (dBusCapId === undefined) {
+    dBusCapId = document.getElementById("dps-network-bc-info").getElementsByTagName('p')[0].textContent.split(' ')[1];
+  }
 
   for (var k in bbs) {
+
+    // search for the ability based on both the abb and dBusCap ids
+    let abbId = bbs[k]['id'];
+    let currentAbility = 0;
+    try {
+      currentAbility = customBBs.find(function (el) {
+        return el.id === `${abbId} - ${dBusCapId}`;
+      })['Ability to support the dBusCap'];
+      currentBBTableBody[k]['ability'] = currentAbility;
+    }
+    // if no abb exists, search in the bcList
+    catch (err) {
+      currentAbility = bcList[dBusCapId]['bbs'].find(function (el) {
+        return el.id === abbId;
+      })['ability'];
+      currentBBTableBody[k]['ability'] = currentAbility;
+    }
+
     let row = body.insertRow();
 
     row.insertCell().appendChild(document.createTextNode(bbs[k].id));
@@ -2295,7 +3515,7 @@ function createBuildingBlocksTable(bc) {
 
     row.insertCell().appendChild(document.createTextNode(bbs[k].description));
 
-    row.insertCell().appendChild(document.createTextNode(bbs[k].ability));
+    row.insertCell().appendChild(document.createTextNode(currentAbility)); //bbs[k].ability));
 
     let succs = bbs[k].successors.join(", ");
 
@@ -2309,15 +3529,15 @@ function createBuildingBlocksTable(bc) {
 
 document
   .querySelector("#policy-filter-span")
-  .addEventListener("click", function () {
-    this.classList.toggle("goog-combobox-active");
-    let div = this.querySelector("#policy-filter-span > div");
-    if (div.style.display === "none") {
-      div.style.display = "block";
-    } else {
-      div.style.display = "none";
-    }
-  });
+// .addEventListener("click", function () {
+//   this.classList.toggle("goog-combobox-active");
+//   let div = this.querySelector("#policy-filter-span > div");
+//   if (div.style.display === "none") {
+//     div.style.display = "block";
+//   } else {
+//     div.style.display = "none";
+//   }
+// });
 
 let xAxisValues = document.querySelectorAll("#policy-filter-span > div > div");
 
@@ -2425,7 +3645,6 @@ dpsSelectDivList.addEventListener("change", (e) => {
       }
       return false;
     });
-    console.log(filteredBBSs);
   } else {
     filteredBBSs = clickedBC.bbs;
   }
@@ -2465,3 +3684,33 @@ $(document).on("scroll", function () {
 $(".scroll-to-dps").on("click", function () {
   scrollToElement("#networkBBs");
 });
+
+
+function createCSV(selectedValue, bcList) {
+  let currentBcList;
+  if (selectedValue) {
+    currentBcList = { [selectedValue]: bcList[selectedValue] };
+  } else {
+    currentBcList = bcList;
+  }
+
+  const encuestaResultados = [];
+  for (let clave in currentBcList) {
+    const resultado = currentBcList[clave];
+    encuestaResultados.push(resultado);
+  }
+  // Este código obtiene los resultados de la encuesta y los almacena en un array llamado encuestaResultados
+  let encuestaCSV = "Pregunta 1, Pregunta 2, Pregunta 3\n";
+  encuestaResultados.forEach((resultado) => {
+    const respuesta = `"${resultado.pregunta1}", "${resultado.pregunta2}", "${resultado.pregunta3}"\n`;
+    encuestaCSV += respuesta;
+  });
+  // Descarga del archivo en CSV
+  const blob = new Blob([encuestaCSV], { type: "text/csv;charset=utf-8;" });
+  const enlace = document.createElement("a");
+  enlace.setAttribute("href", URL.createObjectURL(blob));
+  enlace.setAttribute("download", "resultados_encuesta.csv");
+  document.body.appendChild(enlace);
+  enlace.click();
+}
+

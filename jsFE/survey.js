@@ -6,9 +6,12 @@ let converter = new showdown.Converter();
 let resultsToSave = {};
 let currentState = {};
 let doLoadState = false;
-
+let prospectiveAvgElements = [];
+// let createAvgElementIdx = null;
+let selectedNonApplicableReqIDs = [];
+let nonApplicableReqs = [];
 let checkboxes = {};
-
+let overallAvgOptimal = 0;
 let fullName;
 let organisation;
 let email;
@@ -19,7 +22,9 @@ const buttonTitles = [];
 
 const pubValueTooltip = `It refers to the expected beneficial impact (cost discounted) provided by the target prospective ability (*) to support the digital business capability. (*) default is the highest possible prospective ability`;
 
-const budgetTooltip = `It refers to the estimated amount (in millions of EUR) required to reach the target prospective ability of the Architectural Building Block to support the digital business capability`;
+const budgetTooltip = `It refers to the estimated amount (in millions of EUR) required to reach the target prospective ability of the Architectural Building Block to support the digital business capability (to fulfill the GAP)`;
+
+const perspectiveTool = `It measures the perspective ability to support a Digital Business Capability`;
 
 const supportTooltip = `It measures the current ability to support the digital business capability`;
 
@@ -115,8 +120,16 @@ const createChecbox = (policy) => {
 
   input.setAttribute("type", "checkbox");
   input.setAttribute("checked", "checked");
+  
   input.id = `${policy.toLowerCase().split(" ").join("-")}-checkbox`;
   labelText === "Business agnostic" && input.setAttribute("disabled", "true");
+
+  if (labelText === "Business agnostic") {
+    input.setAttribute("disabled", "true");
+    input.setAttribute("checked", "checked");
+  } else {
+    input.checked = false;
+  }
 
   label.innerText =
     labelText === "Business agnostic" ? `${labelText} (required)` : labelText;
@@ -150,10 +163,11 @@ function updateButtonsClickAbility(currentActiveIdx) {
     if (i < currentActiveIdx) {
       buttons[i].disabled = false;
     } else {
-      buttons[i].disabled = true;
+      buttons[i].disabled = false;
     }
   }
 }
+
 
 function addButtonsInNavigation() {
   let footerContent = document.querySelector(".panel-footer");
@@ -186,6 +200,12 @@ function addButtonsInNavigation() {
   buttonsObserver.observe(footerContent, observerConfiguration);
 }
 
+
+
+
+
+
+
 /**
  * Create Checkboxe for skip functionality
  */
@@ -211,9 +231,12 @@ const getGeneratedVisibleRow = (page, idx) => {
  * Helper for addCheckBoxInBCQuestion
  */
 const changeRequiredStateAtCells = (visibleRow, reqState) => {
-  const { cells } = visibleRow;
-  for (let idx = 0; idx < cells.length; idx++) {
-    cells[idx].question.isRequired = reqState;
+  if (null != visibleRow && undefined != visibleRow)
+  {
+    const { cells } = visibleRow;
+    for (let idx = 0; idx < cells.length; idx++) {
+      cells[idx].question.isRequired = reqState;
+    }
   }
 };
 
@@ -280,7 +303,12 @@ const determineParentClass = (parentElement, checked) => {
   }
 };
 
+const cleanGeneratedQuestionFromSpanTag = (question) => {
+  return question.replace('<span style="display:none">', "").replace("</span>", "");
+}
+
 const getIDFromGeneratedQuestion = (question) => {
+  question = cleanGeneratedQuestionFromSpanTag(question);
   return question.split(")")[0];
 };
 
@@ -385,13 +413,16 @@ const addCheckBoxInBCQuestion = (
     );
   }
 
+  //Not sure why the if below doesn't work. This line is a workaround for now
+
+
   if (!isFirstPage) {
     if (isAllBcSelected(bcBodyTag)) {
       toggleAllElementsState(page, true);
       toggleVisibility(page, true);
     } else {
       toggleAllElementsState(page, false);
-      toggleVisibility(page, false);
+      toggleVisibility(page, true);
     }
   }
 
@@ -453,7 +484,7 @@ const setVisibilitySurveyPageBasedDBCID = (survey, id, state) => {
  */
 const totalCalcAbbAvg = () => {
   const array = $(
-    ".sv_row:not(:last-child) .btn.btn-default.btn-secondary.active"
+    ".sv_row:not(:last-child) .btn.btn-default.btn-secondary.active:not(.hide)"
   )
     .map(function (index, element) {
       return +$(this).find("input").val();
@@ -462,7 +493,6 @@ const totalCalcAbbAvg = () => {
   const sum = array.reduce(function (sum, num) {
     return (sum += num);
   }, 0);
-
   const avg = array.length > 0 ? sum / array.length : 0;
   return avg;
 };
@@ -473,23 +503,26 @@ const totalCalcAbbAvg = () => {
 const totalAvgAbbElement = (bcName) => {
   let lastRow = $(".sv_row:last-child");
 
-  const avg = totalCalcAbbAvg();
+  //const avg = totalCalcAbbAvg();
 
-  let newElement = $(`
-  <div class="custom-row pt-2 pb-4 px-3">
-    <p class="custom-avg-p">
-    The overall assessed ability to support the digital business capability "${
-      bcName.title
-    }" is:
-      <input class="custom-avg-input" id="total-avg-input" type="text" value="${avg.toFixed(
-        2
-      )}" disabled />
-    out of 10
-    </p>
-  </div>
-  `);
-
-  lastRow.before(newElement);
+  // let newElement = $(`
+  // <div class="custom-row pt-2 pb-4 px-3" hidden>
+  //   <p class="custom-avg-p">
+  //   The overall assessed ability to support the digital business capability "${bcName.title
+  //   }" is:
+  //     <input class="custom-avg-input" id="total-avg-input" type=text value="${avg.toFixed(2)}" disabled />
+  //   out of 5
+  //   </p>
+  // </div>
+  // <div class="custom-row pt-2 pb-4 px-3">
+  //   <p class="custom-avg-p">
+  //     Therefore the gap between the Target Prospective Average Ability and the Overall Assessed Ability to support the digital business capability is:
+  //     <input id="overall-diff-target-ability" class="custom-avg-input" id="total-avg-input" type=text value="${avg.toFixed(2)}" disabled /> out of 5
+  //   </p>
+  // </div>
+  // `);
+  //lastRow.before(newElement);
+ 
 
   $(".sv_row:not(:last-child) .btn.btn-default.btn-secondary").on(
     "click",
@@ -500,42 +533,116 @@ const totalAvgAbbElement = (bcName) => {
       $(this).parent().nextAll().removeClass("active");
       const avg = totalCalcAbbAvg();
       $("#total-avg-input").val(avg.toFixed(2));
+      updateTargetOverallAccessDiff();
     }
   );
 };
 
+// const calcAvgForView = (idx) => {
+//   let $activeLabels = $(
+//     `.sv_row:nth-of-type(${idx + 1}) .btn.btn-default.btn-secondary.active:not(.hide)`
+//   );
+//   let values = $activeLabels
+//     .map(function () {
+//       return +$(this).find("input").val();
+//     })
+//     .get();
+
+//   let avg = values.reduce((sum, currVal) => (sum += currVal), 0);
+//   let length = values.length;
+
+//   if (!length) return 0;
+
+//   return avg / length;
+// };
+
 const calcAvgForView = (idx) => {
-  let $activeLabels = $(
-    `.sv_row:nth-of-type(${idx + 1}) .btn.btn-default.btn-secondary.active`
-  );
-  let values = $activeLabels
-    .map(function () {
-      return +$(this).find("input").val();
-    })
-    .get();
+  const $activeLabels = $(`.sv_row:nth-of-type(${idx}) .rating-button.selected`);
+  let sum = 0;
+  let length = $activeLabels.length;
 
-  let avg = values.reduce((sum, currVal) => (sum += currVal), 0);
-  let length = values.length;
+  $activeLabels.each(function () {
+    sum += parseInt($(this).val(), 10);
+  });
 
-  if (!length) return 0;
+  if (length === 0) return 0;
 
-  return avg / length;
+  return sum / length;
 };
 
 const createAvgElement = (bcName, view, idx) => {
   let avg = calcAvgForView(idx);
   let newElement = $(`
   <div class="custom-row pt-2 pb-4 px-3">
-    <p class="custom-avg-p">
+     <p class="custom-avg-p">
     The overall assessed ability to support the digital business capability "${bcName}" ${view} requirements is:
-      <input class="custom-avg-input" id="custom-avg-input-${idx}" type="text" value="${avg.toFixed(
+      <input class="custom-avg-input view-avg" id="custom-avg-input-${idx}" type=text value="${avg.toFixed(
     2
   )}" disabled />
-    out of 10
-    </p>
+    out of 5
+    </p> 
   </div>
   `);
+
+  //<input type="range" name="prospective-avg-input" id="prospective-avg-input-${idx}" min="1" max="5" value="0" required>
+
+  // <form>
+  //         <label class="radio-inline">
+  //           <input type="radio" name="optradio" checked>Option 1
+  //         </label>
+  //         <label class="radio-inline">
+  //           <input type="radio" name="optradio">Option 2
+  //         </label>
+  //         <label class="radio-inline">
+  //           <input type="radio" name="optradio">Option 3
+  //         </label>
+  //       </form>
+
+
+  // Este codigo pertenece a la const newElement2 de debajo, pero por motivos de front se ha sacado para comentarlo.
+
+  const targetElement = $(".sv_row");
+  const newElement2 = $(`
+    <div>
+      <div>
+        <div  id="prospective-avg-input-${idx}" required></div>
+      </div>
+      <div id="ability-difference-${idx}">  
+      </div>
+      <div class="custom-row pt-2 pb-4 px-3" id="ability-difference-${idx}">
+      </div>
+    </div>
+    <h2><b> ${view} View</b></h2>
+    <hr style="height:2px;background-color:black;">
+  `);
+
+  let latestActualAvg = 0;
+  let latestOptimalAvg = 0;
+  prospectiveAvgElements = document.getElementsByName("prospective-avg-input");
+
+  // Updates the value that shows the difference between the Target Prospectice (Optimal)
+  // and the OvelAll assessed (Actual) Avg Ability
+  function updateDiff() {
+    document.getElementById(`ability-difference-value-${idx}`).value = (latestActualAvg - latestOptimalAvg).toFixed(2);
+  }
+
+  // Calculate the Overall Average
+  function updateOverallAvgOptimal() {
+    let sum = 0;
+    let len = prospectiveAvgElements.length;
+    for (let i = 0; i < len; i++) {
+      sum += Number(prospectiveAvgElements[i].value);
+    }
+    overallAvgOptimal = (sum / len).toFixed(0);
+    return overallAvgOptimal;
+  }
+
   $(".sv_row").eq(idx).append(newElement);
+  //$(".sv_row").eq(idx).append(newElement2);
+
+  targetElement.eq(idx).prepend(newElement2);
+
+
   $(".sv_row")
     .eq(idx)
     .on("click", "*", function (event) {
@@ -546,8 +653,45 @@ const createAvgElement = (bcName, view, idx) => {
       $labels.nextAll().removeClass("active");
       const avg = calcAvgForView(idx);
       $(`#custom-avg-input-${idx}`).val(avg.toFixed(2));
+
+      // Get the actual avg from the values of the requirements
+      latestActualAvg = $(`#custom-avg-input-${idx}`)[0].value;
+      updateDiff();
     });
+
+  // Get the optimal avg that the user provides
+  document.getElementById(`prospective-avg-input-${idx}`).addEventListener("click", function () {
+    latestOptimalAvg = document.getElementById(`prospective-avg-input-${idx}`).value;
+    // Update the difference value between the user's optimal average and the actual average
+    updateDiff();
+    // Update the Target Prospective Average Ability rating value
+    const lastTable = Array.from(document.querySelectorAll('table')).slice(-1)[0];
+    const tbodyElement = lastTable.querySelector('tbody');
+    const trElement = tbodyElement.querySelector('tr');
+    const lastTdElement = Array.from(trElement.querySelectorAll('td')).slice(-1)[0];
+    const divElement = lastTdElement.querySelector('div');
+    // Make the Target Prospective Average Ability rating non clickable for the user
+    divElement.className = ' disable-div';
+    // Automatically click the Average value for Target Prospective
+    divElement.getElementsByClassName('btn-group')[0].querySelectorAll('label')[updateOverallAvgOptimal() - 1].click();
+
+    updateTargetOverallAccessDiff();
+  });
 };
+
+/***
+ * Updates the value of the difference between Target Prospective Average Ability 
+ * and Overall Access Ability to Support the DBC
+ */
+function updateTargetOverallAccessDiff() {
+  // Get overall access ability value
+  const overallAccessAblity = $("#total-avg-input").val();
+  // Get the target prospective value
+  const targetProspectiveValue = overallAvgOptimal;
+  // Update the difference value
+  const newValue = overallAccessAblity - targetProspectiveValue;
+  $("#overall-diff-target-ability").val(newValue.toFixed(2));
+}
 
 const createAvgElements = (bcName, views) => {
   views.forEach((view, idx) => {
@@ -573,10 +717,36 @@ function surveyRelated(surveys, index, go2Top) {
     }, 1);
   }
 
-  let title = surveys[idx].title;
-  let pages = surveys[idx].pages;
+  let title = "eGovera";
+  let pages = [{
+    name: "Electronic identification",
+    elements: [{
+        name: "legal",
+        title: "Legal View",
+        type: "panel",
+        elements: [
+            {
+                name: "eIdentification1",
+                title: "eIdentification",
+                type: "radiogroup",
+                colCount: 4,
+                choices: [
+                    { value: 5, text: "5" },
+                    { value: 4, text: "4" },
+                    { value: 3, text: "3" },
+                    { value: 2, text: "2" },
+                    { value: 1, text: "1" }
+                ]
+            }
+        ]
+    }]
+}];
 
-  var surveyJSON = { title: title, pages: pages, showTitle: false };
+  var surveyJSON = { 
+    title: title,
+    pages: pages,
+    showTitle: false
+    };
 
   const isLast = idx === surveys.length - 1;
 
@@ -603,10 +773,114 @@ function surveyRelated(surveys, index, go2Top) {
     }, 10);
   });
 
+  let optionsAfterRenderPage = ""
+
   survey.onAfterRenderPage.add(function (sender, options) {
+    optionsAfterRenderPage = options;
     updateNavigation(options.page.visibleIndex);
 
     updateButtonsClickAbility(options.page.visibleIndex);
+
+    // Implement the pre populate functionality 
+    const valueBtns = document.getElementsByClassName("btn btn-default btn-secondary");
+    const requirements = document.getElementsByClassName("req");
+    const questionsObj = {};
+    const surveyDataObj = {};
+
+    // populate the questionObj
+    // {requirement ID: [valueBtn1,....], .....}
+
+    /*Comentado temporalmente para el desarrollo-MG
+    let pos = 0;
+    for (let i = 0; i < requirements.length; i++) {
+      const plainID = requirements[i].innerText.split("*")[0];
+      questionsObj[plainID] = [];
+        for (let j = 0; j < 5; j++) {
+          questionsObj[plainID].push(valueBtns[pos]);
+          pos += 1;
+        } 
+    } */
+
+    for (const [view, valuesObj] of Object.entries(survey.data)) {
+      for (let [id, ability] of Object.entries(valuesObj)) {
+        id = getIDFromGeneratedQuestion(id).split(">")[2];
+        ability = Object.values(ability)[0]
+        if (id !== undefined) {
+          surveyDataObj[id.split("-")[0].replace(" ", "")] = ability;
+        }
+      }
+    }
+
+    // Uncomment to autopopulate requirements
+    // for (let i = 0; i < valueBtns.length;) {
+    //   // populate random value
+    //   // let rand = Math.floor(Math.random() * 5) + 1;
+    //   // for(let j = 1; j <= 5; j++) {
+    //   //   if((j + 1) % rand === 0) {
+    //   //     valueBtns[i].click();
+    //   //   }
+    //   //   i += 1;
+    //   // }
+    //   // populate value 5
+    //   if((i + 1) % 5 === 0) {
+    //     valueBtns[i].click();
+    //   }
+    //   i += 1;
+    // }
+
+    // Populate requirement's value based on a previous value 
+    for (const [id, labelArray] of Object.entries(questionsObj)) {
+      console.log("id", id)
+      console.log("labelArray", labelArray)
+      console.log("surveyDataObj", surveyDataObj)
+      console.log("questionObj", questionsObj)
+      console.log("selectedNonApplicableReqIDs", selectedNonApplicableReqIDs)
+      let hasActiveValue = false;
+      for (let i = 0; i < labelArray.length; i++) {
+        console.log("label Array value", labelArray[i])
+        console.log("label Array value contains", labelArray[i].classList.contains('active'))
+        if (labelArray[i].classList.contains('active')) {
+          hasActiveValue = true;
+        }
+      }
+
+      let nonApplicableBtnId = id.replace(" - ", "");
+      nonApplicableBtnId = nonApplicableBtnId.replace(')"', "");
+      id = id.split("-")[0].replace(" ", "");
+
+      let found = false;
+      for (let i = 0; i < selectedNonApplicableReqIDs.length; i++) {
+        if (selectedNonApplicableReqIDs[i].includes(id)) {
+          console.log("ASDF")
+          found = true;
+        }
+      }
+
+      // if the requirement has no previous value, initialize it with the most recent
+      if (hasActiveValue === false || found) {
+
+        // let nonApplicableBtnId = id.replace(" - ", "");
+        // nonApplicableBtnId = nonApplicableBtnId.replace(')"', "");
+        // id = id.split("-")[0].replace(" ", "");
+        if (id in surveyDataObj) {
+          // let found = false;
+          // for (let i=0; i < selectedNonApplicableReqIDs.length; i++){
+          //   if(selectedNonApplicableReqIDs[i].includes(id)){
+          //     console.log("ASDF")
+          //     found = true;
+          //   }
+          // }
+          if (surveyDataObj[id] === "NotApplicable" || found) {
+            document.getElementById(nonApplicableBtnId).click();
+            if (!selectedNonApplicableReqIDs.includes(nonApplicableBtnId)) {
+              selectedNonApplicableReqIDs.push(nonApplicableBtnId);
+            }
+          } else {
+            labelArray[surveyDataObj[id] - 1].click();
+          }
+        }
+      }
+    }
 
     let interval = setInterval(function () {
       let questions = $(".sv_row");
@@ -633,7 +907,7 @@ function surveyRelated(surveys, index, go2Top) {
           views
         );
 
-        totalAvgAbbElement(activeButtonTitles[options.page.visibleIndex - 1]);
+        //totalAvgAbbElement(activeButtonTitles[options.page.visibleIndex - 1]);
       }
       addCheckBoxInBCQuestion(survey, options, survey.currentPageNo === 0);
       updateProgressBar();
@@ -675,37 +949,40 @@ function surveyRelated(surveys, index, go2Top) {
     }
   });
 
-  survey.onValidatedErrorsOnCurrentPage.add(function (survey, options) {
-    let pageHasErros = options.errors.length !== 0;
-    let windowHeight = $(window).height();
-    if (!pageHasErros) return;
 
-    const { questions } = options;
-    const { questions: allQuestions } = survey.currentPage;
 
-    allQuestions.forEach((question) => {
-      const { id } = question;
-      $(`#${id}-custom-alert`).remove();
-    });
 
-    questions.forEach((option) => {
-      const $error = $("<div></div>")
-        .addClass("alert alert-danger")
-        .attr("id", `${option.id}-custom-alert`)
-        .text("Please answer the question");
-
-      $(`#${option.id}`).before($error);
-    });
-
-    $("#access-controls .spinner-border").addClass("d-none");
-    $("html, body").animate(
-      {
-        scrollTop:
-          $(".sv_qstn .has-error").first().offset().top - windowHeight / 2,
-      },
-      800
-    );
-  });
+  // survey.onValidatedErrorsOnCurrentPage.add(function (survey, options) {
+  //   let pageHasErros =  options.errors.length !== 0;
+  //   let windowHeight = $(window).height();
+  //   if (!pageHasErros) return;
+  
+  //   const { questions } = options;
+  //   const { questions: allQuestions } = survey.currentPage;
+  
+  //   allQuestions.forEach((question) => {
+  //     const { id } = question;
+  //     $(`#${id}-custom-alert`).remove();
+  //   });
+  
+  //   questions.forEach((option) => {
+  //     const $error = $("<div></div>")
+  //       .addClass("alert alert-danger")
+  //       .attr("id", `${option.id}-custom-alert`)
+  //       .text("Please answer the question");
+  
+  //     $(`#${option.id}`).before($error);
+  //   });
+  
+  //   $("#access-controls .spinner-border").addClass("d-none");
+  //   $("html, body").animate(
+  //     {
+  //       scrollTop:
+  //         $(".sv_qstn .has-error").first().offset().top - windowHeight / 2,
+  //     },
+  //     800
+  //   );
+  // });
 
   survey.onTextMarkdown.add(function (survey, options) {
     var str = converter.makeHtml(options.text);
@@ -721,10 +998,11 @@ function surveyRelated(surveys, index, go2Top) {
 
   $("#surveyContainer").Survey({
     model: survey,
-    onComplete: saveResultToFile,
+    onComplete: handleSurveyCompletion,
     css: myCss,
   });
   survey.onCurrentPageChanging.add(function (sender, options) {
+    $('.sv_next_btn').hide();
     if (!doAnimantion) return;
     options.allowChanging = false;
     document.getElementById("pageSelector").classList.add("d-none");
@@ -742,54 +1020,13 @@ function surveyRelated(surveys, index, go2Top) {
     animate("slideUp", 400);
   });
   survey.onCurrentPageChanged.add(function (sender) {
+    $('.sv_next_btn').hide();
     animate("slideDown", 400);
     setTimeout(() => {
       updateProgressBar();
       $surveyLoadingModal.modal("hide");
     }, 400);
   });
-
-  const illustrativeExample = (category) => {
-    const examples = {
-      Legal: `
-      <b>Requirement:</b> BAABB6) [legal:European Legal Act] - Directive (EU) 2016/2102 of the European Parliament and of the Council of 26 October
-      2016 on the accessibility of the websites and mobile applications of public sector bodies.<br />
-      <b>Question:</b> To what extent the requirement is met by the As-Is Digital Business Capability? (scale from 1 to 10).<br />
-      <b>Answer:</b>You should indicate the extent the mentioned requirement has been implemented, on a scale from 1 to 10, where 1 is the lowest score (e.g., no adherence to the EU Directive) and 10 the maximum score (e.g., fully adherence to the EU Directive). <br />
-      `,
-      Organisational: `
-      <b>Requirement:</b> BAABB51) [organisational:Business Information] - Log<br />
-      <b>Question:</b> To what extent the requirement is met by the As-Is Digital Business Capability? (scale from 1 to 10).<br />
-      <b>Answer:</b> you should indicate the extent the mentioned requirement has been implemented, on a scale from 1 to 10, where 1 is the lowest score (e.g., paper-based log information tracker) and 10 the maximum score (e.g., advanced digital log information tracker).<br />
-      `,
-      Semantic: `
-      <b>Requirement:</b> BAABB198) [Semantic:Data Set] - Data Set Catalogue<br />
-      <b>Question:</b> To what extent the requirement is met by the As-Is Digital Business Capability? (scale from 1 to 10). <br />
-      <b>Answer:</b> you should indicate the extent the mentioned requirement has been implemented, on a scale from 1 to 10, where 1 is the lowest score (e.g., no data set catalogue implemented) and 10 the maximum score (e.g., full structured data set catalogue implemented).<br />
-      `,
-      "Technical view application": `
-      <b>Requirement:</b> BAABB198) [technical view-application:Interfaces] - Enterprise service bus <br />
-      <b>Question:</b> To what extent the requirement is met by the As-Is Digital Business Capability? (scale from 1 to 10). <br />
-      <b>Answer:</b> you should indicate the extent the mentioned requirement has been implemented, on a scale from 1 to 10, where 1 is the lowest score (e.g., no enterprise service bus implemented) and 10 the maximum score
-       (e.g., lightweight and high-performance Enterprise Service Bus). <br />
-      `,
-      "Technical view infrastructure": `
-      <b>Requirement:</b> BAABB198) [technical view-infrastructure:Hosting and Networking Infrastructure] - Hosting Service <br />
-      <b>Question:</b> To what extent the requirement is met by the As-Is Digital Business Capability? (scale from 1 to 10). <br />
-      <b>Answer:</b> you should indicate the extent the mentioned requirement has been implemented, on a scale from 1 to 10, where 1 is the lowest score (e.g., no hosting service implemented) and 10 the maximum score (e.g., high availability and high performance Hosting Service). <br />
-      `,
-    };
-    const $container = $("<div></div>");
-
-    const $title = $("<p><u><i>Illustrative Example:</u></i></p>");
-    const $text = $(`<div>
-    ${examples[category]}
-    </div>`);
-
-    $container.append($title);
-    $container.append($text);
-    return $container;
-  };
 
   survey.onAfterRenderQuestion.add(function (sender, options) {
     if (sender.currentPageNo === 0) return;
@@ -811,8 +1048,8 @@ function surveyRelated(surveys, index, go2Top) {
     try {
       const label = $titleDiv.attr("aria-label");
       const category = label.split("<b>")[1].split("</b>")[0];
-      $(`#${parentID} table`).before(illustrativeExample(category));
-    } catch (e) {}
+      //$(`#${parentID} table`).before(illustrativeExample(category));
+    } catch (e) { }
 
     $titleDiv.prepend($button);
   });
@@ -827,22 +1064,85 @@ function surveyRelated(surveys, index, go2Top) {
     const $text = $(
       "<div><b>Extent to which the requirement is met by the As-Is Digital Business Capability</b></div>"
     );
+    let reqId = getIDFromGeneratedQuestionForBB(options.question.data.name).split(">")[2];
+    // the - creates bug when used in id of html element button
+    let abbId = reqId.split("-")[0].replace(" ", "");
+    reqId = reqId.replace(" - ", "")
+    const $applicable = $(
+      `<span title="By selecting this requirement as 'not applicable' one, it will not be considered in the overall assessed ability to support the digital business capability">` +
+      `<button class="non-applicable-button" id=${reqId}>Not Applicable Requirement</button></span>`
+    );
     $(options.htmlElement).prepend($text);
+    if (nonApplicableReqs.includes(abbId)) {
+      $(options.htmlElement).append($applicable);;
+    }
+
+    // The functionality regarding the non applicable button
+    document.getElementById(`${reqId}`)?.addEventListener('click', function () {
+      // add or delete the reqId from the array
+      if (selectedNonApplicableReqIDs.includes(reqId)) {
+        // the user has unselected the non applicable button
+        selectedNonApplicableReqIDs.splice(selectedNonApplicableReqIDs.indexOf(reqId), 1);
+        // Unselect the value
+        const labels = options.htmlElement.getElementsByTagName("div")[3].getElementsByTagName('label');
+        for (let i = 0; i < labels.length; i++) {
+          labels[i].classList.remove('hide')
+          labels[i].classList.remove('active')
+        }
+
+      } else {
+        // the user has selected the non applicable button
+        selectedNonApplicableReqIDs.push(reqId);
+
+        // Hide the selected requirement's value box
+        const labels = options.htmlElement.getElementsByTagName("div")[3].getElementsByTagName('label');
+        for (let i = 0; i < labels.length; i++) {
+          labels[i].classList.add('hide')
+          // In case the requirment has no selected value
+          // assigned the value one in order to pass the error test
+          if (i === 0) {
+            labels[0].click();
+          }
+        }
+      }
+
+      document.getElementById(`${reqId}`).classList.toggle("non-applicable-activated");
+      options.htmlElement.getElementsByTagName("div")[1].classList.toggle("hide")
+
+      // Calculate the avg without the selected non applicable requirement
+      let allViewsAvgInputs = document.getElementsByClassName('view-avg');
+      for (let i = 0; i < allViewsAvgInputs.length; i++) {
+        let avg = calcAvgForView(0);
+        $(`#custom-avg-input-${i}`).val(avg.toFixed(2));
+        document.getElementById(`custom-avg-input-${i}`).value = avg.toFixed(2);
+        // Update the difference gap
+        let latestOptimalAvg = document.getElementById(`prospective-avg-input-${i}`).value;
+        let latestActualAvg = $(`#custom-avg-input-${i}`)[0].value;
+        document.getElementById(`ability-difference-value-${i}`).value = (latestActualAvg - latestOptimalAvg).toFixed(2);
+      }
+      // Update the final average
+      let avg = totalCalcAbbAvg();
+      $("#total-avg-input").val(avg.toFixed(2));
+      updateTargetOverallAccessDiff();
+    });
   });
 
-  createSaveWorkButton(survey);
-  createPreviousSurvey(surveys, survey, idx);
+
+
+  //createSaveWorkButton(survey);
+  createShowInstructionsButton(survey);
+  //createPreviousSurvey(surveys, survey, idx);
 
   /**
-   * Funtiality that will execute if this survey is the last of all surveys ( which is based on policies)
+   * Funtionality that will execute if this survey is the last of all surveys ( which is based on policies)
    */
   function completeLastSurvey(sender, options) {
     if (!doAnimantion) return;
+    $('.sv_next_btn').hide();
     convertResults(survey);
-    options.allowComplete = false;
+    options.allowComplete = true;
     setTimeout(function () {
       doAnimantion = false;
-      sender.doComplete();
       doAnimantion = true;
     }, 50);
     animate("slideUp", 400);
@@ -863,6 +1163,7 @@ function surveyRelated(surveys, index, go2Top) {
   let surveyTitles = surveys.map(function (surveyObj) {
     return surveyObj.title;
   });
+  $('.sv_next_btn').hide();
 
   setupNavigator(survey, surveyTitles, idx);
 
@@ -891,6 +1192,7 @@ function surveyRelated(surveys, index, go2Top) {
   }
 }
 
+/** Creates a div to indicate to click on the arrow to expand/hide questions in each section. */
 function createMessageForExpand() {
   const html = `Please click on the arrow <span class="down-arrow"></span> to show/ hide the questions in each section`;
   const $div = $(`<div style="margin-bottom: 0 !important"></div>`)
@@ -904,6 +1206,36 @@ function createMessageForExpand() {
 /**
  * Create the the navigation for dBusCaps with the ability to click
  */
+// function setupNavigationBar(survey, idx) {
+//   const options = [...buttonTitles[idx]];
+//   const selector = document.getElementById("pageSelector");
+//   selector.innerHTML = "";
+
+//   options.unshift({ id: 0, title: "Digital Business Capabilities Overview" });
+
+//   const length = options.length;
+
+//   for (let i = 0; i < length; i++) {
+//     let option = document.createElement("button");
+
+//     option.addEventListener("click", function () {
+//       survey.currentPageNo = i;
+//       $("#access-controls .spinner-border").removeClass("d-none");
+//     });
+
+//     option.setAttribute("dBusCap-id", options[i].id);
+
+//     option.innerHTML = options[i].title;
+//     option.classList.add("progress-bar-buttons");
+//     // Highlight the first progress bar button
+//     if (i === 0) option.classList.add("progress-bar-buttons-current-active");
+
+//     selector.appendChild(option);
+//   }
+
+//   updateButtonsClickAbility(0);
+// }
+
 function setupNavigationBar(survey, idx) {
   const options = [...buttonTitles[idx]];
   const selector = document.getElementById("pageSelector");
@@ -912,6 +1244,12 @@ function setupNavigationBar(survey, idx) {
   options.unshift({ id: 0, title: "Digital Business Capabilities Overview" });
 
   const length = options.length;
+
+  const sliderContainer = document.createElement('div');
+  sliderContainer.classList.add('slider-container');
+
+  const slider = document.createElement('div');
+  slider.classList.add('slider');
 
   for (let i = 0; i < length; i++) {
     let option = document.createElement("button");
@@ -925,14 +1263,115 @@ function setupNavigationBar(survey, idx) {
 
     option.innerHTML = options[i].title;
     option.classList.add("progress-bar-buttons");
+    // Highlight the first progress bar button
+    if (i === 0) option.classList.add("progress-bar-buttons-current-active");
 
-    if (i === 0) option.classList.add("progress-bar-buttons-active");
-
-    selector.appendChild(option);
+    slider.appendChild(option);
   }
 
-  updateButtonsClickAbility(0);
+  // Agregar el slider al contenedor
+  sliderContainer.appendChild(slider);
+
+  // Agregar el contenedor del slider al selector
+  selector.appendChild(sliderContainer);
+
+  // Obtén los elementos relevantes del DOM
+  const sliderElement = sliderContainer.querySelector('.slider');
+  const sliderItems = slider.querySelectorAll('button');
+
+  // Inicializa algunas variables
+  let currentIndex = 0;
+  let isTransitioning = false;
+
+  // Calcula la cantidad de desplazamiento necesario para mover un botón y medio
+  const slideWidth = sliderItems[0].offsetWidth;
+  const displacement = -1 * (slideWidth * 1.5);
+
+  // Función para mover el slider a una sección específica
+  function goToSection(index) {
+    if (index < 0 || index >= sliderItems.length || isTransitioning) {
+      return;
+    }
+
+    isTransitioning = true;
+
+    // Calcula el desplazamiento actualizado en base al índice
+    const updatedDisplacement = displacement * (index + 1); // Añade 1 al índice
+
+    // Aplica la transformación de desplazamiento con una animación suave
+    sliderElement.style.transition = "transform 0.3s ease-in-out";
+    sliderElement.style.transform = `translateX(${updatedDisplacement}px)`;
+
+    // Actualiza el índice actual
+    currentIndex = index;
+
+    // Restaura la transición después de que termine la animación
+    setTimeout(() => {
+      sliderElement.style.transition = "";
+      isTransitioning = false;
+    }, 300);
+  }
+
+  // Escucha los eventos de teclado para navegar a través del slider
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowLeft') {
+      goToSection(currentIndex - 1);
+    } else if (event.key === 'ArrowRight') {
+      goToSection(currentIndex + 1);
+    }
+  });
+
+  // Estilos CSS adicionales
+  sliderContainer.style.width = "1200px"; // Ajusta el ancho del contenedor según tus necesidades
+  sliderItems.forEach(item => {
+    item.style.height = "100px"; // Ajusta la altura de los botones según tus necesidades
+  });
+
+  // Animación al cambiar de sección
+  sliderElement.style.transition = "transform 0.3s ease-in-out";
+
+  // Crear contenedor para las flechas de navegación
+  // const arrowsContainer = document.createElement('div');
+  // arrowsContainer.classList.add('slider-arrows-container');
+
+  // // Agregar flechas de navegación
+  // const sliderArrowLeft = document.createElement('button');
+  // sliderArrowLeft.classList.add('slider-arrow', 'slider-arrow-left');
+  // sliderArrowLeft.innerHTML = '&lt;';
+
+  // const sliderArrowRight = document.createElement('button');
+  // sliderArrowRight.classList.add('slider-arrow', 'slider-arrow-right');
+  // sliderArrowRight.innerHTML = '&gt;';
+
+  // // Agregar flechas de navegación al contenedor del carrusel
+  // arrowsContainer.appendChild(sliderArrowLeft);
+  // arrowsContainer.appendChild(sliderArrowRight);
+
+  // // Agregar contenedor de flechas de navegación antes del slider
+  // sliderContainer.insertAdjacentElement('beforebegin', arrowsContainer);
+
+  // // Navegación a través de los botones de flecha
+  // sliderArrowLeft.addEventListener('click', () => {
+  //   goToSection(currentIndex - 1);
+  // });
+
+  // sliderArrowRight.addEventListener('click', () => {
+  //   goToSection(currentIndex + 1);
+  // });
+
+
+  // Resto del código necesario para el slider
+  // ...
 }
+
+
+
+
+
+
+
+
+
 
 /**
  * Create the first navigation that will display all the policies
@@ -958,7 +1397,11 @@ function createSurveyTitles(surveyTitles, idx) {
     selector.appendChild(option);
 
     option.className = "progress-bar-divs ";
-    if (index <= idx) option.classList.add("progress-bar-divs-active");
+    // The previous completed primary progress bar buttons have no red borders
+    if (index < idx) option.classList.add("progress-bar-divs-active");
+    // The currently active primary progress bar button has red borders
+    if (index === idx) option.classList.add("progress-bar-divs-current-active");
+
     option.style.width = 98 / length + "%";
     if (length === 1) option.style.width = "100%";
   });
@@ -1097,123 +1540,616 @@ const bbLinks = (area) => {
 /**
  * Helper Function
  */
-const bbFormaterFunc = (bb) => {
-  return `<div><b>Requirement</b></div><p>${bb.id}) [${bb.view}:${bbLinks(
-    bb.area
-  )}] - <b>${bb.abb}</b><br><p style="font-size:13px;"<i>${
-    bb.description
-  }</p><p>`;
+const bbFormaterFunc = (bb, dBusCapID) => {
+  let baSentence;
+  let explanatorySentence = "";
+  let dpsWords = [];
 
-  //return `<div><b>Requirement</b></div><p>${bb.id}) [${bb.view}:${bb.area}] - <b>${bb.abb}</b><br><p style="font-size:13px;"<i>${bb.description}</p><p>`;
+  if (dBusCapID === "BABC5") {
+    explanatorySentence = bb.artificialIntelligence;
+  } else if (dBusCapID === "BABC6") {
+    explanatorySentence = bb.digitalCommunication;
+  } else if (dBusCapID === "BABC9") {
+    explanatorySentence = bb.dataManagement;
+  } else if (dBusCapID === "BABC12") {
+    explanatorySentence = bb.caseWorkflowManagement;
+  } else if (dBusCapID === "BABC1") {
+    explanatorySentence = bb.electronicIdentification;
+  } else if (dBusCapID === "HDBC01") {
+    explanatorySentence = bb.consultation;
+  } else if (dBusCapID === "HDBC02") {
+    explanatorySentence = bb.laboratory;
+  } else if (dBusCapID === "HDBC04") {
+    explanatorySentence = bb.prescription;
+  } else if (dBusCapID === "HDBC07") {
+    explanatorySentence = bb.medicalImaging;
+  } else if (dBusCapID === "HDBC16") {
+    explanatorySentence = bb.secondaryUse;
+  } else if (dBusCapID === "HDBC06") {
+    explanatorySentence = bb.electronicHealth;
+  }
+  if ((bb.policy === "business agnostic" || bb.policy === "health") && explanatorySentence !== "") {
+    baSentence = `
+      <br>
+      ${explanatorySentence}
+      </br>
+    `;
+    // `
+    // <br>
+    // <u> 
+    // <a href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability" target="_blank">
+    // digital business capability</a> 
+    // because</u> ${explanatorySentence}
+    // <br>`;
+
+  } else {
+    baSentence = ``;
+  }
+
+  // bold the word should or might
+  if (baSentence !== ``) {
+    const baSentenceArr = baSentence.split(' ')
+    const baSentenceArr2 = baSentenceArr.map(element => {
+      if (element === 'might') {
+        return `<b>might</b>`
+      } else if (element === 'should') {
+        return '<b>should</b>'
+      }
+      return element
+    })
+    baSentence = baSentenceArr2.join(' ');
+  }
+
+  const botonPromise = createButtonInfoAsync(bb, dBusCapID);
+
+  extractWordsDPS(baSentence,dpsWords);
+  extractDelegationDPS(baSentence,dpsWords);
+  
+  botonPromise.then(({ button, informacionDiv }) => {
+    // Agregar elementos al DOM u otras operaciones
+    document.body.appendChild(button);
+    document.body.appendChild(informacionDiv);
+  }).catch(err => console.log(err));
+
+  return (`<div id="${bb.id} - ${dBusCapID}">
+          <div id="${bb.id} -- ${dBusCapID}">     
+          <p><b class="req">Requirement: </b>${bb.abb} <b>${bb.specificQuestion}</b></p><br>
+          </div>
+          <br>
+          <br>
+          <p>To what extent your AS-IS Digital Public Services (DPS) below meet this requirement?
+          <br>
+          <div class="survContainer">
+          <br>
+          ${checksSurvey(dpsWords)}
+          <br>
+          </div>
+          <br>
+          </div>
+          `);
 };
+
+/**
+ * Coge el parametro baSentence y lo recorta para quedarse unicamente con la palabra "Delegation of Power" si esta va seguida de la palabra "DPS", el resto de 
+ * palabras no las añade al array.
+ * @param {*} baSentence 
+ * @returns 
+ */
+function extractDelegationDPS(baSentence, dpsWords) {
+  const regex = /DPS\s(.*?)\sDPS/g;
+  const matches = [...baSentence.matchAll(regex)];
+  const arrayPalabras = matches.map(match => match[1]);
+
+  if (arrayPalabras.length === 1 && arrayPalabras[0] === "Delegation of Power") {
+    arrayPalabras.forEach(word =>{
+      dpsWords.push(word);
+    });
+    return arrayPalabras;
+  } else {
+    return [];
+  }
+}
+
+/**
+ * Coge el parametro baSentence y lo recorta para las palabras previas a la palabra DPS, con el condicional de que si es "Power", no lo añada al array.
+ * @param {*} baSentence 
+ * @returns 
+ */
+
+function extractWordsDPS(baSentence, dpsWords) {
+  const regex = /(?:^|\s)(\S+)\sDPS/g;
+  const matches = [...baSentence.matchAll(regex)];
+  const arrayPalabras = matches.map(match => match[1]);
+
+  const indexToRemove = arrayPalabras.indexOf("Power");
+  if (indexToRemove !== -1) {
+    arrayPalabras.splice(indexToRemove, 1);
+  }
+  arrayPalabras.forEach(word =>{
+    dpsWords.push(word);
+  });
+  return arrayPalabras;
+}
+
+//Function for add checkbox for every DPS element
+function checksSurvey(array) {
+  var dpsInfo = [];
+  var dpsId = 0;
+  array.forEach(element => {
+    dpsInfo.push(`
+      <div class="additional-comment-container">
+        <input type="checkbox" id="checkbox-${dpsId}" class="dps-checkbox" checked="true">
+        <label>${element}</label>
+        <div class="rating-container" id="rating${dpsId}">${addValoration(element)}</div>
+        <div class="na-container" id="na${dpsId}" style="display:none;"><label class="naLabel">Not Applicable</label></div>
+        <input type=text class="additional-comments-input" placeholder="Additional Comments:">
+      </div>
+    `);
+    dpsId = dpsId +1;
+  });
+
+  dpsInfo.push(`
+  
+  <div>
+    <button id="addDpsButton" class="btn-primary">Add DPS</button>
+  </div>  
+`);
+
+
+
+  return dpsInfo.join('');
+}
+
+function addValoration(element) {
+
+  document.addEventListener("click", function (event) {
+    if (event.target.classList.contains("rating-button")) {
+      const buttons = event.target.parentElement.querySelectorAll(".rating-button");
+      buttons.forEach(button => button.classList.remove("selected"));
+      event.target.classList.add("selected");
+
+      const $svRow = $(event.target).closest(".sv_row");
+      if ($svRow.length > 0) {
+        const rowIndex = $svRow.index();
+        const avg = calcAvgForView(rowIndex);
+        $(`#custom-avg-input-${rowIndex -1}`).val(avg.toFixed(2));
+      } else {
+        console.log("Parent element with .sv_row class not found.");
+      }
+    }
+  });
+
+  $(document).on('change', '.dps-checkbox', function() {
+    let parentDiv = $(this).closest('.additional-comment-container');
+    let ratingContainer = parentDiv.find('.rating-container');
+    let naContainer = parentDiv.find('.na-container');
+    let naCheckbox = naContainer.find('input[type="checkbox"]');
+
+    if ($(this).is(':checked')) {
+      ratingContainer.show();
+      naContainer.hide();
+      naCheckbox.prop('checked', false);
+    } else {
+      ratingContainer.hide();
+      naContainer.show();
+      naCheckbox.prop('checked', true);
+    }
+});
+  
+  return `
+      <div class="rating-buttons">
+        <button type="button" class="rating-button" id="button0" value="0">0</button>
+        <button type="button" class="rating-button" id="button1" value="1">1</button>
+        <button type="button" class="rating-button" id="button2" value="2">2</button>
+        <button type="button" class="rating-button" id="button3" value="3">3</button>
+        <button type="button" class="rating-button" id="button4" value="4">4</button>
+        <button type="button" class="rating-button" id="button5" value="5">5</button>
+      </div>
+  `;
+}
+
+async function createButtonInfoAsync(bb, dBusCapID) {
+  // Creamos el botón dinámicamente
+  const button = document.createElement("button");
+  button.classList.add("btn-primary");
+  button.style.marginTop = "10px";
+  button.textContent = "Show Additional Information";
+
+  // Esperamos a que se cree el div con el id bb.id + " - " + dBusCapID
+  await new Promise((resolve) => {
+    const intervalId = setInterval(() => {
+      const divBB = document.getElementById(`${bb.id} - ${dBusCapID}`);
+      const reqDiv = document.getElementById(`${bb.id} -- ${dBusCapID}`);
+
+      if (divBB) {
+        clearInterval(intervalId);
+        // Creamos el div "informacion" dinámicamente
+        const informacionDiv = document.createElement("div");
+        informacionDiv.textContent = `-EIRA Stereotype: <<eira:${bb.area}>>`;
+        informacionDiv.style.marginTop = "15px";
+        informacionDiv.style.display = "none"; // Inicialmente oculto
+
+        // Añadimos un manejador de eventos para cuando se haga clic en el botón
+        button.addEventListener("click", function () {
+          // Cambiamos la visibilidad del div "informacion" al hacer clic
+          informacionDiv.style.display = informacionDiv.style.display === "none" ? "block" : "none";
+          
+          // Cambiar el texto del botón según la visibilidad del div "informacion"
+          if (informacionDiv.style.display === "none") {
+            button.textContent = "Show Additional Information";
+          } else {
+            button.textContent = "Hide Additional Information";
+          }
+        });
+        // Agregamos el botón al final del div con el ID bb.id + " - " + dBusCapID
+        reqDiv.append(button);
+
+        // Agregamos el div de información al final del div con el ID bb.id + " - " + dBusCapID
+        reqDiv.append(informacionDiv);
+
+        resolve();
+      }
+    }, 100); // Verificar cada 100ms si el div se ha creado
+  });
+}
 
 /**
  * Preparing the question for the survey
  */
 function createSurvey(response) {
-  let test = response;
+  renderSurvey(response);
+}
 
-  selectedBC = Object.keys(test).reduce((prev, curr) => {
-    return {
-      ...prev,
-      [curr]: true,
+function renderSurvey(response)
+{
+  let title = "Business Agnostic Assessment";
+  let pages = createSurveyPages(response);
+
+  var surveyJSON = { 
+    title: title,
+    pages: pages,
+    pageNextText: "Next",
+    pagePrevText: "Previous",
+    completeText: "Complete",
+    showProgressBar: "top",
+    showQuestionNumbers: "off",
+    showTOC: true
     };
-  }, {});
 
-  let dBusCaps = groupBy(Object.values(test), "policy");
+    //Survey.JsonObject.metaData.addProperty("questionbase", "tooltip");
+    Survey.StylesManager.applyTheme("defaultV2");
+    var survey = new Survey.Model(surveyJSON);
+    survey.autoSave = true;
 
-  const pagePreperation = {};
-  for (let policy in dBusCaps) {
-    pagePreperation[policy] = pagePreperation[policy] || {};
-
-    dBusCaps[policy].forEach((question) => {
-      let abbs = groupBy(question.abbs, "view");
-      let formattedQuestion = bcFormaterFunc(question);
-      pagePreperation[policy][formattedQuestion] = {};
-      for (let view in abbs) {
-        let abb = abbs[view];
-        pagePreperation[policy][formattedQuestion][view] =
-          pagePreperation[policy][formattedQuestion][view] || [];
-
-        abb.forEach((abbQuestion) => {
-          let formattedAbbQuestion = bbFormaterFunc(abbQuestion);
-          pagePreperation[policy][formattedQuestion][view].push(
-            formattedAbbQuestion
-          );
-        });
+    survey.onCurrentPageChanged.add(function(sender, options) {
+      if (sender.currentPageNo === 0) { // Si es la primera página
+          sender.pageNextText = "Submit";
+      } else {
+          sender.pageNextText = "Next"; // Restablecer el texto a "Next" para las demás páginas
       }
-    });
-  }
-  let surveys = [];
-  let surveyTitles = [];
-
-  for (let policy in pagePreperation) {
-    if (!checkboxes[policy]) continue;
-    let pages = [];
-    surveyTitles.push(capitalize(policy));
-    let firstPage = [];
-    let bcTitles = [];
-    for (let question in pagePreperation[policy]) {
-      firstPage.push(question);
-      let startBTag = question.indexOf("<b>");
-      let endBTag = question.indexOf("</b>");
-      let q = question.slice(startBTag + 3, endBTag);
-      let id = getIDFromGeneratedQuestion(question);
-      bcTitles.push({
-        id,
-        title: q,
-        active: true,
-      });
-      pages.push(
-        surveyPages("testing page", [question], {
-          question: q,
-          ...pagePreperation[policy][question],
-        })
-      );
-    }
-    buttonTitles.push(bcTitles);
-    pages.unshift(surveyFirstPage("Business Capabilites", firstPage, policy));
-    surveys.push(pages);
-  }
-
-  let finalSurveysV2 = [];
-
-  surveyTitles.forEach((surveyTitle, idx) => {
-    let pages = surveys[idx];
-    let obj = {
-      title: surveyTitle,
-      pages: pages,
-    };
-    finalSurveysV2.push(obj);
   });
 
-  surveyRelated(finalSurveysV2);
+    survey.onUpdateQuestionCssClasses.add(function(_, options) {
+      const classes = options.cssClasses;
+      if (options.question.name.includes('REQUIREMENT')) {
+        classes.root = 'custom-question-class';
+      }
+    });
+
+    survey.onAfterRenderQuestion.add(function(sender, options) {
+      if (options.question.name.includes('REQUIREMENT')) {
+          const index = parseInt(options.question.name.split('-').pop());
+          const abb = abbList[index];
+          
+          // Añadir botón "Show More"
+          options.htmlElement.innerHTML += `<button class="expand-btn">Show More</button>`;
+          
+          // Añadir div oculto para información adicional
+          options.htmlElement.innerHTML += `
+              <div class="hidden-info">
+                  ${abb.Rationale || 'TESTING ADDITIONAL INFO BUTTON'}
+              </div>
+              <style>
+                  .hidden-info {
+                      display: none;
+                  }
+              </style>
+          `;
+  
+          // Vincular evento al botón
+          const expandBtn = options.htmlElement.querySelector('.expand-btn');
+          expandBtn.addEventListener('click', function() {
+              const hiddenInfo = options.htmlElement.querySelector('.hidden-info');
+              if (hiddenInfo.style.display === 'none') {
+                  hiddenInfo.style.display = 'block';
+              } else {
+                  hiddenInfo.style.display = 'none';
+              }
+          });
+      }
+  });
+
+  //Pours the survey data of a previously exported survey into the Survey object
+  survey.data = currentState.data;
+
+    $("#surveyCard").Survey({ model: survey });
+
+
+    //survey.completeText = isLast ? "Complete" : "Next Survey";
+
+    //survey.onCompleting.add(completeLastSurvey(survey));
+
+    createSaveWorkButton(survey);
+    createShowInstructionsButton(survey);
+
 }
 
-function updateProgressBar() {
-  const progressWidth = $(".progress-bar-buttons-active")
-    .map((idx, elem) => {
-      if (idx === 0) return $(elem).outerWidth();
-      return $(elem).outerWidth() + 10;
-    })
-    .get()
-    .reduce((width, newWidth) => (width += newWidth), 0);
+function createSurveyPages(response){
+  let pages = [];
 
-  $(".progress-bar").css({ width: `${progressWidth}px` });
-}
+  if(response.length >= 3)
+  {
+    let abbList = response[0];
+    let dbcList = response[1];
+    let responses  = response[3];
 
-function updateNavigation(idx) {
-  const options = document.querySelectorAll(
-    ".progress-bar-buttons:not(.d-none)"
-  );
+    let initialPage = {
+      name: 'Strategic Fit',
+      elements: []
+    };
 
-  for (let i = 0; i < options.length; i++) {
-    if (i <= idx) {
-      options[i].classList.add("progress-bar-buttons-active");
-      continue;
-    }
-    options[i].classList.remove("progress-bar-buttons-active");
+    
+
+    initialPage.elements.push({
+      type: 'panel',
+      name: 'instruction-panel',
+      elements: [
+        {
+          type: 'html',
+          html: `
+          <div class="instructionPanel" style="font-size: 30px;"><b>Please select the Digital Business Capabilities (DBC) to be assessed and indicate the National Digital Strategic Fit (0 lowest,  5 highest)</b>
+          <div class="tooltip-container">
+              <i class="fa fa-question-circle text-primary"></i>
+              <div class="tooltip-content">
+              It reports the strategic priority assigned to the digital business capability by the national digital agenda of the country.
+              </div>
+          </div>
+          </div>`
+      }
+      ]
+  });
+    dbcList.forEach(dbc => {
+      
+
+      let radioIndex = 0;
+      initialPage.elements.push({
+          type: 'panel',
+          name: `${dbc.Name} - Panel`,
+          elements: [
+              {
+                  type: 'checkbox', 
+                  name: `${dbc.Name} - Include`,
+                  title:" ",
+
+                  choices: [
+                      { value: "Include", text: dbc.Name }
+                  ]
+              },
+              {
+                  type: 'radiogroup',
+                  name: `${dbc.Name} - Rating`,
+                  title:" ",
+                  description: dbc.Description,
+                  choices: [
+                      { value: 0, text: "0" },
+                      { value: 1, text: "1" },
+                      { value: 2, text: "2" },
+                      { value: 3, text: "3" },
+                      { value: 4, text: "4" },
+                      { value: 5, text: "5" }
+                  ],
+                  colCount: 5
+              }
+              
+          ]
+          
+      });
+      radioIndex++;
+  });
+
+    pages.push(initialPage);
+    //Adds "elements" property to the DBCs so to fill it when processing the ABB list
+    dbcList.forEach(function(dbc, index, array){dbc.elements = addViewsToDbc(); array[index] = dbc});
+
+    let dpsList = response [2];
+
+    
+
+    //ABB elements are added to the DBC list so to create the panel structure needed by SurveyJS
+    let index = 0
+    abbList.forEach(abb => {
+      abb.DBCs.forEach(abbDbc => {
+        dbcList.filter(dbc => dbc.ID == abbDbc).forEach(dbc => {
+            dbc.elements.forEach(function(element, dbcIndex, dbcElements) {
+                if (element.name == abb.View) {
+                    if (abb.View === "Expected Public Value & Estimated Budget") {
+                    } else {
+                        // Contenido HTML
+                        // let htmlContent = {
+                        //     type: "html",
+                        //     html: "<strong>To what extent the AS-IS Digital Public Services below meet the requirement?</strong>"
+                        // };
+                        // Información adicional
+                        let additionalInfo = {
+                            name: dbc.Name.concat(' - ', abb.View, ' - Additional-Info'),
+                            type: "panel",
+                            title: "Additional Information",
+                            state: "collapsed",
+                            elements: [
+                                {
+                                    type: "html",
+                                    html: abb.Rationale || ''
+                                }
+                            ]
+                        };
+                        // Requisito
+                        let newRequirement = {
+                            name: dbc.Name.concat(' - ', abb.View, '-', index++),
+                            title: 'REQUIREMENT: '.concat(abb.Architecture_Building_Block),
+                            description: abb.Description,
+                            type: "panel",
+                            state: "collapsed",
+                            elements: [additionalInfo],
+                            cssClass: "custom-panel-class"
+                        };
+    
+                        Array.prototype.push.apply(newRequirement.elements, extractDpsFromDbc(dbc, dpsList, abbList));
+    
+                        element.elements.push(newRequirement);
+                    }
+                    dbcElements[dbcIndex] = element;
+                }
+            });
+        });
+    });
+  });
+
+      //Add all elements to the survey pages
+      dbcList.forEach(
+        dbc => {
+          const htmlTitleElement = {
+            type: "html",
+            html: `<h3 class="dbcTitle" style="font-size:45px;"><a href="${dbc.ID}">DBC  ${dbc.Name}</a></h3>
+            <p style="font-size:20px;">The DBC ${dbc.Description}</p>`
+        };
+        
+        pages.push({
+            name: dbc.Name,
+            visibleIf: `{${dbc.Name} - Include} contains 'Include'`,  
+            elements: [htmlTitleElement, ...dbc.elements],
+            description: " "
+        });
+        }
+      );
+  }else
+  {
+    document.querySelector("#previous-work-error").classList.remove("d-none");
+      return;
   }
+
+  return pages;
+
+}
+
+function addViewsToDbc(){
+
+  const surveyViews = [
+    { name: "Legal", title: "Legal View", type: "panel", state: "collapsed", elements:[], cssClass: "custom-view-class" },
+    { name: "Organisational", title: "Organisational View", type: "panel", state: "collapsed", elements:[], cssClass: "custom-view-class" },
+    { name: "Semantic", title: "Semantic View", type: "panel", state: "collapsed", elements:[], cssClass: "custom-view-class" },
+    { name: "Technical - Application", title: "Technical - Application View", type: "panel", state: "collapsed", elements:[], cssClass: "custom-view-class" },
+    { name: "Technical - Infrastructure", title: "Technical - Infrastructure View", type: "panel", state: "collapsed", elements:[], cssClass: "custom-view-class" },
+    { name: "Expected Public Value & Estimated Budget", title: "Expected Public Value & Estimated Budget", type: "panel", state: "collapsed", elements:[], cssClass: "custom-view-class" }
+  ];
+
+  return surveyViews;
+}
+
+function extractDpsFromDbc(DBC, DpsList, abbList){
+  let scoreIndex = 0;
+  let processedDps = []; 
+  let scoreNames = [];
+  const specificABB = abbList.find(abb => abb.DBCs.includes(DBC.ID));
+  if (!specificABB) {
+    console.error('ABB específico no encontrado');
+    return [];
+}
+
+  DBC.Digital_Public_Services.forEach(dbcDps =>
+    {
+      let extractedDps = DpsList.filter(dps => dps.ID == dbcDps.ID)[0];
+      let scoreName = DBC.Name.concat(' - ',extractedDps.Name, scoreIndex,  ' - Score');
+      scoreNames.push(`${scoreName}`);
+      
+      processedDps.push({
+        name: "dpsQuestion-" + scoreIndex,
+        type: "html",
+        html: `<strong>To what extent the AS-IS Digital Public Service ${extractedDps.Name} below meet the requirement?</strong>`
+      });
+      
+      processedDps.push({
+        name: "dpsLink",
+        type: "html",
+        html: `<div class="dpsInfo" ><b><p style="font-size:20px;">DPS <a style="font-size:20px;" href="${extractedDps.ID}">${extractedDps.Name}</a></p></b><p>${extractedDps.Description}</p></div>`
+    }),
+      
+      processedDps.push({
+        name: scoreName,
+        title: " ",
+        type: "radiogroup",
+        showNoneItem: true,
+        noneText: "Not Applicable",
+        colCount: 0,
+        choices: [
+          { value: 0, text: "0" },
+          { value: 1, text: "1" },
+          { value: 2, text: "2" },
+          { value: 3, text: "3" },
+          { value: 4, text: "4" },
+          { value: 5, text: "5" }
+        ]
+    },
+
+    {
+        name: DBC.Name.concat(' - ', extractedDps.Name, ' - Comments'),
+        title: "Additional Comments",
+        type: "comment",
+        placeHolder: "Enter your comments here...",
+        rows: 2,
+        cols: 20
+    })
+    scoreIndex++;
+    });
+
+    processedDps.push({
+      name: DBC.Name.concat(' - Summary'),
+      type: "html", 
+      html: `<h6>Requirement ${specificABB.Architecture_Building_Block} Assessment Summary</h6>`  
+  })
+    
+  const sumScores = scoreNames.map(score =>`(iif({${score}} = "none" or {${score}} = null, 0, {${score}}))`).join(" + ");
+  const divisor = scoreNames.length;
+  const expressionString = `(${sumScores}) / ${divisor}`;
+  processedDps.push({
+    name: DBC.Name.concat(' - Total Score'),
+    type: "expression",
+    title: "The overall assessed ability to support the digital business capability " + DBC.Name + " is: ",
+    expression: expressionString,
+    visible: true  
+  });
+
+
+  processedDps.push({
+    name: DBC.Name.concat(' - Target Prospective Ability'),
+    type: "text",
+    inputType: "range", 
+    title: "Please, indicate the Target Prospective Ability to support the Digital Business Capability - Legal requirements (0-5):",
+    min: 0,  
+    max: 5,  
+    step: 1, 
+    defaultValue: 0, 
+    visible: true
+});
+
+  processedDps.push({
+    name: DBC.Name.concat(' - Gap Difference'),
+    type: "expression",
+    title: "Therefore, the gap between the Target Prospective Average Ability and the Overall Assessed Ability to support the Digital Business Capability is: ",
+    expression: "{".concat(DBC.Name, ' - Total Score', "} - {", DBC.Name, ' - Target Prospective Ability', "}"),
+    visible: true
+  });
+ 
+    return processedDps;
 }
 
 function loadState(survey) {
@@ -1235,6 +2171,7 @@ function loadState(survey) {
     }
   }
 }
+
 
 /**
  * Helper function for saveStateMiddleware function
@@ -1290,10 +2227,23 @@ const saveSelectedQuestions = (firstPageBCes, surveyTitle) => {
 function saveStateMiddleware(survey, completed) {
   let completedSurvey = completed || false;
   let title = survey.title;
+  let data = survey.data;
+  // Mark the not applicable requirements as such
+  for (let i = 0; i < selectedNonApplicableReqIDs.length; i++) {
+    for (let [key, value] of Object.entries(data)) {
+      for (let [key2, value2] of Object.entries(value)) {
+        let keyId = getIDFromGeneratedQuestion(key2).split('>')[2]?.replace(" - ", "")
+        if (keyId === selectedNonApplicableReqIDs[i]) {
+          //delete data[key][key2]
+          data[key][key2]['Ability to support the dBusCap'] = "NotApplicable";
+        }
+      }
+    }
+  }
   let res = {
     [title]: {
       currentPageNo: survey.currentPageNo,
-      data: survey.data,
+      data: data,
       completed: completedSurvey,
     },
     fullName: fullName,
@@ -1311,11 +2261,12 @@ function saveStateMiddleware(survey, completed) {
  * @param {Object} survey
  */
 function saveState(survey) {
-  saveStateMiddleware(survey);
+
+  var res = { currentPageNo: survey.currentPageNo, data: survey.data, contactData: {fullName, organisation, email, country}};
 
   const a = document.createElement("a");
   a.href = URL.createObjectURL(
-    new Blob([JSON.stringify(currentState, null, 2)], {
+    new Blob([JSON.stringify(res, null, 2)], {
       type: "application/json",
     })
   );
@@ -1349,21 +2300,48 @@ function createPreviousSurvey(surveys, survey, currentSurveyIndex) {
  * Create save work button at the footer of the survey
  * @param {Object} survey
  */
-function createSaveWorkButton(survey) {
-  const footer = document.querySelector(".panel-footer");
 
-  const saveWorkBtn = document.createElement("button");
-  const saveLabel = document.createTextNode("Save work");
-  saveWorkBtn.appendChild(saveLabel);
-  saveWorkBtn.className = "btn btn-primary";
-  saveWorkBtn.setAttribute("id", "save-work-btn");
+
+function createShowInstructionsButton(survey) {
+  const saveButton = document.querySelector("#save-work-btn");
+  const parent = saveButton.parentNode;  // Obtener el contenedor o padre de saveButton
+
+  const showInstrBtn = document.createElement("button");
+  const showLabel = document.createTextNode("Show Instructions");
+  showInstrBtn.appendChild(showLabel);
+  showInstrBtn.className = "btn btn-primary";
+  showInstrBtn.setAttribute("id", "show-instruct-btn");
+
+  showInstrBtn.addEventListener("click", function () {
+    $("#dbcInstructions").modal("show");
+  });
+
+  // Añade el botón showInstrBtn justo después de saveButton
+  parent.insertBefore(showInstrBtn, saveButton.nextSibling);
+
+  setTimeout(() => {
+    const buttonInstr = document.querySelector("#show-instruct_btn");
+    if (buttonInstr) {
+      buttonInstr.style.display = "block";
+      buttonInstr.style.marginTop = "1%";
+    }
+  }, 100);
+}
+
+function createSaveWorkButton(survey) {
+
+  let saveWorkBtn = document.querySelector("#save-work-btn");
+ 
   saveWorkBtn.addEventListener("click", function () {
     saveState(survey);
   });
-
-  const nextBtn = document.querySelector(".panel-footer .sv_next_btn");
-  footer.insertBefore(saveWorkBtn, nextBtn);
 }
+
+
+/**
+ * Create current working path Label at the top of the survey
+ */
+function createLabel() { }
 
 /**
  * Add skip value in the save_work file
@@ -1387,12 +2365,28 @@ const saveSelectedBCs = () => {
  * @param {Object} survey
  */
 function convertResults(survey) {
-  let results = survey.data;
+  let results;
   let returnData = {};
   returnData[survey.title] = returnData[survey.title] || {};
+  console.log("Survey data: ", JSON.stringify(survey.data, null, 3));
+  let data = survey.data;
+  // Remove the non applicable requirements
+  for (let i = 0; i < selectedNonApplicableReqIDs.length; i++) {
+    for (let [key, value] of Object.entries(data)) {
+      for (let [key2, value2] of Object.entries(value)) {
+        let keyId = getIDFromGeneratedQuestion(key2).split('>')[2]?.replace(" - ", "")
+        if (keyId === selectedNonApplicableReqIDs[i]) {
+          delete data[key][key2]
+        }
+      }
+    }
+  }
+
+  results = data;
 
   let BCS = {};
   let BBS = {};
+  console.log("results: ", results);
   for (let key in results) {
     if (key.includes("BC")) {
       Object.assign(BCS, results[key]);
@@ -1412,7 +2406,7 @@ function convertResults(survey) {
 
   let returnBB = [];
   for (let bb in BBS) {
-    let id = getIDFromGeneratedQuestionForBB(bb).trim();
+    let id = getIDFromGeneratedQuestionForBB(bb).trim().split(">")[2];
     let objToStore = Object.assign({}, BBS[bb]);
     objToStore.id = id;
     returnBB.push(objToStore);
@@ -1426,13 +2420,16 @@ function convertResults(survey) {
   returnData.email = email;
   returnData.country = country;
 
+ 
+
   Object.assign(resultsToSave, returnData);
   saveSelectedBCs();
+  console.log(resultsToSave, returnData);
 }
 
 const getIDFromGeneratedQuestionForBB = (bb) => {
-  const newBB = bb.replace("<div><b>Requirement</b></div><p>", "");
-  return getIDFromGeneratedQuestion(newBB);
+  //const newBB = bb.replace("<div><b>Requirement</b></div><p>", "");
+  return getIDFromGeneratedQuestion(bb);
 };
 
 const removeUnSelectedBCes = () => {
@@ -1464,6 +2461,59 @@ const removeUnSelectedBCes = () => {
   resultsToSave = { ...newResults, country, email, fullName, organisation };
 };
 
+const handleSurveyCompletion = (survey) => {
+  let myPreparedJson = {
+    "BB": [
+      {
+        "Ability to support the dBusCap": 3,
+        "id": "BAABB1 - BABC1"
+      },
+      {
+        "Ability to support the dBusCap": 3,
+        "id": "BAABB3 - BABC1"
+      },
+      {
+        "Ability to support the dBusCap": 3,
+        "id": "BAABB4 - BABC1"
+      },
+      {
+        "Ability to support the dBusCap": 3,
+        "id": "BAABB6 - BABC1"
+      },
+      {
+        "Ability to support the dBusCap": 3,
+        "id": "BAABB14 - BABC1"
+      },
+    ]
+  };
+
+  myPreparedJson.fullName = fullName;
+  myPreparedJson.organisation = organisation;
+  myPreparedJson.email = email;
+  myPreparedJson.country = country;
+  myPreparedJson = buildJson(myPreparedJson);
+  saveResultToFile(myPreparedJson);
+};
+
+/**
+ * Method to retrieve all BBs, their related DPS and build a JSON with the results
+ */
+
+function buildJson(json)
+{
+  console.log($(function(){
+    $('input[type="checkbox-0"]').each(function(i,item){
+        if(ids.indexOf($(item).data('id')) > -1){
+          return $(item).prop("checked", "checked");
+        }
+    });
+    }));
+
+  
+
+  return null;  
+}
+
 /**
  *
  * Functionality to create the file and prompts to the user for saving the result file
@@ -1471,10 +2521,10 @@ const removeUnSelectedBCes = () => {
 function saveResultToFile(survey) {
   const a = document.createElement("a");
 
-  saveSelectedBCs();
-  removeUnSelectedBCes();
+  // saveSelectedBCs();
+  // removeUnSelectedBCes();
   a.href = URL.createObjectURL(
-    new Blob([JSON.stringify(resultsToSave, null, 2)], {
+    new Blob([JSON.stringify(survey, null, 2)], {
       type: "application/json",
     })
   );
@@ -1496,24 +2546,24 @@ function subSectionOfPage(name, bbList, question, orientation) {
     name: orientation + " BB",
     title: `<span>
     Please, indicate to what extent each of the following <b>${orientation
-      .split("-")
-      .join(
-        " "
-      )}</b>  requirements is met by this digital business capability? (1 not at all, 10 full fulfilment)
+        .split("-")
+        .join(
+          " "
+        )}</b>  requirements are met by this digital business capability? 
       </span>`,
-    isRequired: true,
     columnMinWidth: "390px",
-    columns: [
-      {
-        name: "Ability to support the dBusCap",
-        title: `<span style="display: none;">Ability to support the dBusCap </span>`,
-        cellType: "rating",
-        isRequired: true,
-        rateValues: range(1, 10),
-      },
-    ],
-    choices: range(1, 10),
-    cellType: "rating",
+
+    /*     columns: [
+          {
+            name: "Ability to support the dBusCap",
+            title: `<span style="display: none;">Ability to support the dBusCap </span>`,
+            cellType: "rating",
+            rateValues: range(0, 5),
+          },
+        ], 
+        choices: range(0, 5),
+        cellType: "rating",  */
+
     rows: bbList,
   };
 }
@@ -1540,34 +2590,42 @@ function surveyPages(name, bcList, bbs) {
     );
     bbs[policy].length > 0 && template.elements.push(temp);
   }
-  const bc = {
-    type: "matrixdropdown",
-    name: "Business Capabilities BC",
-    title: `Please, indicate the Expected Public Value and Estimated budget to this digital business capability`,
-    tooltip:
-      "legend: 1-2. no priority (neither in the future); 3-5. Low priority (long-term); 6-8. Medium priority (mid-term); 9-10. Very high priority (short-term)",
-    isRequired: true,
-    columnMinWidth: "260px",
-    columns: [
-      {
-        name: "Expected Public Value",
-        title: `<span>Expected Public Value </span><span data-toggle="tooltip" data-html="true" title="${pubValueTooltip}">  <i class="fa fa-question-circle text-primary"></i></span>`,
-        cellType: "rating",
-        isRequired: true,
-        rateValues: range(1, 5),
-      },
-      {
-        name: "budget",
-        title: `<span>Estimated budget (in millions EUR)</span><span data-toggle="tooltip" data-html="true" title="${budgetTooltip}">  <i class="fa fa-question-circle text-primary"></i></span>`,
-        cellType: "number",
-        isRequired: true,
-      },
-    ],
-    choices: range(1, 5),
-    cellType: "rating",
-    rows: bcList,
-  };
-  template.elements.push(bc);
+
+
+  // const bc = {
+  //   type: "matrixdropdown",
+  //   name: "Business Capabilities BC",
+  //   title: `Please, indicate the Expected Public Value and Estimated budget to this digital business capability`,
+  //   tooltip:
+  //     "legend: 1-2. no priority (neither in the future); 3-5. Low priority (long-term); 6-8. Medium priority (mid-term); 9-10. Very high priority (short-term)",
+  //   isRequired: true,
+  //   columnMinWidth: "260px",
+  //   columns: [
+  //     {
+  //       name: "Expected Public Value",
+  //       title: `<span>Expected Public Value </span><span data-toggle="tooltip" data-html="true" title="${pubValueTooltip}">  <i class="fa fa-question-circle text-primary"></i></span>`,
+  //       cellType: "rating",
+  //       isRequired: true,
+  //       rateValues: range(0, 5),
+  //     },
+  //     {
+  //       name: "budget",
+  //       title: `<span>Estimated budget (in millions EUR)</span><span data-toggle="tooltip" data-html="true" title="${budgetTooltip}">  <i class="fa fa-question-circle text-primary"></i></span>`,
+  //       cellType: "number",
+  //       isRequired: true,
+  //     },
+  //     {
+  //       title: `<span>Target Prospective Average Ability</span><span data-toggle="tooltip" data-html="true" title="${perspectiveTool}"> <i class="fa fa-question-circle text-primary"></i></span>`,
+  //       cellType: `rating`,
+  //       isRequired: true,
+  //       rateValues: range(0, 5),
+  //     },
+  //   ],
+  //   choices: range(0, 5),
+  //   cellType: "rating",
+  //   rows: bcList,
+  // };
+  // template.elements.push(bc);
 
   return template;
 }
@@ -1584,6 +2642,7 @@ function getStrategicFitTooltip(policy) {
  */
 function surveyFirstPage(name, bcList, policy) {
   let title;
+  //console.log(bcList, policy);
   let formattedPolicy = policy.toLowerCase().split(" ").join("-");
   if (formattedPolicy === "business-agnostic") {
     title = `<span>National Digital Strategy Fit</span><span data-toggle="tooltip" data-html="true" title="${getStrategicFitTooltip(
@@ -1601,7 +2660,7 @@ function surveyFirstPage(name, bcList, policy) {
         type: "matrixdropdown",
         name: "Business Capabilities BC",
         title:
-          "Please indicate the value for each selected National Digital Strategic Fit for each digital business capability (1 lower,  5 highest)",
+          "Please select the Digital Business Capabilities (DBC) to be assessed and indicate the National Digital Strategic Fit (0 lowest,  5 highest)",
         tooltip:
           "legend: 1-2. no priority (neither in the future); 3-5. Low priority (long-term); 6-8. Medium priority (mid-term); 9-10. Very high priority (short-term)",
         isRequired: true,
@@ -1611,17 +2670,17 @@ function surveyFirstPage(name, bcList, policy) {
             name: "National Digital Strategy Fit",
             title,
             cellType: "rating",
-            isRequired: true,
-            rateValues: range(1, 5),
+            rateValues: range(0, 5),
           },
         ],
-        choices: range(1, 5),
+        choices: range(0, 5),
         cellType: "rating",
         rows: bcList,
       },
     ],
   };
 }
+
 
 document
   .getElementById("previous-work")
@@ -1636,14 +2695,8 @@ document
     reader.addEventListener("load", async function (evt) {
       document.querySelector(".spinner-border").classList.remove("d-none");
       let content = JSON.parse(evt.target.result);
-
-      if (
-        !content.fullName ||
-        !content.organisation ||
-        !content.email ||
-        !content.country ||
-        !content.checkboxes
-      ) {
+      
+      if (!content.contactData || !content.data) {
         document.querySelector(".spinner-border").classList.add("d-none");
         document
           .querySelector("#previous-work-error")
@@ -1651,18 +2704,17 @@ document
         return;
       }
 
-      fullName = content.fullName;
-      organisation = content.organisation;
-      email = content.email;
-      country = content.country;
-
+      fullName = content.contactData.fullName;
+      organisation = content.contactData.organisation;
+      email = content.contactData.email;
+      country = content.contactData.country;
       checkboxes = content.checkboxes;
 
-      delete content.fullName;
-      delete content.organisation;
-      delete content.email;
-      delete content.country;
-      delete content.checkboxes;
+      delete content.contactData.fullName;
+      delete content.contactData.organisation;
+      delete content.contactData.email;
+      delete content.contactData.country;
+      delete content.contactData.checkboxes;
 
       doLoadState = true;
       Object.assign(currentState, content);
@@ -1692,5 +2744,3 @@ $(window).scroll(function () {
     accessControls.removeClass("access-controls");
   }
 });
-
-$(window).on("resize", updateProgressBar);

@@ -17,6 +17,13 @@
   <link rel="stylesheet" href="../css/loginModal.css" />
   <link rel="stylesheet" href="roadmap.css" />
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"
+    integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/"
+    crossorigin="anonymous"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script> -->
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.2.3/jspdf.plugin.autotable.min.js"></script>
+
   <title>eGovERA&copy;</title>
 </head>
 
@@ -32,15 +39,20 @@
               2. Decision support tools
             </h1>
             <div id="content-test" class="row mr-5">
-              <button id="reset-work" class="btn btn-primary mr-2 d-none" type="reset"
+              <div class="sectionpdfdiv">
+                <button class="sectionpdfbutton" id="pdfButton">
+                  <span class="download-btn-txt" id="pdfButtonTxt">Export the survey results in PDF</span>
+                </button>
+              </div>
+              <!-- <button id="reset-work" class="btn btn-primary mr-2 d-none" type="reset"
                 style="height: 80%; margin-top: 2%">
                 Reset work
-              </button>
+              </button> -->
               <a id="file-selector-link" href="#"
                 class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm col-6"
                 style="height: 80%; margin-top: 2%"><i class="far fa-folder-open" data-toggle="tooltip"
-                  data-placement="left" title="Choose the capability assessment result"></i>
-                <input type="file" id="file-selector" accept=".txt, .json" data-toggle="tooltip" data-placement="left"
+                  data-placement="top" title="Choose the capability assessment result"></i>
+                <input type="file" id="file-selector" accept=".txt, .json" data-toggle="tooltip" data-placement="top"
                   title="Choose the capability assessment result" /></a>
               <img src="../img/european_commission.svg_.png" alt="European Commission" style="width: 100px;"
                 class="ml-2 mr-2">
@@ -51,93 +63,139 @@
 
           <div class="row">
             <div class="col-12">
-              <div class="card shadow mb-4">
-                <a href="#collapseCardExample3" class="d-block card-header py" data-toggle="collapse" role="button"
-                  aria-expanded="false" aria-controls="collapseCardExample3">
-                  <h6 class="m-0 font-weight-bold text-primary text-center">
-                    eGovERA&copy; portfolio management decision support
-                  </h6>
-                </a>
-                <div id="egovera-portofolio" class="container-fluid d-none">
-                  <div class="row">
-                    <div class="col-xl-7">
-                      <div class="table-responsive">
-                        <table class="table table-hover table-sm" id="bcTable" width="100%" cellspacing="0"
-                          style="font-size: 14px; padding-bottom: 0px"></table>
-                      </div>
-                    </div>
-                    <div class="col-xl-5">
-                      <div class="collapse" id="matrixBCs">
-                        <div class="card-body" id="dashboard_div" style="padding-bottom: 0px; padding-top: 0px">
-                          <div class="filters-div">
-                            <div id="visibility_control_div" class=""></div>
-                            <div id="x-axis-div" class="">
-                              <div class="select-input">
+                <div class="card shadow mb-4">
+                    <a href="#collapseCardExample3" class="d-block card-header py" data-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="collapseCardExample3">
+                        <h6 class="m-0 font-weight-bold text-primary text-center">
+                            <span data-toggle="tooltip" data-placement="right" title="Cells with gray borders are editable.">
+                                <i class="fa fa-question-circle text-primary"></i>
+                            </span>
+                            eGovERA&copy; portfolio management decision support
+                        </h6>
+                    </a>
+                    <div id="egovera-portofolio" class="container-fluid d-none">
+                        <!-- Fila para myGridTable y quadrantChart -->
+                        <div class="row">
+                            <!-- Columna para myGridTable -->
+                            <div class="col-xl-6">
+                                <div id="myGridTable"></div>
+                                <div id="totalBudgetDisplay" style="text-align: right; margin-top: 10px;"><b>
+                                        Total Budget: <span id="totalBudgetValue"><b>0</b></span> mill €</b>
+                                </div>
+                                <div id="tableLegend" style="text-align: left; margin-top: 10px;">
+                                    <p style="margin-bottom: 40px; margin-top: -20px;">*Click in a cell to edit the value</p>
+                                </div>
+                            </div>
+                            <!-- Columna para quadrantChart -->
+                            <div class="col-xl-6">
+                                <div class="col-x1-5 quadCol">
+                                    <p>*Change the x axis</p>
+                                    <select id="xAxisSelector">
+                                        <option value="strategicFit">Strategic Fit</option>
+                                        <option value="expPublicValue">Expected Public Value</option>
+                                    </select>
+                                    <div class="quadrantChartBox" style="width: 700px;">
+                                        <canvas id="quadrantChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Fila para el chart tipo araña -->
+                        <div class="row">
+                            <div class="col-xl-6">
                                 <div>
-                                  <span id="policy-filter-span" class="goog-combobox goog-inline-block"><input name=""
-                                      type="text" autocomplete="off" label="Change the x axis"
-                                      placeholder="Change the x axis" aria-label="Change the x axis"
-                                      class="label-input-label" /><span class="goog-combobox-button"
-                                      style="user-select: none">▼</span>
-                                    <div class="goog-menu goog-menu-vertical" role="menu" aria-haspopup="true"
-                                      style="user-select: none; display: none">
-                                      <div value="National digital strategy Fit" class="goog-menuitem" role="menuitem"
-                                        style="user-select: none" id=":g">
-                                        <div class="goog-menuitem-content" style="user-select: none">
-                                          National digital strategy Fit
-                                        </div>
-                                      </div>
-                                      <div value="Expected public value" class="goog-menuitem" role="menuitem"
-                                        style="user-select: none" id=":h">
-                                        <div class="goog-menuitem-content" style="user-select: none">
-                                          Expected public value
+                                    <canvas id="myChart"></canvas>
+                                </div>
+                                <p>*Click on the legend to hide/show the DBC's</p>
+                                <div class="card-body" id="dashboard_div" style="padding-bottom: 0px; padding-top: 0px">
+                                  <div class="filters-div">
+                                    <div id="visibility_control_div"></div>
+                                    <div id="x-axis-div">
+                                      <div class="select-input">
+                                        <div>
+                                          <div class="goog-menu goog-menu-vertical" role="menu" aria-haspopup="true"
+                                            style="user-select: none; display: none">
+                                            <div value="National digital strategy Fit" class="goog-menuitem" role="menuitem"
+                                              style="user-select: none" id=":g">
+                                              <div class="goog-menuitem-content" style="user-select: none">
+                                                National digital strategy Fit
+                                              </div>
+                                            </div>
+                                            <div value="Expected public value" class="goog-menuitem" role="menuitem"
+                                              style="user-select: none" id=":h">
+                                              <div class="goog-menuitem-content" style="user-select: none">
+                                                Expected public value
+                                              </div>
+                                            </div>
+                                          </div>
                                         </div>
                                       </div>
                                     </div>
-                                  </span>
+                                  </div>
+                                  <div>
+                                    <div id="dashboard_strategicSlider_div"></div>
+                                    <div id="dashboard_expPubValSlider_div"></div>
+                                    <div id="dashboard_abiToSupdBusCapSlider_div"></div>
+                                    <div id="budget_filtering_div"></div>
+                                  </div>
                                 </div>
-                                <span style="margin: 0.75rem 0 0 0.62rem" data-toggle="tooltip" data-placement="top"
-                                  title="Drop down list that let to select what is displayed in the x axis: or national digital strategy fit or expected public value">
-                                  <i class="fa fa-question-circle text-primary"></i>
-                                </span>
-                              </div>
+                            </div>
+                       
+                        <!-- Fila para los sliders y botones de filtros -->
+                            <div class="centered-content col-xl-6">
+                                <div class="collapse" style="margin-top: 10%;" id="matrixBCs">
+                                  <p>*Move the sliders to see DBCs that match the filters criteria.</p>
+                                  <select id="dbcFilter" style="margin-bottom: 10px;">
+                                    <option value="all">All DBC's</option>
+                                  </select>
+                                </div>
+        
+                                <style>
+                                  #filters label {
+                                    display: inline-block;
+                                    width: 200px;
+                                    vertical-align: top;
+                                  }
+                                </style>
+                                <div id="filters" class="text-center" style="margin-bottom: 10px;">
+                                  <label>Strategic Fit:</label>
+                                  <input type="range" id="filter-strategicFit" min="0" max="5" value="5">
+                                  <span id="value-strategicFit">5</span>
+                                  <br>
+        
+                                  <label>Expected Public Value:</label>
+                                  <input type="range" id="filter-expPublicValue" min="0" max="5" value="5">
+                                  <span id="value-expPublicValue">5</span>
+                                  <br>
+        
+                                  <label>DBC Support Ability:</label>
+                                  <input type="range" id="filter-dbcSupportAbility" min="0" max="5" value="5">
+                                  <span id="value-dbcSupportAbility">5</span>
+                                  <br>
+        
+                                  <label>Estimated Budget (mill €):</label>
+                                  <input type="range" id="filter-budget" min="0" max="20" value="5">
+                                  <span id="value-budget">5</span>
+                                </div>
+                                <div class="text-center">
+                                    <button class="custom-button" id="applyFilters">Apply Filters</button>
+                                    <button class="custom-button" id="resetFilters">Reset Filters</button>
+                                </div>
                             </div>
                           </div>
-                          <div>
-                            <div class="chart-area d-flex justify-content-center notranslate" id="quadrant_div"></div>
 
-                            <h6 class="filter-header">
-                              Filter the <a target="_blank"
-                                href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
-                                title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">digital
-                                business capabilities</a> with
-                              the following parameters:
-                            </h6>
-                            <div id="dashboard_strategicSlider_div"></div>
-                            <div id="dashboard_expPubValSlider_div"></div>
-                            <div id="dashboard_abiToSupdBusCapSlider_div"></div>
-                            <div id="budget_filtering_div"></div>
-                          </div>
-                          <hr />
-                          <p style="font-size: 14px; text-align: center">
-                            click on one Digital Business Capability to scope
-                            the digital transformation roadmap support
-                          </p>
-                        </div>
-                      </div>
+
                     </div>
-                  </div>
                 </div>
-              </div>
             </div>
-          </div>
-
+        </div>
           <div class="row">
             <div class="col-xl-12 col-lg-12">
               <div class="card shadow mb-4">
                 <a href="#collapseCardExample2" class="d-block card-header py" data-toggle="collapse" role="button"
                   aria-expanded="false" aria-controls="collapseCardExample2">
                   <h6 class="m-0 font-weight-bold text-primary text-center">
+
                     eGovERA&copy; digital transformation roadmap decision
                     support
                   </h6>
@@ -148,7 +206,6 @@
                       <!--  <p class="align-instructions text-primary">
                         <b>Click on any Digital Public Service</b>
                       </p> -->
-
                       <div class="row">
                         <div class="col-sm-3">
                           <div id="dps-network-info">
@@ -162,7 +219,7 @@
                             <p class="mt-1 mb-1">
                               <b>Digital public services in scope:</b>
                             </p>
-                            <div class="dps-select-div mt-2">
+                            <div class="dps-select-div mt-2" id="dps-select-info">
                               <ul></ul>
                             </div>
                           </div>
@@ -289,7 +346,7 @@
                           digital business capability</b>
                       </p>
                       <div class="row">
-                        <div class="col-xl col-lg" style="height: 450px">
+                        <div class="col-xl col-lg" style="height: 450px" id='graph3_info'>
                           <div id="networkBBs2-dbc-info">
                             <p>
                               <b>Selected digital business capability:</b>
@@ -299,7 +356,7 @@
                           <hr class="hr-styling" />
                           <div id="networkBBs2-dps-info">
                             <p><b>Selected digital public service(s):</b></p>
-                            <div class="info"></div>
+                            <div class="info" id="selected-service-info"></div>
                           </div>
                           <hr class="hr-styling" />
                           <div id="networkBBs2-view-info">
@@ -432,6 +489,11 @@
   </div>
 
   <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=fetch"></script>
+  <!-- <script>
+    $(document).ready(function () {
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script> -->
 
   <script type="text/javascript" src="../vendo/jquery/jquery.min.js"></script>
   <script type="text/javascript" src="../vendo/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -445,11 +507,12 @@
 
   <script type="text/javascript" src="https://unpkg.com/vis-network@7.7.0/standalone/umd/vis-network.min.js"></script>
 
+  <div id="google_translate_element"></div>
   <script type="text/javascript">
     function googleTranslateElementInit() {
       new google.translate.TranslateElement(
         {
-          pageLanguage: "en",
+          pageLanguage: 'en', includedLanguages: 'es,fr,de,it,pt,ru,pl,nl,sv,no,da,fi,el,cs,hu,ro,bg,hr,sk,sl,sr,et,lv,lt',
           layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
         },
         "google_translate_element"
@@ -469,7 +532,7 @@
 
   <script src="../JSBuild/authenticationModal.js"></script>
 
-  <script src="../JSBuild/roadmap.js"></script>
+  <script src="../JSBuild/roadmap.js" defer></script>
 
   <script src="../js/sb-admin-2.min.js"></script>
 </body>

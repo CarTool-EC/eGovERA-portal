@@ -8,14 +8,22 @@
   <meta name="description" content="" />
   <meta name="author" content="" />
 
+  <script type="text/javascript" src="../vendo/jquery/jquery.min.js"></script>
+
   <link href="../vendo/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
   <link
     href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
     rel="stylesheet" />
+
+  <!-- Default V2 theme -->
+  <link href="https://unpkg.com/survey-jquery/defaultV2.min.css" type="text/css" rel="stylesheet">
+
   <link href="../css/sb-admin-2.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="../css/loginModal.css" />
   <link rel="stylesheet" href="../css/mycss.css" />
   <link rel="stylesheet" href="survey.css" />
+
+  <script type="text/javascript" src="https://unpkg.com/survey-jquery/survey.jquery.min.js"></script>
   <title>eGovERA&copy</title>
 </head>
 
@@ -27,7 +35,7 @@
       <div id="content">
         <div class="container-fluid" style="padding-top: 20px">
           <div class="d-sm-flex align-items-center justify-content-between mb-4" id="divtitle">
-            <h1 class="h3 mb-0 text-gray-800">1. Capability assessment</h1>
+            <h1 class="h3 mb-0 text-gray-800">1. Digital Business Capability Assessment</h1>
             <img src="../img/european_commission.svg_.png" alt="European Commission" style="width: 100px;"
               class="ml-auto mr-2">
             <div id="login-btn"></div>
@@ -61,7 +69,7 @@
                           </div>
                           <div class="col-md-3 mb-3">
                             <label for="validationCustom02">Organisation email</label>
-                            <input type="text" class="form-control" id="validationCustom04" placeholder="email"
+                            <input type="text" class="form-control" id="validationCustom04" placeholder="Email"
                               required />
                             <div class="valid-feedback">correct</div>
                           </div>
@@ -73,14 +81,14 @@
                           </div>
                         </div>
                         <br />
-                        <p>
+                        <!-- <p>
                           <b>Please select at least one or more policy domains
                             for the assessement:</b>
-                        </p>
+                        </p> -->
                         <div id="checkboxes" class="form-check-group"></div>
                         <br />
                         <div class="form-check-group d-flex">
-                          <button id="start" class="btn btn-primary" type="submit">
+                          <button id="startAssess" class="btn btn-primary" type="submit">
                             Start the assessment
                           </button>
                           <div class="spinner-border text-primary d-none" role="status">
@@ -88,12 +96,12 @@
                           </div>
 
                           <div class="ml-auto">
-                            <label><b>Load previous work</b></label>
-                            <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="far fa-folder-open" data-toggle="tooltip" data-placement="left"
-                                title="Load previous work"></i>
+                            <label><strong>Load previous work</strong></label>
+                            <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><em
+                                class="far fa-folder-open" data-toggle="tooltip" data-placement="top"
+                                title="Load previous work"></em>
                               <input type="file" id="previous-work" accept=".json" data-toggle="tooltip"
-                                data-placement="left" title="Load previous work" />
+                                data-placement="top" title="Load previous work" />
                             </a>
                           </div>
                         </div>
@@ -110,7 +118,9 @@
               </div>
             </div>
           </div>
-
+          <button id="save-work-btn" class="btn btn-primary">
+            Save survey
+            </button>
           <div class="row">
             <div class="col-xl col-lg">
               <div class="card shadow mb-4">
@@ -142,7 +152,8 @@
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title text-primary font-weight-bold col-11 text-center" id="exampleModalLongTitle">DIGITAL
+              <h5 class="modal-title text-primary font-weight-bold col-11 text-center" id="exampleModalLongTitle">
+                DIGITAL
                 BUSINESS CAPABILITIES OVERVIEW
               </h5>
               <button type="button" class="close col-1" data-dismiss="modal" aria-label="Close">
@@ -150,69 +161,59 @@
               </button>
             </div>
             <div class="modal-body">
-              <div>Please indicate the <a class="text-primary"
-                  title="It reports the strategic priority assigned to the digital business capability by the national digital agenda of the country.">National
-                  Digital Strategic Fit*</a> for each <a target="_blank"
-                  href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
-                  title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">Digital
-                  Business Capabilities</a>, taking
-                into account the following <b>instructions:</b></div>
+              <div>Please indicate the <strong><em>National
+                      Digital Strategic Fit*</em></strong></a> for each <strong><em>Digital
+                      Business Capabilities</em></strong></a>, taking
+                into account the following <strong>instructions:</strong></div>
               <ul>
-                <li>You are asked to prioritise all the <a target="_blank"
-                    href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
-                    title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">Digital
-                    Business Capabilities</a>
-                  for the selected policy domain,
-                  according to the <a class="text-primary"
-                    title="It reports the strategic priority assigned to the digital business capability by the national digital agenda of the country.">National
+                <li>You are asked to prioritise all the <strong>Digital
+                      Business Capabilities</strong></a>for the selected policy domain,
+                  according to the National
                     Digital Strategic Fit</a> that you as a Member
                   state assign to the specific
-                  <a target="_blank"
-                    href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
-                    title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">Digital
-                    Business Capabilities</a>
+                  <strong>Digital Business Capabilities</strong></a>
+
                 </li>
-                <li>You can choose to address only some <a target="_blank"
-                    href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
-                    title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">Digital
-                    Business Capabilities</a>
-                  and to exclude any of them in
-                  the evaluation process using the <span class="text-success">green button</span> on the left side of
-                  the <a target="_blank"
-                    href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
-                    title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">Digital
-                    Business Capabilities</a>
-                  list. In particular, if one or more <a target="_blank"
-                    href="https://joinup.ec.europa.eu/taxonomy/term/http_e_f_fdata_ceuropa_ceu_fdr8_fDigitalBusinessCapability "
-                    title="Digital Capabilities are the key skills and capabilities a company or a Government requires to transform itself into a sustainable and successful business by considering digital technology as the enabling component">Digital
-                    Business Capability</a>,
-                  doesn’t play a strategic role in your
-                  national agenda, then its assessment might be skipped. </li>
+                <li>You can choose between some <strong>Digital
+                      Business Capabilities</strong></a> and exclude any of them in
+                  the evaluation process. If one or more Digital Business Capabilities</a>
+                  do not play a strategic role in your national agenda, then their assessment might be skipped. To
+                  exclude
+                  any Digital Businesss Capability use the green button on the left side of the <strong>Digital Business
+                    Capabilities</strong> list. </li>
+
               </ul>
-              <div><b>Definitions:</b></div>
-              <p><b>Digital Business Capabilities:</b> A particular digital ability or capacity that an organisation may
+              <div>
+                <h4><b>Definitions:</b></h4>
+              </div>
+              <p><b><u>Digital Business Capabilities:</u></b> A particular digital ability or capacity that an
+                organisation may
                 possess or exchange to achieve a specific purpose or outcome</p>
-              <p><b>National Digital Strategy Fit:</b> It reports the strategic priority assigned to the digital
+
+              <p><b><u>National Digital Strategy Fit:</u></b> It reports the strategic priority assigned to the digital
                 business
                 capability by the national digital agenda of the country</p>
+
               <div>
-                <p>*Score for the <a class="text-primary"
-                    title="It reports the strategic priority assigned to the digital business capability by the national digital agenda of the country.">National
+                <p>*Score for the National
                     Digital Strategic Fit</a> parameter (<b>1 lower, 5 highest</b>):</p>
                 <ol>
-                  <li><b>very low priority</b> (this dBusCap will be taken into account in the future)</li>
-                  <li><b>Low priority</b> (this dBusCap will be developed once the ones with medium priority are
-                    developed)
+                  <li><b>Very low priority</b> (this Digital Business Capability will be considered in the future)</li>
+                  <li><b>Low priority</b> (this Digital Business Capability will be developed once the ones with medium
+                    priority are developed)
                   </li>
-                  <li><b>Medium priority</b> (this dBusCap will be developed once the ones with high priority are
-                    developed)
+                  <li><b>Medium priority</b> (this Digital Business Capability will be developed once the ones with high
+                    priority are developed)
                   </li>
-                  <li><b>High priority</b> (this dBusCap will be developed once the ones with very high priority are
-                    developed)
+                  <li><b>High priority</b> (this Digital Business Capability will be developed once the ones with very
+                    high priority are developed)
                   </li>
-                  <li><b>Very high priority</b> (this dBusCap has the highest priority in the development)</li>
+                  <li><b>Very high priority</b> (this Digital Business Capability has the highest priority in the
+                    development)</li>
                 </ol>
               </div>
+              <p><strong>Non Applicable:</strong> By selecting a requirements as "not applicable", they will not be
+                considered in the overall assessed ability to support the digital business capability</p>
             </div>
 
           </div>
@@ -248,21 +249,21 @@
       <span>Go to Top</span>
     </div>
   </div>
+  
 
   <script
     src="https://polyfill.io/v3/polyfill.min.js?features=String.prototype.includes%2Cfetch%2CArray.prototype.forEach%2CObject.assign%2CObject.values%2CArray.from"></script>
 
-  <script type="text/javascript" src="../vendo/jquery/jquery.min.js"></script>
+  
   <script type="text/javascript" src="../vendo/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <script type="text/javascript" src="../vendo/jquery-easing/jquery.easing.min.js"></script>
 
   <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet" />
+
   <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/survey-jquery/1.7.1/survey.jquery.min.js"
-    integrity="sha512-EYG2oq0Hk9HoUpcRRZT2HcOybGiJhfyQp2sDh2wrNMxYiHijLfocrxe0qHSuj58AWHaAi3EeovgyuAt7UGCdEw=="
-    crossorigin="anonymous"></script>
+  <script type="text/javascript" src="https://unpkg.com/survey-jquery/survey.jquery.min.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js"
     integrity="sha512-L03kznCrNOfVxOUovR6ESfCz9Gfny7gihUX/huVbQB9zjODtYpxaVtIaAkpetoiyV2eqWbvxMH9fiSv5enX7bw=="
@@ -276,7 +277,7 @@
     function googleTranslateElementInit() {
       new google.translate.TranslateElement(
         {
-          pageLanguage: "en",
+          pageLanguage: 'en', includedLanguages: 'es,fr,de,it,pt,ru,pl,nl,sv,no,da,fi,el,cs,hu,ro,bg,hr,sk,sl,sr,et,lv,lt',
           layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
         },
         "google_translate_element"

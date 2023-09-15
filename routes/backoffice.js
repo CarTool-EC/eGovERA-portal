@@ -146,17 +146,6 @@ router.get("/metadata", (req, res) => {
   res.status(200).json(obj);
 });
 
-const determineFile = (content) => {
-  switch (Object.keys(content).length) {
-    case 4:
-      return "dBusCaps";
-    case 5:
-      return "dPubSer";
-    default:
-      return "abb";
-  }
-};
-
 const readPerFile = (file) => {
   let fileContent = fs.readFileSync(file);
   fileContent = JSON.parse(fileContent);
@@ -166,25 +155,21 @@ const readPerFile = (file) => {
 
 router.get("/get-files", (req, res) => {
   const files = fs.readdirSync(PERM_DIR_PATH);
-  const filesContent = {};
+  const filesContent = [];
 
   try {
     files.forEach((file) => {
       const content = readPerFile(`${PERM_DIR_PATH}/${file}`);
-      const type = determineFile(content[0]);
-      filesContent[type] = content;
+      filesContent.push(content);
     });
-
-    res
-      .status(200)
-      .send(
-        createBcListObject(
-          filesContent.abb,
-          filesContent.dPubSer,
-          filesContent.dBusCaps
-        )
-      );
-    // res.status(200).send(filesContent);
+    // res
+    //   .status(200)
+    //   .send(
+    //     createBcListObject(
+    //       filesContent
+    //     )
+    //   );
+    res.status(200).send(filesContent);
   } catch (e) {
     res.status(500).send({ message: "Failed" });
   }
@@ -289,6 +274,21 @@ let groupABBByID = (array) => {
     let ability = null;
     let successors = [];
     let digPubServ = [];
+    let specificQuestion = item.Specific_question_per_EIRAABB || "";
+    let artificialIntelligence = item.BABC5_Artificial_Intelligence || "";
+    let digitalCommunication = item.BABC6_Digital_Communication || "";
+    let dataManagement = item.BABC9_Data_Management || "";
+    let caseWorkflowManagement = item.BABC12_Case_and_Workflow_management || "";
+    let electronicIdentification = item.BABC1_Electronic_identification || "";
+    let nonApplicable = item.Falset_Applicable;
+
+    let consultation = item.HDBC01_Consultation || "";
+    let laboratory = item.HDBC02_Laboratory || "";
+    let prescription = item["HDBC04_Prescription / Dispensation"] || "";
+    let electronicHealth = item["Electronic_health_records_&_patient_summary"] || "";
+    let medicalImaging = item.HDBC07_Medical_imaging || "";
+    let secondaryUse = item.HDBC16_Secondary_use_of_healthcare_data || "";
+    
 
     if (item.successors !== undefined && item.successors !== null) {
       let tempSuccessors = item.successors.toString();
@@ -319,6 +319,19 @@ let groupABBByID = (array) => {
         ability,
         successors,
         digPubServ,
+        specificQuestion,
+        artificialIntelligence,
+        digitalCommunication,
+        dataManagement,
+        caseWorkflowManagement,
+        electronicIdentification,
+        nonApplicable,
+        consultation,
+        laboratory,
+        prescription,
+        electronicHealth,
+        medicalImaging,
+        secondaryUse,
       },
     };
 
@@ -406,6 +419,6 @@ const createBcListObject = (inputBBJSON, inputDPSJSON, inputBCJSON) => {
     abbs = [...new Set(abbs)];
     tempDBCs[id].abbs = abbs;
   });
-
+  
   return tempDBCs;
 };

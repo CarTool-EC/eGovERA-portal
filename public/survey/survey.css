@@ -15,8 +15,9 @@
   color: red;
 }
 
-#save-work-btn {
+#save-work-btn, #show-instruct-btn {
   margin-right: 0.35rem;
+  margin-bottom: 10px;
 }
 
 #simpleCard button {
@@ -40,6 +41,7 @@
   font-size: 0.9rem;
   padding: 0 1em;
   text-align: center;
+  overflow: hidden;
 }
 
 .progress-bar-buttons-active,
@@ -48,15 +50,27 @@
   color: #f2f2f2;
   font-weight: bold;
 }
+
 .progress-bar-buttons-active,
 .progress-bar-divs-active {
   background-color: rgb(78, 115, 223);
   border: 3px solid rgb(78, 115, 223);
 }
 
+.progress-bar-buttons-current-active,
+.progress-bar-divs-current-active {
+  background-color: rgb(78, 115, 223);
+  color: #f2f2f2;
+
+}
+
+.progress-bar-buttons-current-active {
+  border: 3px solid rgb(228, 26, 26);
+}
+
 .progress-bar-buttons {
-  width: inherit;
   margin-left: 10px;
+  width:300px;
 }
 
 .progress-bar-buttons:first-child {
@@ -76,7 +90,7 @@
   justify-content: center;
 }
 
-.progress-bar-divs > p {
+.progress-bar-divs>p {
   margin: 0 0 0 1em;
 }
 
@@ -94,7 +108,7 @@
   color: inherit;
 }
 
-.collapse.show > .card-body {
+.collapse.show>.card-body {
   min-height: 290px;
 }
 
@@ -118,11 +132,12 @@
   right: 61px;
   top: 129px;
 }
+
 #surveyContainer {
   margin-top: 270px;
 }
 
-#google_translate_element > div > div > img {
+#google_translate_element>div>div>img {
   display: none;
 }
 
@@ -171,7 +186,7 @@
   display: block;
 }
 
-.table-parent-event > td:nth-child(2) {
+.table-parent-event>td:nth-child(2) {
   color: #eeeeee;
 }
 
@@ -196,6 +211,7 @@
 .tax-policy-images {
   content: url("../img/tax.png");
 }
+
 .business-agnostic-policy-images {
   content: url("../img/tech.png");
 }
@@ -246,11 +262,11 @@
   width: 320px !important;
 }
  */
-.collapse > .sv_qstn_error_top {
+.collapse>.sv_qstn_error_top {
   display: none !important;
 }
 
-[data-bind="css: question.cssContent"] > .alert {
+[data-bind="css: question.cssContent"]>.alert {
   display: none;
 }
 
@@ -266,6 +282,364 @@
   align-items: center;
 }
 
-#buttons-in-top{
+#buttons-in-top {
   margin-left: 0 !important;
+}
+
+.diff-class {}
+
+.non-applicable-activated {
+  background-color: rgb(228, 26, 26);
+}
+
+.hide {
+  display: none;
+}
+
+.view-avg {}
+
+.disable-div {
+  pointer-events: none;
+}
+
+.slider-container {
+  position: relative;
+  overflow: hidden;
+  scroll-behavior: smooth;
+  margin: 0 auto;
+  width: 1200px;
+  padding-bottom:5px;
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+}
+
+/* Estilizar la barra de desplazamiento */
+::-webkit-scrollbar {
+  width: 5px; /* Ancho de la barra de desplazamiento */
+  height: 10px;
+}
+
+/* Estilizar el pulgar de la barra de desplazamiento */
+::-webkit-scrollbar-thumb {
+  background-color: #888; /* Color del pulgar */
+  border-radius: 5px; /* Radio de los bordes del pulgar */
+}
+
+/* Cambiar el color del pulgar cuando se está desplazando */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* Color del pulgar al pasar el cursor sobre él */
+}
+
+.visible{
+  display: block;
+}
+
+.slider {
+  display: flex;
+  transition: transform 0.3s ease-in-out;
+  scroll-behavior: smooth;
+  width: 1000%;
+
+}
+
+.slider-item {
+  flex: 0 0 calc(100% / 3);
+  /* Muestra 3 secciones a la vez */
+  width: 100%;
+  height: 100px;
+  /* Ajusta la altura según tus necesidades */
+}
+
+.slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background-color: transparent;
+  border: none;
+  font-size: 20px;
+  color: black;
+  cursor: pointer;
+}
+
+.slider-arrow-left {
+  left: 5px;
+  margin-left: 20%
+}
+
+.slider-arrow-right {
+  right: 5px;
+  margin-right: 20%
+}
+
+/* Estilos para los checkboxes */
+.additional-comment-checkbox input[type="checkbox"] {
+  /* Estilos para reemplazar el aspecto por defecto del checkbox */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.additional-comment-checkbox input[type="checkbox"]:checked {
+  /* Cambia el estilo del tick cuando está marcado */
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M6.293 10.293L3.646 7.646a.5.5 0 01.708-.708L6.5 8.793l4.646-4.647a.5.5 0 01.708.708l-5 5a.5.5 0 01-.708 0z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Estilos para los campos de texto de los Additional Comments */
+.additional-comments-input {
+  width: 250px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin: 8px;
+  
+}
+
+#checkboxes {
+  visibility: hidden;
+}
+
+
+/* Estilos para el contenedor principal */
+#surveyContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  flex-direction: column; /* Alinea los elementos en columna */
+}
+
+/* Estilos para el contenedor de cada bloque additional-comment-container */
+.survContainer {
+  display: flex;
+  flex-wrap: wrap; /* Asegura que los bloques se envuelvan en una nueva línea cuando no quepan en una sola fila */
+  align-items: center;
+}
+
+/* Estilos para cada bloque additional-comment-container */
+.additional-comment-container {
+  display: flex;
+  align-items: center;
+  margin: 5px;
+  min-width: 400px; /* Ancho mínimo para evitar que se descuadre con textos más largos */
+  flex-basis: 100%; /* Ocupa el ancho completo */
+  /*justify-content: center;*/
+}
+
+/* Estilo para el checkbox */
+.additional-comment-container input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.additional-comments-input {
+  width: 70%;
+}
+
+/* Estilo para el DPS */
+.additional-comment-container label {
+  margin-right: 6px;
+  min-width: 150px; 
+}
+
+/* Estilos para el contenedor de los botones de valoración */
+.rating-container {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+/* Estilos para el botón de valoración */
+.additional-comment-container .rating-container button {
+  border: none; /* Quitamos el borde */
+  margin-left: 5px;
+  background-color: #f0f0f0;
+  color: #333;
+  padding: 5px 10px;
+  margin-right: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  outline: none; /* Quitamos el contorno que aparece al hacer clic */
+}
+
+/* Estilo para el borde gris de los botones cuando se hace clic */
+.additional-comment-container .rating-container button:active {
+  border: 1px solid gray; /* Mostramos el borde al hacer clic */
+}
+
+/* Estilos para el botón de valoración seleccionado */
+.additional-comment-container .rating-container button.selected {
+  background-color: #ccc; /* Color de fondo cuando está seleccionado */
+  border: 1px solid gray; /* Mostramos el borde cuando está seleccionado */
+}
+
+/* Estilos para el campo Additional Comments */
+.additional-comments-input input[type="text"] {
+  padding: 5px;
+  border: 1px solid #ccc;
+  width: 500px;
+}
+
+/* Estilo para el na-container */
+.na-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 250px; 
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 5px;
+  margin: 8px;
+  background-color: #8080808a; 
+  color: #0000008a; 
+  height: 37px;
+}
+
+
+.na-container label {
+  font-size: 14px;
+  font-weight: bold;
+  cursor: default; 
+  text-align: center; 
+  margin-top: 7px;
+}
+
+.sd-page{
+  width: 200%;
+  margin-left: -325px !important;
+}
+
+.sv-list__filter {
+  display: none;
+}
+
+.sd-input[type="range"] {
+  width: 200px;
+}
+
+.sd-input[type="range"] {
+  outline: 0;
+  border: 0;
+  border-radius: 400px;  /* Ajustado */
+  width: 250px;  /* Ajustado */
+  max-width: 100%;
+  margin: 19.2px 0 12.8px;  /* Ajustado */
+  transition: box-shadow 0.2s ease-in-out;
+
+  @media screen and (-webkit-min-device-pixel-ratio:0) {
+    & {
+      overflow: hidden;
+      height: 5px;  /* Ajustado */
+      -webkit-appearance: none;
+      background-color: #ddd;
+    }
+    &::-webkit-slider-runnable-track {
+      height: 5px;  /* Igualado a la altura del slider */
+      -webkit-appearance: none;
+      transition: box-shadow 0.2s ease-in-out;
+      color: transparent;
+      background-color: transparent;
+    }
+    &::-webkit-slider-thumb {
+      width: 15px;  /* Ajustado para ser un círculo perfecto */
+      -webkit-appearance: none;
+      height: 15px;  /* Ajustado para ser un círculo perfecto */
+      cursor: pointer;
+      background: #fff;
+      box-shadow: -250px 0 0 240px #1597ff, inset 0 0 0 15px #1597ff;
+      border-radius: 50%;  /* Hace que sea un círculo perfecto */
+      margin-top: -5px;  /* Ajusta la posición vertical del pulgar */
+      transition: box-shadow 0.2s ease-in-out;
+      position: relative;
+    }
+    &:active::-webkit-slider-thumb {
+      background: #fff;
+      box-shadow: -272px 0 0 256px #1597ff, inset 0 0 0 2.4px #1597ff;  /* Ajustado */
+    }
+  }
+
+  &::-moz-range-progress {
+    background-color: #43e5f7; 
+  }
+  &::-moz-range-track {  
+    background-color: #9a905d;
+  }
+
+  &::-ms-fill-lower {
+    background-color: #43e5f7; 
+  }
+  &::-ms-fill-upper {  
+    background-color: #9a905d;
+  }
+
+}
+
+
+
+.dpsInfo{
+  margin-bottom: -40px !important;
+}
+
+
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.highlighted-text {
+  font-weight: bold;
+}
+
+.tooltip-icon {
+  cursor: pointer;
+  color: #007BFF;
+  font-size: 1.2em;
+}
+
+.tooltip-content {
+  visibility: hidden;
+  background-color: #555;
+  color: #fff !important;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 10px;
+  position: absolute;
+  z-index: 1;
+  width: 600px;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -300px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip-container:hover .tooltip-content {
+  visibility: visible;
+  opacity: 1;
+}
+body a:link {
+  color: black; 
+  text-decoration: none; 
+}
+body a:hover {
+  color: darkgray; 
+}
+
+.custom-panel-class {
+  font-size: 22px;
+}
+.custom-question-class{
+  font-size:22px;
+}
+
+.custom-view-class {
+  font-size: 27px;
 }

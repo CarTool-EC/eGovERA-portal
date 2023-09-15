@@ -14,7 +14,7 @@ function createLoginButton() {
 
 function simpleButton() {
   const btn = document.createElement("button");
-  btn.classList.add("btn", "btn-light");
+  btn.classList.add("btn", "btn-dark");
 
   const role = sessionStorage.getItem("role");
   const isLoggedIn = role !== "";
@@ -42,7 +42,7 @@ function adminLoginButton() {
 
   const text = document.createElement("p");
   text.style.color = "#4e74df";
-  text.style.maxHeight = "1rem !importnat";
+  text.style.maxHeight = "1rem !important";
   text.innerHTML = "Logged as admin";
 
   const imgDiv = document.createElement("div");
