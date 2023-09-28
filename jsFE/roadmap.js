@@ -1,7 +1,7 @@
 import "regenerator-runtime/runtime";
 import 'chartjs-plugin-annotation';
 import { Grid } from "gridjs";
-
+import FILES from "./requestSurvey";
 
 let demo = true;
 google.charts.load("current", {
@@ -985,7 +985,24 @@ function callBackForRequest(response, json) {
       { id: 'expPublicValue', name: 'Expected Public Value', attributes: { "contenteditable": "true" } },
       { id: 'budget', name: 'Estimated Budget (mill €)', attributes: { "contenteditable": "true" } }
     ],
-    data: editedData
+    data: editedData,
+    style: {
+      table: {
+        border: '3px solid #ccc'
+      },
+      th: {
+        'background-color': 'rgba(0, 0, 0, 0.1)',
+        color: '#000',
+        //'border': '3px solid #ccc',
+        'border-bottom': '3px solid #ccc',
+        'border-left': '5px',
+        'border-right': '5px',
+        'text-align': 'center'
+      },
+      td: {
+        'text-align': 'center'
+      }      
+    }
   });
   populateDBCDropdown(editedData);
 
@@ -1109,37 +1126,6 @@ function renderChart(data) {
   }
 }
 //plugin quadrant block
-const quadrantLinesDEPRECATED = {
-  id: 'quadrantLinesBCK',
-  beforeDraw(chart) {
-    const ctx = chart.ctx;
-    const chartArea = chart.chartArea;
-
-    // Obtiene las posiciones de pixel para el valor 2.5 en ambos ejes
-    const midX = chart.scales['x'].getPixelForValue(2.5);
-    const midY = chart.scales['y'].getPixelForValue(2.5);
-
-    ctx.save();
-
-    // Define el estilo de línea
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 1;
-
-    // Dibuja la línea vertical
-    ctx.beginPath();
-    ctx.moveTo(midX, chartArea.top);
-    ctx.lineTo(midX, chartArea.bottom);
-    ctx.stroke();
-
-    // Dibuja la línea horizontal
-    ctx.beginPath();
-    ctx.moveTo(chartArea.left, midY);
-    ctx.lineTo(chartArea.right, midY);
-    ctx.stroke();
-
-    ctx.restore();
-  }
-};
 
 const quadrantLines = {
   id: 'quadrantLines',
@@ -1170,19 +1156,20 @@ const quadConfig = {
   data: {},
   options: {
     responsive: true,
-    maintainAspectRatio: true,
+    maintainAspectRatio: false,
+    aspectRatio: 1,
     layout: {
       padding: {
-        top: 50,
-        right: 50
+        top: 5,
+        right: 15
       }
     },
     scales: {
       xAxes: [{
-        title: {
-          color: 'red',
+        scaleLabel: {
           display: true,
-          text: 'Strategic Fit'
+          labelString: 'Strategic Fit',
+          fontSize: 20,
         },
         gridLines: {
           display: false,
@@ -1191,13 +1178,25 @@ const quadConfig = {
           beginAtZero: true,
           min: 0,
           max: 5,
-          stepSize: 1,
+          stepSize: 0.5,
+          callback: function(value, index, values) {
+            if (value == 0) {
+              return "low"
+            } else if (value == 2.5) {
+              return "medium"
+            } else if (value == 5) {
+              return "high"
+            }
+
+            return "";
+          },
         }
       }],
       yAxes: [{
-        title: {
+        scaleLabel: {
           display: true,
-          text: "DBC Support Ability"
+          labelString: "DBC Support Ability",
+          fontSize: 20,
         },
         gridLines: {
           display: false,
@@ -1206,99 +1205,62 @@ const quadConfig = {
           beginAtZero: true,
           min: 0,
           max: 5,
-          stepSize: 1,
+          stepSize: 0.5,
+          callback: function(value, index, values) {
+            if (value == 0) {
+              return "low"
+            } else if (value == 2.5) {
+              return "medium"
+            } else if (value == 5) {
+              return "high"
+            }
+
+            return "";
+          },
         }
       }],
     },
+    tooltips: {
+      callbacks: {
+        label: function (item, data) {
+          var labelText = [
+            " " + data.datasets[item.datasetIndex].label,
+            "   x: " + data.datasets[item.datasetIndex].data[item.index].x,
+            "   y: " + data.datasets[item.datasetIndex].data[item.index].y,
+            "   budget:" + data.datasets[item.datasetIndex].data[item.index].budget + " mill €"
+          ];
+
+          return labelText;
+        },
+      },
+    },
   },
-  plugins: [quadrantLines],
+  plugins: [
+    quadrantLines,
+    {
+      beforeInit: function(chart, options) {
+        chart.legend.afterFit = function() {
+          this.height = this.height + 10;
+        };
+      },
+    },
+  ],
 };
 
-const configDEPRECATED = {
-  type: "scatter",
-  data: {},
-  options: {
-    scales: {
-      x: {
-        title: {
-          color: 'red',
-          display: true,
-          text: 'Strategic Fit'
-        },
-        autoSkip: false,
-        beginAtZero: true,
-        min: 0,
-        max: 5,
-        ticks: {
-          stepSize: 1
-        }
-      },
-      y: {
-        axis: "y",
-        autoSkip: false,
-        title: {
-          display: true,
-          text: "DBC Support Ability"
-        },
-        beginAtZero: true,
-        min: 0,
-        max: 5,
-        ticks: {
-          stepSize: 1
-        }
-      }
-    },
-    plugins: {
-      tooltip: {
-        enabled: true,
-        callbacks: {
-          title: function (context) {
-            return context[0].dataset.label;
-          },
-        }
-      },
-      annotation: {
-        annotations: [
-          {
-            type: 'line',
-            mode: 'horizontal',
-            scaleID: 'y',
-            value: 2.5,
-            borderColor: 'red',
-            borderWidth: 1
-          },
-          {
-            type: 'line',
-            mode: 'vertical',
-            scaleID: 'x',
-            value: 2.5,
-            borderColor: 'red',
-            borderWidth: 1
-          }
-        ]
-      },
-      quadrants: {
-        topLeft: "purple",
-        topRight: "grey",
-        bottomRight: "green",
-        bottomLeft: "yellow",
-      }
-    }
-  },
-};
+
+
 
 function updateXAxis(choice) {
-  if (choice === 'Strategic Fit') {
-    quadChart.options.scales.x.title.display = true;
-    quadChart.options.scales.x.title.text = 'Strategic Fit';
-  } else if (choice === 'Expected Public Value') {
-    quadChart.options.scales.x.title.display = true;
-    quadChart.options.scales.x.title.text = 'Expected Public Value';
+  if (choice === 'strategicFit') {
+    quadChart.scales["x-axis-0"].options.scaleLabel.display = true;
+    quadChart.scales["x-axis-0"].options.scaleLabel.labelString = 'Strategic Fit';
+  } else if (choice === 'expPublicValue') {
+    quadChart.scales["x-axis-0"].options.scaleLabel.display = true;
+    quadChart.scales["x-axis-0"].options.scaleLabel.labelString = 'Expected Public Value';
   }
+
   quadChart.update(); // Actualiza el gráfico después de realizar cambios en las opciones.
 }
-
-
 
 function renderQuadrantChart(chartData) {
   quadConfig.data = chartData;
@@ -1308,7 +1270,86 @@ function renderQuadrantChart(chartData) {
     quadChart.data = quadConfig.data;
     quadChart.update();
   }
-  //console.log(quadChart.config);
+
+
+  quadChart.canvas.onclick = function (evt) {
+    var activePoints = quadChart.getElementsAtEventForMode(evt, 'point', quadChart.options);
+    if (activePoints.length === 0) {
+        console.error('No se hizo clic en ninguna burbuja.');
+        return;
+    }
+
+    var firstPoint = activePoints[0];
+    var datasetIndex = firstPoint._datasetIndex;
+    var dataIndex = firstPoint._index;
+
+    var dataset = quadChart.data.datasets[datasetIndex];
+    if (!dataset) {
+        console.error('No se pudo obtener el dataset.');
+        return;
+    }
+    
+    var bubbleData = quadChart.data.datasets[datasetIndex].data[dataIndex];
+    if (!bubbleData) {
+        console.error('No se pudo obtener los datos de la burbuja.');
+        return;
+    }
+
+    var dbcName = dataset.label; 
+    if (!dbcName) {
+        console.error('No se pudo obtener el nombre del DBC.');
+        return;
+    }
+
+    const dbcData = editedData.find(data => data.dbc === dbcName);
+
+    if (!dbcData) {
+        console.error(`No se encontraron datos para el DBC con nombre ${dbcName}`);
+        return;
+    }
+
+
+    createBuildingBlocksTableUpdated(dbcData);
+};
+
+}
+async function createBuildingBlocksTableUpdated(dbcData) {
+  document.getElementById("bb-div").classList.remove("d-none");
+  let response = await FILES;
+  let abbList = response[0];
+
+  if (!dbcData) {
+      console.error('No se pudieron obtener los datos necesarios para rellenar la tabla.');
+      return;
+  }
+
+  let dbcName = dbcData.dbc; 
+  let dbcId = `http://data.europa.eu/dr8/egovera/${dbcName.replace(/\s+/g, '')}Capability`; 
+  let relevantABBs = abbList.filter(abb => abb.DBCs.includes(dbcId));
+   const dBusCapId = dbcId;
+  
+  let table = document.getElementById("bbTable");
+  table.innerHTML = "";
+  let thead = table.createTHead();
+  let headRow = thead.insertRow();
+  ["ID", "View", "Area", "Architecture_Building_Block", "Description", "IDs' successors", "Digital Public service"].forEach(text => {
+      let th = document.createElement("th");
+      th.appendChild(document.createTextNode(text));
+      headRow.appendChild(th);
+  });
+
+  let tbody = document.createElement("tbody");
+  table.appendChild(tbody);
+  
+  relevantABBs.forEach(abb => {
+      let row = tbody.insertRow();
+      row.insertCell().appendChild(document.createTextNode(abb.ID || ""));
+      row.insertCell().appendChild(document.createTextNode(abb.View || ""));
+      row.insertCell().appendChild(document.createTextNode(abb.Area || ""));
+      row.insertCell().appendChild(document.createTextNode(abb.Architecture_Building_Block || ""));
+      row.insertCell().appendChild(document.createTextNode(abb.Description || ""));
+      row.insertCell().appendChild(document.createTextNode(abb.successors || ""));
+  });
 }
 
 
@@ -1322,10 +1363,15 @@ function prepareQuadChartData(tableData, xAxisField = 'strategicFit') {
       data: [{
         x: parseFloat(entry[xAxisField]) || 0,  // Usa el campo seleccionado para el eje X
         y: parseFloat(entry.dbcSupportAbility) || 0,
-        r: parseFloat(entry.budget) + 6.0 || 0,
+        //r: parseFloat(entry.budget) + 6.0 || 0,
+        budget: parseFloat(entry.budget) || 0,
       }],
       // Si necesitas más propiedades para el conjunto de datos, agréguelas aquí
       hoverRadius: 8.0,
+      radius: context => {
+        console.log(context);
+        return context.dataset.data[context.dataIndex].budget + 6.0;
+      },
     }
   });
 
