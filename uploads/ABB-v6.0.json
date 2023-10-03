@@ -23,6 +23,34 @@
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/BusinessIntelligengeBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalAssetManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -98,6 +126,13 @@
             "http://data.europa.eu/dr8/egovera/DigitalExchangeCapability",
             "http://data.europa.eu/dr8/egovera/CaseAndWorkflowManagementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -154,6 +189,22 @@
             "http://data.europa.eu/dr8/egovera/DataManagementCapability",
             "http://data.europa.eu/dr8/egovera/QualificationManagementCapability",
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -232,6 +283,33 @@
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/BusinessIntelligengeBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalAssetManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -308,6 +386,18 @@
             "http://data.europa.eu/dr8/egovera/DataManagementCapability",
             "http://data.europa.eu/dr8/egovera/CaseAndWorkflowManagementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -370,6 +460,14 @@
             "http://data.europa.eu/dr8/egovera/DigitalCommunicationCapability",
             "http://data.europa.eu/dr8/egovera/CaseAndWorkflowManagementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -428,6 +526,15 @@
             "http://data.europa.eu/dr8/egovera/DigitalCommunicationCapability",
             "http://data.europa.eu/dr8/egovera/MultimediaManagementCapability",
             "http://data.europa.eu/dr8/egovera/CaseAndWorkflowManagementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalAssetManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -488,6 +595,13 @@
             "http://data.europa.eu/dr8/egovera/DigitalExchangeCapability",
             "http://data.europa.eu/dr8/egovera/DataManagementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -546,6 +660,16 @@
             "http://data.europa.eu/dr8/egovera/DigitalExchangeCapability",
             "http://data.europa.eu/dr8/egovera/DigitalCommunicationCapability",
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -612,6 +736,11 @@
             "http://data.europa.eu/dr8/egovera/ContactManagementCapability",
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -663,6 +792,11 @@
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability",
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -710,6 +844,15 @@
             "http://data.europa.eu/dr8/egovera/DigitalExchangeCapability",
             "http://data.europa.eu/dr8/egovera/DigitalCommunicationCapability",
             "http://data.europa.eu/dr8/egovera/CaseAndWorkflowManagementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -772,6 +915,12 @@
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -821,6 +970,15 @@
             "http://data.europa.eu/dr8/egovera/ElectronicIdentificationCapability",
             "http://data.europa.eu/dr8/egovera/DigitalExchangeCapability",
             "http://data.europa.eu/dr8/egovera/DigitalCommunicationCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -882,6 +1040,10 @@
         "DBCs": [
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -923,6 +1085,9 @@
         "DBCs": [
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -961,6 +1126,9 @@
         "Rationale": "This legislation covers aspects on the use of electronic signatures and to contribute to their legal recognition. It establishes a legal framework for electronic signatures and certain certification-services in order to ensure the proper functioning of the internal market.",
         "DBCs": [
             "http://data.europa.eu/dr8/egovera/DigitalExchangeCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -1004,6 +1172,11 @@
         "DBCs": [
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability",
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -1050,6 +1223,11 @@
         "DBCs": [
             "http://data.europa.eu/dr8/egovera/ContactManagementCapability",
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -1106,6 +1284,20 @@
             "http://data.europa.eu/dr8/egovera/MultimediaManagementCapability",
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability",
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalAssetManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -1180,6 +1372,19 @@
             "http://data.europa.eu/dr8/egovera/MultimediaManagementCapability",
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalAssetManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -1249,6 +1454,13 @@
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -1302,6 +1514,19 @@
             "http://data.europa.eu/dr8/egovera/DigitalTwinCapability",
             "http://data.europa.eu/dr8/egovera/DigitalCommunicationCapability",
             "http://data.europa.eu/dr8/egovera/DataManagementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/BusinessIntelligengeBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -1364,6 +1589,26 @@
             "http://data.europa.eu/dr8/egovera/DataManagementCapability",
             "http://data.europa.eu/dr8/egovera/CaseAndWorkflowManagementCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -1437,6 +1682,28 @@
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability",
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -1512,6 +1779,19 @@
             "http://data.europa.eu/dr8/egovera/DigitalCommunicationCapability",
             "http://data.europa.eu/dr8/egovera/DataManagementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/BusinessIntelligengeBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -1572,6 +1852,16 @@
             "http://data.europa.eu/dr8/egovera/KnowledgeManagementCapability",
             "http://data.europa.eu/dr8/egovera/DataManagementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -1631,6 +1921,15 @@
             "http://data.europa.eu/dr8/egovera/ElectronicIdentificationCapability",
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -1683,6 +1982,9 @@
         "DBCs": [
             "http://data.europa.eu/dr8/egovera/QualificationManagementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/DataSpaceEnablersGrouping",
@@ -1721,6 +2023,16 @@
             "http://data.europa.eu/dr8/egovera/DigitalCommunicationCapability",
             "http://data.europa.eu/dr8/egovera/MultimediaManagementCapability",
             "http://data.europa.eu/dr8/egovera/ContactManagementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalAssetManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -1782,6 +2094,16 @@
             "http://data.europa.eu/dr8/egovera/ElectronicIdentificationCapability",
             "http://data.europa.eu/dr8/egovera/QualificationManagementCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -1846,6 +2168,19 @@
             "http://data.europa.eu/dr8/egovera/KnowledgeManagementCapability",
             "http://data.europa.eu/dr8/egovera/CaseAndWorkflowManagementCapability",
             "http://data.europa.eu/dr8/egovera/QualificationManagementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalAssetManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -1918,6 +2253,19 @@
             "http://data.europa.eu/dr8/egovera/CaseAndWorkflowManagementCapability",
             "http://data.europa.eu/dr8/egovera/QualificationManagementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalAssetManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -1984,6 +2332,14 @@
             "http://data.europa.eu/dr8/egovera/ElectronicIdentificationCapability",
             "http://data.europa.eu/dr8/egovera/ContactManagementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainInfrastructureEnablers",
@@ -2035,6 +2391,9 @@
         "DBCs": [
             "http://data.europa.eu/dr8/egovera/MultimediaManagementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/DigitalAssetManagementBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/DataSpaceEnablersGrouping",
@@ -2073,6 +2432,21 @@
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability",
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -2144,6 +2518,10 @@
         "DBCs": [
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -2184,6 +2562,9 @@
         "Rationale": "",
         "DBCs": [
             "http://data.europa.eu/dr8/egovera/DigitalExchangeCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -2227,6 +2608,9 @@
         "DBCs": [
             "http://data.europa.eu/dr8/egovera/DigitalExchangeCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -2269,6 +2653,11 @@
         "DBCs": [
             "http://data.europa.eu/dr8/egovera/QualificationManagementCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -2320,6 +2709,14 @@
             "http://data.europa.eu/dr8/egovera/CaseAndWorkflowManagementCapability",
             "http://data.europa.eu/dr8/egovera/QualificationManagementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/DataSpaceEnablersGrouping",
@@ -2370,6 +2767,14 @@
             "http://data.europa.eu/dr8/egovera/ContactManagementCapability",
             "http://data.europa.eu/dr8/egovera/CaseAndWorkflowManagementCapability",
             "http://data.europa.eu/dr8/egovera/QualificationManagementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -2513,6 +2918,29 @@
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/BusinessIntelligengeBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalAssetManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -2608,6 +3036,20 @@
             "http://data.europa.eu/dr8/egovera/CaseAndWorkflowManagementCapability",
             "http://data.europa.eu/dr8/egovera/QualificationManagementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -2698,6 +3140,34 @@
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability",
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/BusinessIntelligengeBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalAssetManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -2792,6 +3262,34 @@
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/BusinessIntelligengeBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalAssetManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -2884,6 +3382,34 @@
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability",
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/BusinessIntelligengeBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalAssetManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -2993,6 +3519,34 @@
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability",
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/BusinessIntelligengeBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalAssetManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -3106,6 +3660,34 @@
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability",
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/BusinessIntelligengeBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalAssetManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -3223,6 +3805,34 @@
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability",
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/BusinessIntelligengeBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalAssetManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -3368,6 +3978,24 @@
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability",
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/BusinessIntelligengeBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalAssetManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -3517,6 +4145,34 @@
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/BusinessIntelligengeBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalAssetManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -3604,6 +4260,15 @@
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability",
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EDeliveryBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -3697,6 +4362,26 @@
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability",
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/BusinessIntelligengeBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalAssetManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DigitalCollaborationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -3794,6 +4479,27 @@
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/BusinessIntelligengeBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -3876,6 +4582,30 @@
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability",
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/EQualificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -3965,6 +4695,19 @@
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -4053,6 +4796,29 @@
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContactManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainEnablersGrouping",
@@ -4133,6 +4899,14 @@
             "http://data.europa.eu/dr8/egovera/KnowledgeManagementCapability",
             "http://data.europa.eu/dr8/egovera/DataManagementCapability"
         ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService"
+        ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
             "http://data.europa.eu/dr8/BlockchainInfrastructureEnablers",
@@ -4192,6 +4966,28 @@
             "http://data.europa.eu/dr8/egovera/DigitalPaymentsCapability",
             "http://data.europa.eu/dr8/egovera/DigitalInvoicingCapability",
             "http://data.europa.eu/dr8/egovera/DigitalProcurementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EInvoicingBusinessService",
+            "http://data.europa.eu/dr8/egovera/ENotificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/EPaymentBusinessService",
+            "http://data.europa.eu/dr8/egovera/ESignatureBusinessService",
+            "http://data.europa.eu/dr8/egovera/ETenderingBusinessService",
+            "http://data.europa.eu/dr8/egovera/FormsManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/LogManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService",
+            "http://data.europa.eu/dr8/egovera/WaitingListManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/WorkflowManagementBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",
@@ -4281,6 +5077,19 @@
             "http://data.europa.eu/dr8/egovera/ElectronicIdentificationCapability",
             "http://data.europa.eu/dr8/egovera/KnowledgeManagementCapability",
             "http://data.europa.eu/dr8/egovera/DataManagementCapability"
+        ],
+        "Digital_Public_Service": [
+            "http://data.europa.eu/dr8/egovera/AnonymisationBusinessService",
+            "http://data.europa.eu/dr8/egovera/AuditBusinessService",
+            "http://data.europa.eu/dr8/egovera/ContentManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataAnalyticsBusinessService",
+            "http://data.europa.eu/dr8/egovera/DataExtractionTransformationAndLoadingBusinessService",
+            "http://data.europa.eu/dr8/egovera/DelegationOfPowerBusinessService",
+            "http://data.europa.eu/dr8/egovera/EArchivingBusinessService",
+            "http://data.europa.eu/dr8/egovera/EIdentificationBusinessService",
+            "http://data.europa.eu/dr8/egovera/KnowledgeManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/OpenDataManagementBusinessService",
+            "http://data.europa.eu/dr8/egovera/SecureAccessControlBusinessService"
         ],
         "successors": [
             "http://data.europa.eu/dr8/APIEnablersGrouping",

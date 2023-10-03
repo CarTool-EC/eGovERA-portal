@@ -959,10 +959,10 @@ let quadChart;
  *
  */
 function callBackForRequest(response, json) {
-  // inputBCJSON = response.dBusCaps;
-  // inputBBJSON = response.abb;
-  // inputDPSJSON = response.dPubSer;
-  // initInputfromJSON();
+  //inputBCJSON = response.dBusCaps;
+  //inputBBJSON = response.abb;
+  //inputDPSJSON = response.dPubSer;
+  //initInputfromJSON();
   //readSurveyResult(json);
   // createBusinessCapabilityTable();
   // drawBusinessCapabilityChart();
@@ -973,13 +973,11 @@ function callBackForRequest(response, json) {
   editedData = [...tableData];
   updateTotalBudget();
 
-
-
   const tableGrid = new Grid({
     columns: [
       { id: 'dbc', name: 'DBC' },
       // { id: 'policy', name: 'Policy Domain' },
-      { id: 'strategicFit', name: 'Strategic Fit', attributes: { "contenteditable": "true" }, tooltip: "Hola que tal" },
+      { id: 'strategicFit', name: 'Strategic Fit', attributes: { "contenteditable": "true" }},
       { id: 'dbcSupportAbility', name: 'DBC Support Ability', attributes: { "contenteditable": "true" } },
       { id: 'supportTargetAbility', name: 'Support Target Ability', attributes: { "contenteditable": "true" } },
       { id: 'expPublicValue', name: 'Expected Public Value', attributes: { "contenteditable": "true" } },
@@ -1006,10 +1004,7 @@ function callBackForRequest(response, json) {
   });
   populateDBCDropdown(editedData);
 
-
   tableGrid.render(document.getElementById('myGridTable'));
-
-
 
   document.getElementById('myGridTable').addEventListener('input', function (e) {
     const cell = e.target;
@@ -1273,6 +1268,7 @@ function renderQuadrantChart(chartData) {
 
 
   quadChart.canvas.onclick = function (evt) {
+    /*
     var activePoints = quadChart.getElementsAtEventForMode(evt, 'point', quadChart.options);
     if (activePoints.length === 0) {
         console.error('No se hizo clic en ninguna burbuja.');
@@ -1308,9 +1304,10 @@ function renderQuadrantChart(chartData) {
         return;
     }
 
-
     createBuildingBlocksTableUpdated(dbcData);
-};
+    */
+    selectHandler(evt);
+  };
 
 }
 async function createBuildingBlocksTableUpdated(dbcData) {
@@ -1326,7 +1323,7 @@ async function createBuildingBlocksTableUpdated(dbcData) {
   let dbcName = dbcData.dbc; 
   let dbcId = `http://data.europa.eu/dr8/egovera/${dbcName.replace(/\s+/g, '')}Capability`; 
   let relevantABBs = abbList.filter(abb => abb.DBCs.includes(dbcId));
-   const dBusCapId = dbcId;
+  const dBusCapId = dbcId;
   
   let table = document.getElementById("bbTable");
   table.innerHTML = "";
@@ -1348,7 +1345,10 @@ async function createBuildingBlocksTableUpdated(dbcData) {
       row.insertCell().appendChild(document.createTextNode(abb.Area || ""));
       row.insertCell().appendChild(document.createTextNode(abb.Architecture_Building_Block || ""));
       row.insertCell().appendChild(document.createTextNode(abb.Description || ""));
-      row.insertCell().appendChild(document.createTextNode(abb.successors || ""));
+      //row.insertCell().appendChild(document.createTextNode(abb.successors || ""));
+      var sccrText = "";
+      abb.successors.forEach(scc => {sccrText += scc + "\n";});
+      row.insertCell().appendChild(document.createTextNode(sccrText));
   });
 }
 
@@ -1363,13 +1363,11 @@ function prepareQuadChartData(tableData, xAxisField = 'strategicFit') {
       data: [{
         x: parseFloat(entry[xAxisField]) || 0,  // Usa el campo seleccionado para el eje X
         y: parseFloat(entry.dbcSupportAbility) || 0,
-        //r: parseFloat(entry.budget) + 6.0 || 0,
         budget: parseFloat(entry.budget) || 0,
       }],
       // Si necesitas más propiedades para el conjunto de datos, agréguelas aquí
       hoverRadius: 8.0,
       radius: context => {
-        console.log(context);
         return context.dataset.data[context.dataIndex].budget + 6.0;
       },
     }
@@ -1558,7 +1556,7 @@ function createView(name, id, policy, avgAbility, bbs) {
   view.bbs = bbs;
   return view;
 }
-
+/*
 function initInputfromJSON() {
   viewBCmc.name = "Buisness Capabilities (mission critial)";
   viewBCmc.id = 0;
@@ -1593,10 +1591,11 @@ const avgDpsAbility = (abbs) => {
   let avg = Number((sum / abbs.length).toFixed(2));
   return avg;
 };
-
+*/
 /**
  * Create the bcList object with the relations of the abbs, dps and bc
  */
+/*
 const createBcListObject = () => {
   let ABBs = groupABBByID(inputBBJSON);
   DPSs = groupDPSsByID(inputDPSJSON);
@@ -1642,7 +1641,7 @@ const createBcListObject = () => {
   });
   return tempDBCs;
 };
-
+*/
 // document.getElementById("reset-work").addEventListener("click", function () {
 //   document.getElementById("bb-div").classList.add("d-none");
 //   selectedBC = null;
@@ -1725,7 +1724,7 @@ const mapFilterResultstoBcList = (json) => {
 
   bcList = finalBCList;
 };
-
+/*
 const randomizeQuandrantValues = () => {
   const bcValues = Object.values(bcList);
 
@@ -1811,7 +1810,7 @@ function controlWrapper(controlType, containerId, options) {
     options: options,
   });
 }
-
+*/
 var view;
 
 let strategicSlider;
@@ -1863,6 +1862,7 @@ const getImagePerPolicy = (policy) => {
 /**
  * Create the bubble chart
  */
+/*
 function drawBusinessCapabilityChart(height) {
   height = height || 1;
   data = new google.visualization.DataTable();
@@ -2041,7 +2041,7 @@ function drawBusinessCapabilityChart(height) {
     );
   });
 }
-
+*/
 const scrollToElement = (selector) => {
   $([document.documentElement, document.body]).animate(
     {
@@ -2074,14 +2074,66 @@ const bcInfoNodes = (id, policy, name, budget, spanID) => {
   return parent;
 };
 
-function selectHandler(e) {
-  var selection = chartBubble.getChart().getSelection();
-  var item = selection[0];
-  if (item == null) return;
-  document.getElementById("bb-div").classList.remove("d-none");
-  selectedValue = chartBubble.getDataTable().getValue(item.row, 0);
+async function selectHandler(evt) {
+  let response = await FILES;
+  console.log("FILES:", response);
+  const abbList = response[0];
+  const dbcList = response[1];
+  const dpsList = response[2];
 
-  clickedDPSs = [];
+  var activePoints = quadChart.getElementsAtEventForMode(evt, 'point', quadChart.options);
+  if (activePoints.length === 0) {
+      console.error('No se hizo clic en ninguna burbuja.');
+      return;
+  }
+
+  var firstPoint = activePoints[0];
+  var datasetIndex = firstPoint._datasetIndex;
+  var dataIndex = firstPoint._index;
+
+  var dataset = quadChart.data.datasets[datasetIndex];
+  if (!dataset) {
+      console.error('No se pudo obtener el dataset.');
+      return;
+  }
+  
+  var bubbleData = quadChart.data.datasets[datasetIndex].data[dataIndex];
+  if (!bubbleData) {
+      console.error('No se pudo obtener los datos de la burbuja.');
+      return;
+  }
+
+  var dbcName = dataset.label; 
+  if (!dbcName) {
+      console.error('No se pudo obtener el nombre del DBC.');
+      return;
+  }
+
+  const dbcData = editedData.find(data => data.dbc === dbcName);
+
+  if (!dbcData) {
+      console.error(`No se encontraron datos para el DBC con nombre ${dbcName}`);
+      return;
+  }
+
+  dbcData.ID = `http://data.europa.eu/dr8/egovera/${dbcName.replace(/\s+/g, '')}Capability`; 
+  dbcData.DPSs = [];
+  dbcList.filter(dbc => dbc.ID == dbcData.ID).forEach(dbc => {
+    dbc["Digital_Public_Services"].forEach(dbcDPS => {
+      let dps = dpsList.filter(dps => dps.ID == dbcDPS.ID)[0];
+      dps.dbcSupportAbility = dbcData.dbcSupportAbility;
+      dps.supportTargetAbility = dbcData.supportTargetAbility;
+      dbcData.DPSs.push(dps);
+    });
+  });
+  dbcData.DPSs = [...new Set(dbcData.DPSs)];
+
+  console.log("DBC NAME:", dbcName);
+  console.log("DBC ID .:", dbcData.ID);
+  console.log("DBC DATA:", dbcData);
+
+  //selectedValue = dbcName;
+  //clickedDPSs = [];
 
   $("#networkBBs2").fadeOut();
   $("#network_div").fadeOut(function () {
@@ -2096,35 +2148,31 @@ function selectHandler(e) {
     $("#listBBs").collapse("show");
     $("#network_div").fadeIn();
 
-    drawViewsPredecessorsChart(bcList[selectedValue]);
-
-    dpsNetworkAndCheckbox(bcList[selectedValue].dps, bcList[selectedValue].bbs);
-
+    drawViewsPredecessorsChart(dbcData);
+    dpsNetworkAndCheckbox(dbcData);
+    
     scrollToElement("#networkBBs");
 
-    selectedBC = selectedValue;
-    clickedBC = bcList[selectedValue];
-
-    bbsFillInfo(bcList[selectedBC]);
+    bbsFillInfo(dbcData);
 
     document.getElementById("bcDetail").innerHTML = bcInfoNodes(
-      bcList[selectedValue].id,
-      CA(bcList[selectedValue].policy),
-      bcList[selectedValue].name,
-      bcList[selectedValue].budget,
+      dbcData.ID,
+      CA(dbcData.policy),
+      dbcData.dbc,
+      dbcData.budget,
       "bcDetails-budget"
     ).innerHTML;
     document.getElementById("dps-network-bc-info").innerHTML = bcInfoNodes(
-      bcList[selectedValue].id,
-      CA(bcList[selectedValue].policy),
-      bcList[selectedValue].name,
-      bcList[selectedValue].budget,
+      dbcData.ID,
+      CA(dbcData.policy),
+      dbcData.dbc,
+      dbcData.budget,
       "bcDetails-budget-copy"
     ).innerHTML;
     document.getElementById("bbDetail").innerHTML =
       "<i>please select a builidng block</i>";
-
-    createBuildingBlocksTable(bcList[selectedValue]);
+    //createBuildingBlocksTable(bcList[selectedValue]);
+    createBuildingBlocksTableUpdated(dbcData);
   });
 }
 
@@ -2635,15 +2683,15 @@ const syncCheckboxAfterNodesClicked = (dps) => {
   }
 };
 
-const dpsNetworkAndCheckbox = (dpss, bbs) => {
-  drawDPSNetwork(dpss, bbs);
-  createFilterDPSCheckbox(dpss);
+const dpsNetworkAndCheckbox = (dbcData) => {
+  drawDPSNetwork(dbcData.DPSs);
+  createFilterDPSCheckbox(dbcData.DPSs);
 };
 
 /**
  * Create and draw dps network chart
  */
-const drawDPSNetwork = (dpss, bbs) => {
+const drawDPSNetwork = (dpss) => {
   if (DPSnetwork !== null) {
     DPSnetwork.destroy();
     DPSnetwork = null;
@@ -2655,7 +2703,7 @@ const drawDPSNetwork = (dpss, bbs) => {
 
   for (let idx = 0; idx < length; idx++) {
     let dps = dpss[idx];
-    let { policy, id: dpsID, name: label, dpsAbility } = dps;
+    let { Policy: policy, ID: dpsID, Name: label, dbcSupportAbility: dpsAbility } = dps;
 
     let title = `<div>
     ${dpsDetailChild("ID: ", dpsID).outerHTML}
@@ -2667,7 +2715,8 @@ const drawDPSNetwork = (dpss, bbs) => {
       id: idx,
       image: getImagePerPolicy(policy),
       dpsID,
-      label: `${dpsID} - ${label}`,
+      //label: `${dpsID} - ${label}`,
+      label: `${label}`,
       title,
       hidden: false,
       color: {
@@ -2793,12 +2842,13 @@ const createFilterDPSCheckbox = (dpss) => {
 
     const li = document.createElement("li");
     const div = document.createElement("div");
-    const dpsName = dps.name;
+    const dpsName = dps.Name;
     const textNode = document.createElement("span");
-    textNode.textContent = `${dps.id} - ${dpsName}`;
+    //textNode.textContent = `${dps.ID} - ${dpsName}`;
+    textNode.textContent = `${dpsName}`;
     const input = document.createElement("input");
     input.setAttribute("type", "checkbox");
-    input.setAttribute("data-dig-pub-service", dps.id);
+    input.setAttribute("data-dig-pub-service", dps.ID);
 
     li.appendChild(div);
     div.appendChild(input);
@@ -2829,7 +2879,7 @@ const calculateAvgAbilityPerViewAndDpss = (view, dpss = []) => {
 /**
  * Create and draw the dBusCaps chart
  */
-function drawViewsPredecessorsChart(bc, dpss = []) {
+function drawViewsPredecessorsChartDEPRECATED(bc, dpss = []) {
   if (network !== null) {
     network.destroy();
     network = null;
@@ -3278,6 +3328,455 @@ function drawViewsPredecessorsChart(bc, dpss = []) {
   });
 }
 
+function drawViewsPredecessorsChart(dbcData) {
+  if (network !== null) {
+    network.destroy();
+    network = null;
+  }
+
+  if (dbcData.policy == "Business Agnostic") {
+    toogleInfra = false;
+  }
+
+  let showNonInfra = true;
+
+  if (
+    clickedDPSs.length > 0 &&
+    clickedDPSs.every((id) => id.startsWith("BA"))
+  ) {
+    showNonInfra = false;
+    toogleInfra = true;
+  }
+
+  //var bbs = dbcData.bbs;
+  var nodes = [];
+  var edges = [];
+
+  var color = [];
+  color.background = "#fff";
+  var bcNode = createDigitalTransformNode(
+    idBCdom,
+    "circularImage",
+    "bc.png",
+    "ID:" +
+    dbcData.ID +
+    ", " +
+    dbcData.dbc +
+    ", \nNational Digital Strategy Fit: " +
+    dbcData.strategicFit +
+    " out of 5, \nAbility to support the dBusCap: " +
+    dbcData.dbcSupportAbility +
+    " out of 5",
+    "ID:" +
+    dbcData.ID +
+    ", " +
+    dbcData.dbc +
+    ", \nNational Digital Strategy Fit: " +
+    dbcData.strategicFit +
+    " out of 5, \nAbility to support the dBusCap: " +
+    dbcData.dbcSupportAbility +
+    " out of 5",
+    color,
+    100,
+    10
+  );
+  nodes.push(bcNode);
+
+  var color = [];
+  color.background = "#fff";
+  var start = createDigitalTransformNode(
+    100,
+    "circularImage",
+    "start.png",
+    "Start",
+    "Start",
+    color,
+    -10,
+    0
+  );
+
+  nodes.push(start);
+  let views = dbcData.views;
+  var count = 0;
+  if (showNonInfra) {
+    for (let i in views) {
+      count += 1;
+      let id = null;
+      var color = [];
+      var image = null;
+      var labelInit = null;
+      switch (String(views[i].name)) {
+        case "legal":
+          image = "legal.png";
+          labelInit = "L";
+          id = idLdom;
+          break;
+        case "organisational":
+          image = "org.png";
+          id = idOdom;
+          labelInit = "O";
+          break;
+        case "semantic":
+          image = "data.png";
+          id = idSdom;
+          labelInit = "S";
+          break;
+        case "technical-application":
+          image = "TA.png";
+          id = idTAdom;
+          labelInit = "TA";
+          break;
+        case "technical-infrastructure":
+          image = "tech.png";
+          id = idTIdom;
+          labelInit = "TI";
+          break;
+        default:
+          image = "tech.png";
+          break;
+      }
+      const currentAvgAbility = calculateAvgAbilityPerViewAndDpss(
+        views[i],
+        clickedDPSs
+      );
+      color.background = getColorPerPolicy(views[i].policy, true);
+
+      if (views[i].bbs.length == 0) {
+        if (labelInit === null) continue;
+        var label = labelInit + " - " + CA(dbcData.policy);
+      } else {
+        var label =
+          labelInit +
+          " - " +
+          CA(dbcData.policy) +
+          ",\n" +
+          currentAvgAbility.toFixed(1) +
+          " out of 5";
+      }
+      let node = createDigitalTransformNode(
+        id,
+        "circularImage",
+        image,
+        label,
+        label,
+        color,
+        10 * i,
+        0
+      );
+      nodes.push(node);
+    }
+  }
+  var bcInfraNode = [];
+  bcInfraNode.id = idBCinf;
+
+  if (toogleInfra) {
+    var color = [];
+    color.background = "#fff";
+    bcInfraNode = createDigitalTransformNode(
+      idBCinf,
+      "circularImage",
+      "bc.png",
+      "Digital business capability Infrastructure," + "\nMission Critical",
+      "Digital business capability Infrastructure," + "\nMission Critical",
+      color,
+      100,
+      50,
+      true
+    );
+    nodes.push(bcInfraNode);
+
+    for (let i in viewsInfra) {
+      let id = null;
+      var color = [];
+      var image = null;
+      var labelInit = null;
+      switch (String(viewsInfra[i].name)) {
+        case "legal":
+          image = "legal.png";
+          id = idLinf;
+          labelInit = "L";
+          break;
+        case "organisational":
+          image = "org.png";
+          id = idOinf;
+          labelInit = "O";
+          break;
+        case "semantic":
+          image = "data.png";
+          id = idSinf;
+          labelInit = "S";
+          break;
+        case "technical-application":
+          image = "TA.png";
+          id = idTAinf;
+          labelInit = "TA";
+          break;
+        case "technical-infrastructure":
+          image = "tech.png";
+          id = idTIinf;
+          labelInit = "TI";
+          break;
+        default:
+          image = "tech.png";
+          break;
+      }
+
+      color.background = getColorPerPolicy(viewsInfra[i].policy, true);
+
+      var label = labelInit + " - Business agnostic";
+
+      let node = createDigitalTransformNode(
+        id,
+        "circularImage",
+        image,
+        label,
+        label,
+        color,
+        10 * i,
+        -10
+      );
+
+      nodes.push(node);
+    }
+  }
+
+  if (busOrientation == 1) {
+    const startToPoint = showNonInfra ? idLdom : idLinf;
+    var edges = new vis.DataSet([
+      { from: start.id, to: startToPoint, dashes: true },
+      { from: idLdom, to: idOdom, dashes: false },
+      { from: idOdom, to: idSdom, dashes: false },
+      { from: idOdom, to: idTIdom, dashes: false },
+      { from: idTIdom, to: idTAdom, dashes: false },
+      { from: idSdom, to: idTAdom, dashes: false },
+      // { from: idTAdom, to: bcNode.id, dashes: true },
+
+      { from: idLinf, to: idLdom, dashes: true },
+      { from: idLinf, to: idOinf, dashes: false },
+      { from: idLinf, to: idSinf, dashes: false },
+      { from: idOinf, to: idOdom, dashes: true },
+      { from: idOinf, to: idSinf, dashes: false },
+      { from: idOinf, to: idTIinf, dashes: false },
+      { from: idSinf, to: idSdom, dashes: true },
+      { from: idSinf, to: idTAinf, dashes: false },
+      { from: idTIinf, to: idTIdom, dashes: true },
+      { from: idTIinf, to: idTAinf, dashes: false },
+      { from: idTAinf, to: idTAdom, dashes: true },
+      { from: idTAinf, to: bcInfraNode.id, dashes: true },
+      { from: bcInfraNode.id, to: bcNode.id, dashes: true },
+    ]);
+    if (showNonInfra) {
+      edges.add({ from: idTAdom, to: bcNode.id, dashes: true });
+    } else {
+      edges.add({ from: idTAinf, to: bcNode.id, dashes: true });
+    }
+  } else if (busOrientation == 2) {
+    const startToPoint = showNonInfra ? idOdom : idOinf;
+
+    var edges = new vis.DataSet([
+      { from: start.id, to: startToPoint, dashes: true },
+      { from: idOdom, to: idTIdom, dashes: false },
+      { from: idOdom, to: idSdom, dashes: false },
+      { from: idTIdom, to: idTAdom, dashes: false },
+      { from: idSdom, to: idTAdom, dashes: false },
+      { from: idTAdom, to: idLdom, dashes: false },
+      // { from: idLdom, to: bcNode.id, dashes: true },
+
+      { from: idOinf, to: idOdom, dashes: true },
+      { from: idOinf, to: idTIinf, dashes: false },
+      { from: idOinf, to: idSinf, dashes: false },
+      { from: idTIinf, to: idTIdom, dashes: true },
+      { from: idTIinf, to: idTAinf, dashes: false },
+      { from: idSinf, to: idTAinf, dashes: false },
+      { from: idSinf, to: idSdom, dashes: true },
+      { from: idTAinf, to: idLinf, dashes: false },
+      { from: idTAinf, to: idTAdom, dashes: true },
+      { from: idLinf, to: idLdom, dashes: true },
+      { from: idLinf, to: bcInfraNode.id, dashes: true },
+      { from: bcInfraNode.id, to: bcNode.id, dashes: true },
+    ]);
+    if (showNonInfra) {
+      edges.add({ from: idLdom, to: bcNode.id, dashes: true });
+    } else {
+      edges.add({ from: idLinf, to: bcNode.id, dashes: true });
+    }
+  } else if (busOrientation == 3) {
+    const startToPoint = showNonInfra ? idSdom : idSinf;
+    var edges = new vis.DataSet([
+      { from: start.id, to: startToPoint, dashes: true },
+      { from: idSdom, to: idOdom, dashes: false },
+      { from: idOdom, to: idTAdom, dashes: false },
+      { from: idOdom, to: idTIdom, dashes: false },
+      { from: idTIdom, to: idTAdom, dashes: false },
+      { from: idTAdom, to: idLdom, dashes: false },
+      // { from: idLdom, to: bcNode.id, dashes: true },
+
+      { from: idSinf, to: idSdom, dashes: true },
+      { from: idSinf, to: idOinf, dashes: false },
+      { from: idOinf, to: idTAinf, dashes: false },
+      { from: idOinf, to: idOdom, dashes: true },
+      { from: idOinf, to: idTIinf, dashes: false },
+      { from: idTIinf, to: idTAinf, dashes: false },
+      { from: idTIinf, to: idTIdom, dashes: true },
+      { from: idTAinf, to: idLinf, dashes: false },
+      { from: idTAinf, to: idTAdom, dashes: true },
+      { from: idLinf, to: idLdom, dashes: true },
+      { from: idLinf, to: bcInfraNode.id, dashes: true },
+      { from: bcInfraNode.id, to: bcNode.id, dashes: true },
+    ]);
+    if (showNonInfra) {
+      edges.add({ from: idLdom, to: bcNode.id, dashes: true });
+    } else {
+      edges.add({ from: idLinf, to: bcNode.id, dashes: true });
+    }
+  } else {
+    const startToPoint = showNonInfra ? idTIdom : idTIinf;
+    var edges = new vis.DataSet([
+      { from: start.id, to: startToPoint, dashes: true },
+      { from: idTIdom, to: idOdom, dashes: false },
+      { from: idOdom, to: idTAdom, dashes: false },
+      { from: idOdom, to: idSdom, dashes: false },
+      { from: idSdom, to: idTAdom, dashes: false },
+      { from: idTAdom, to: idLdom, dashes: false },
+      // { from: idLdom, to: bcNode.id, dashes: true },
+
+      { from: idTIinf, to: idTIdom, dashes: true },
+      { from: idTIinf, to: idOinf, dashes: false },
+      { from: idOinf, to: idTAinf, dashes: false },
+      { from: idOinf, to: idOdom, dashes: true },
+      { from: idOinf, to: idSinf, dashes: false },
+      { from: idSinf, to: idTAinf, dashes: false },
+      { from: idSinf, to: idSdom, dashes: true },
+      { from: idTAinf, to: idLinf, dashes: false },
+      { from: idTAinf, to: idTAdom, dashes: true },
+      { from: idLinf, to: idLdom, dashes: true },
+      { from: idLinf, to: bcInfraNode.id, dashes: true },
+      { from: bcInfraNode.id, to: bcNode.id, dashes: true },
+    ]);
+    if (showNonInfra) {
+      edges.add({ from: idLdom, to: bcNode.id, dashes: true });
+    } else {
+      edges.add({ from: idLinf, to: bcNode.id, dashes: true });
+    }
+  }
+
+  var container = document.getElementById("network_div");
+  var data = {
+    nodes: nodes,
+    edges: edges,
+  };
+  var options = {
+    physics: true,
+    interaction: { hover: true },
+    autoResize: true,
+
+    height: "100%",
+    width: "100%",
+    nodes: {
+      imagePadding: 11,
+      borderWidth: 1,
+      size: 30,
+      color: {
+        border: "#222222",
+        background: "#BBE1FA",
+      },
+      font: { color: "#000", size: 10 },
+      shadow: true,
+    },
+    edges: {
+      smooth: { type: "dynamic", forceDirection: "horizontal", roundness: 0.4 },
+      color: "gray",
+      arrows: { to: { enabled: true } },
+      shadow: true,
+    },
+    interaction: {
+      navigationButtons: true,
+      keyboard: true,
+    },
+    physics: {
+      forceAtlas2Based: {
+        springLength: -10,
+      },
+      minVelocity: 0.75,
+      solver: "forceAtlas2Based",
+      timestep: 0.53,
+    },
+  };
+  network = new vis.Network(container, data, options);
+
+  network.on("click", function (params) {
+    params.event = "[original event]";
+    var selectedNodeID = this.getNodeAt(params.pointer.DOM);
+    if (selectedNodeID <= idBCdom) {
+    } else if (selectedNodeID == idBCinf) {
+      selectedView = viewBCmc;
+
+      createBuildingBlocksTable(selectedView);
+      drawIntraViewsPredecessorsChart(selectedView);
+
+      document.getElementById("viewDetail").innerHTML =
+        "<i>Policy: </i>" +
+        CA(selectedView.policy) +
+        "<br><i>Buisness capabilities (mission critial)</i>";
+      document.getElementById("bbDetail").innerHTML =
+        "<i>please select a builidng block</i>";
+      $("#networkBBs2").fadeIn();
+      $("#network_div2").fadeIn();
+    } else if (selectedNodeID <= idTIdom) {
+      for (let x in views) {
+        if (views[x].id == selectedNodeID) {
+          selectedView = views[x];
+
+          if (clickedDPSs.length === 0) return;
+
+          const abbs = filterABBSBaseDPS(selectedView.bbs);
+          const newView = { ...selectedView };
+          newView.bbs = abbs;
+
+          document.getElementById("viewDetail").innerHTML =
+            `<i>Policy:  ${CA(selectedView.policy)}</i>` +
+            `<br><i>Name: ${CA(selectedView.name)}</i>`;
+
+          const tableBBs = abbs.filter((abb) => !abb.hidden);
+          createBuildingBlocksTable({ bbs: tableBBs });
+          drawIntraViewsPredecessorsChart(newView);
+
+          document.getElementById("bbDetail").innerHTML =
+            "<i>please select a builidng block</i>";
+          $("#networkBBs2").fadeIn();
+          $("#network_div2").fadeIn();
+          return;
+        }
+      }
+    } else if (selectedNodeID <= idTIinf) {
+      for (let x in viewsInfra) {
+        if (viewsInfra[x].id == selectedNodeID) {
+          selectedView = viewsInfra[x];
+
+          if (clickedDPSs.length === 0) return;
+          const abbs = filterABBSBaseDPS(selectedView.bbs);
+          const newView = { ...selectedView };
+          newView.bbs = abbs;
+          const tableBBs = abbs.filter((abb) => !abb.hidden);
+          createBuildingBlocksTable({ bbs: tableBBs });
+          drawIntraViewsPredecessorsChart(newView);
+
+          document.getElementById("viewDetail").innerHTML =
+            `<i>Policy:  ${CA(selectedView.policy)}</i>` +
+            `<br><i>Name: ${CA(selectedView.name)}</i>`;
+          document.getElementById("bbDetail").innerHTML =
+            "<i>please select a builidng block</i>";
+          $("#networkBBs2").fadeIn();
+          $("#network_div2").fadeIn();
+          return;
+        }
+      }
+    } else {
+      console.log("start button or undefined");
+    }
+  });
+}
+
 const filterABBSBaseDPS = (abbs) => {
   return abbs.map((abb) => {
     for (let idx = 0; idx < clickedDPSs.length; idx++) {
@@ -3299,7 +3798,7 @@ const bbsFillInfo = (details) => {
   $("#networkBBs2-dbc-info > .info").html(`
       <div>
         <span>ID: </span>
-        <span>${details.id}</span>
+        <span>${details.ID}</span>
       </div>
       <div>
         <span>Policy: </span>
@@ -3307,7 +3806,7 @@ const bbsFillInfo = (details) => {
       </div>
       <div>
         <span>Name: </span>
-        <span>${details.name}</span>
+        <span>${details.dbc}</span>
       </div>
   `);
 };
