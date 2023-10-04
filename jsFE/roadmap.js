@@ -7,9 +7,9 @@ let demo = true;
 google.charts.load("current", {
   packages: ["corechart", "controls"],
 });
-let chartBubble;
-let data;
-let dashboard;
+//let chartBubble;
+//let data;
+//let dashboard;
 let selectedValue;
 let network = null;
 let DPSnetwork = null;
@@ -20,7 +20,7 @@ let toogleInfra = true;
 let busOrientation = 1;
 let bcList = {};
 let customBBs = [];
-let DPSs = {};
+//let DPSs = {};
 let viewsInfra = [];
 let viewBCmc = [];
 let selectedView = [];
@@ -36,15 +36,19 @@ const idOinf = 9;
 const idSinf = 10;
 const idTAinf = 11;
 const idTIinf = 12;
-let selectedBC;
+let selectedDBC;
 let clickedBC;
 let clickedDPSs = [];
 let maxBudget = 0;
 let currentBBTableBody;
 let fileContent = {};
-let inputBCJSON;
-let inputBBJSON;
-let inputDPSJSON;
+//let inputBCJSON;
+//let inputBBJSON;
+//let inputDPSJSON;
+let jsonDBCs = null;
+let jsonDPSs = null;
+let jsonABBs = null;
+
 let myChart;
 const hAxisLabes = {
   1: "National Digital Strategy Fit",
@@ -958,7 +962,7 @@ let quadChart;
 /**
  *
  */
-function callBackForRequest(response, json) {
+async function callBackForRequest(response, json) {
   //inputBCJSON = response.dBusCaps;
   //inputBBJSON = response.abb;
   //inputDPSJSON = response.dPubSer;
@@ -967,6 +971,10 @@ function callBackForRequest(response, json) {
   // createBusinessCapabilityTable();
   // drawBusinessCapabilityChart();
   // resizeQuandrant();
+  const jsonFiles = await FILES;
+  jsonABBs = jsonFiles[0];
+  jsonDBCs = jsonFiles[1];
+  jsonDPSs = jsonFiles[2];
 
   const tableData = processSurveyResult(json);
   let originalData = [...tableData];
@@ -1310,10 +1318,8 @@ function renderQuadrantChart(chartData) {
   };
 
 }
-async function createBuildingBlocksTableUpdated(dbcData) {
+function createBuildingBlocksTableUpdated(dbcData) {
   document.getElementById("bb-div").classList.remove("d-none");
-  let response = await FILES;
-  let abbList = response[0];
 
   if (!dbcData) {
       console.error('No se pudieron obtener los datos necesarios para rellenar la tabla.');
@@ -1322,8 +1328,8 @@ async function createBuildingBlocksTableUpdated(dbcData) {
 
   let dbcName = dbcData.dbc; 
   let dbcId = `http://data.europa.eu/dr8/egovera/${dbcName.replace(/\s+/g, '')}Capability`; 
-  let relevantABBs = abbList.filter(abb => abb.DBCs.includes(dbcId));
-  const dBusCapId = dbcId;
+  let relevantABBs = jsonABBs.filter(abb => abb.DBCs.includes(dbcId));
+  //const dBusCapId = dbcId;
   
   let table = document.getElementById("bbTable");
   table.innerHTML = "";
@@ -1345,10 +1351,8 @@ async function createBuildingBlocksTableUpdated(dbcData) {
       row.insertCell().appendChild(document.createTextNode(abb.Area || ""));
       row.insertCell().appendChild(document.createTextNode(abb.Architecture_Building_Block || ""));
       row.insertCell().appendChild(document.createTextNode(abb.Description || ""));
-      //row.insertCell().appendChild(document.createTextNode(abb.successors || ""));
-      var sccrText = "";
-      abb.successors.forEach(scc => {sccrText += scc + "\n";});
-      row.insertCell().appendChild(document.createTextNode(sccrText));
+      row.insertCell().appendChild(document.createTextNode(abb.successors.join("\n") || ""));
+      row.insertCell().appendChild(document.createTextNode(abb["Digital_Public_Service"].join("\n") || ""));
   });
 }
 
@@ -2074,13 +2078,7 @@ const bcInfoNodes = (id, policy, name, budget, spanID) => {
   return parent;
 };
 
-async function selectHandler(evt) {
-  let response = await FILES;
-  console.log("FILES:", response);
-  const abbList = response[0];
-  const dbcList = response[1];
-  const dpsList = response[2];
-
+function selectHandler(evt) {
   var activePoints = quadChart.getElementsAtEventForMode(evt, 'point', quadChart.options);
   if (activePoints.length === 0) {
       console.error('No se hizo clic en ninguna burbuja.');
@@ -2118,9 +2116,9 @@ async function selectHandler(evt) {
 
   dbcData.ID = `http://data.europa.eu/dr8/egovera/${dbcName.replace(/\s+/g, '')}Capability`; 
   dbcData.DPSs = [];
-  dbcList.filter(dbc => dbc.ID == dbcData.ID).forEach(dbc => {
+  jsonDBCs.filter(dbc => dbc.ID == dbcData.ID).forEach(dbc => {
     dbc["Digital_Public_Services"].forEach(dbcDPS => {
-      let dps = dpsList.filter(dps => dps.ID == dbcDPS.ID)[0];
+      let dps = jsonDPSs.filter(dps => dps.ID == dbcDPS.ID)[0];
       dps.dbcSupportAbility = dbcData.dbcSupportAbility;
       dps.supportTargetAbility = dbcData.supportTargetAbility;
       dbcData.DPSs.push(dps);
@@ -2128,12 +2126,17 @@ async function selectHandler(evt) {
   });
   dbcData.DPSs = [...new Set(dbcData.DPSs)];
 
-  console.log("DBC NAME:", dbcName);
-  console.log("DBC ID .:", dbcData.ID);
-  console.log("DBC DATA:", dbcData);
+  dbcData.views = [];
+  dbcData.views.push(createView("legal", idLdom, dbcData.policy));
+  dbcData.views.push(createView("organisational", idOdom, dbcData.policy));
+  dbcData.views.push(createView("semantic", idSdom, dbcData.policy));
+  dbcData.views.push(createView("technical-application", idTAdom, dbcData.policy));
+  dbcData.views.push(createView("technical-infrastructure", idTIdom, dbcData.policy));
 
-  //selectedValue = dbcName;
-  //clickedDPSs = [];
+  selectedDBC = dbcData;
+  //console.log("DBC NAME:", dbcName);
+  //console.log("DBC ID .:", dbcData.ID);
+  //console.log("DBC DATA:", dbcData);
 
   $("#networkBBs2").fadeOut();
   $("#network_div").fadeOut(function () {
@@ -2148,12 +2151,12 @@ async function selectHandler(evt) {
     $("#listBBs").collapse("show");
     $("#network_div").fadeIn();
 
-    drawViewsPredecessorsChart(dbcData);
-    dpsNetworkAndCheckbox(dbcData);
+    drawViewsPredecessorsChart(selectedDBC);
+    dpsNetworkAndCheckbox(selectedDBC);
     
     scrollToElement("#networkBBs");
 
-    bbsFillInfo(dbcData);
+    bbsFillInfo(selectedDBC);
 
     document.getElementById("bcDetail").innerHTML = bcInfoNodes(
       dbcData.ID,
@@ -2171,8 +2174,8 @@ async function selectHandler(evt) {
     ).innerHTML;
     document.getElementById("bbDetail").innerHTML =
       "<i>please select a builidng block</i>";
-    //createBuildingBlocksTable(bcList[selectedValue]);
-    createBuildingBlocksTableUpdated(dbcData);
+    
+    createBuildingBlocksTableUpdated(selectedDBC);
   });
 }
 
@@ -2186,7 +2189,7 @@ $("#orientation").on("change", function () {
   } else {
     busOrientation = 4;
   }
-  drawViewsPredecessorsChart(bcList[selectedValue]);
+  drawViewsPredecessorsChart(selectedDBC);
 });
 
 $("#infratoogle").on("change", function () {
@@ -2195,7 +2198,7 @@ $("#infratoogle").on("change", function () {
   } else {
     toogleInfra = true;
   }
-  drawViewsPredecessorsChart(bcList[selectedValue]);
+  drawViewsPredecessorsChart(selectedDBC);
 });
 
 $(document).ready(function () {
@@ -2385,7 +2388,7 @@ function filteringHandler() {
 
   filteringBcTable(values, true);
 }
-
+/*
 const updateBcDetailsBudget = (budget, currentBc) => {
   if (currentBc != selectedBC) return;
   $("#bcDetails-budget").text(budget);
@@ -2623,7 +2626,7 @@ function createBusinessCapabilityTable() {
     els[i].style.paddingBottom = "2px";
   }
 }
-
+*/
 /**
  *
  * @param {Number} id
@@ -2767,14 +2770,14 @@ const drawDPSNetwork = (dpss) => {
       let nodes = DPSNetNodes.get();
 
       let node = nodes.find((node) => node.id === id);
-      let dps = dpss.filter((dp) => dp.id === node.dpsID)[0];
-      clickedDPSs = [dps.id];
+      let dps = dpss.filter((dp) => dp.ID === node.dpsID)[0];
+      clickedDPSs = [dps.ID];
       syncCheckboxAfterNodesClicked(node.dpsID);
-      const newBBs = bbs.filter((bb) => bb.digPubServ.includes(node.dpsID));
-      createBuildingBlocksTable({ bbs: newBBs });
+      //const newBBs = bbs.filter((bb) => bb.digPubServ.includes(node.dpsID));
+      //createBuildingBlocksTable({ bbs: newBBs });
       filternetwork2([node.dpsID]);
-      bbsMultipleDPSInfo([dps.name]);
-      drawViewsPredecessorsChart(bcList[selectedBC], clickedDPSs);
+      bbsMultipleDPSInfo([dps.Name]);
+      drawViewsPredecessorsChart(selectedDBC, clickedDPSs);
     });
   }
 };
@@ -2879,6 +2882,7 @@ const calculateAvgAbilityPerViewAndDpss = (view, dpss = []) => {
 /**
  * Create and draw the dBusCaps chart
  */
+/*
 function drawViewsPredecessorsChartDEPRECATED(bc, dpss = []) {
   if (network !== null) {
     network.destroy();
@@ -3327,7 +3331,7 @@ function drawViewsPredecessorsChartDEPRECATED(bc, dpss = []) {
     }
   });
 }
-
+*/
 function drawViewsPredecessorsChart(dbcData) {
   if (network !== null) {
     network.destroy();
@@ -3810,7 +3814,7 @@ const bbsFillInfo = (details) => {
       </div>
   `);
 };
-
+/*
 const filterBBTableWithMultipleDPS = (bbs) => {
   let bbsIDs = bbs.map((bb) => bb.id);
 
@@ -3824,6 +3828,7 @@ const filterBBTableWithMultipleDPS = (bbs) => {
     if (bbsIDs.indexOf(tdValue) === -1) tr.style.display = "none";
   }
 };
+*/
 /**
  * 
  Create and draw bb chart
@@ -4196,7 +4201,7 @@ dpsSelectDivList.addEventListener("change", (e) => {
   createBuildingBlocksTable({ bbs: filteredBBSs });
   filternetwork2(dps);
   filteringDpsNetwork(dps);
-  drawViewsPredecessorsChart(clickedBC, dps);
+  drawViewsPredecessorsChart(selectedDBC, dps);
 });
 
 /**

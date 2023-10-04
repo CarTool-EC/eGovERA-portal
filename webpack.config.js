@@ -14,12 +14,11 @@ module.exports = {
     });
     return temp;
   })(),
-  devtool: "cheap-source-map",
+  devtool: "eval-source-map",
   output: {
     filename: "[name].js",
     path: path.resolve(__dirname, "./public/JSBuild"),
   },
-
   module: {
     rules: [
       {
