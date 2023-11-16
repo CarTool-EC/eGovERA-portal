@@ -1,194 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=11" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <meta name="description" content="" />
-  <meta name="author" content="" />
+    <!-- Metadatos -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=11">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-  <link href="../vendo/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
-  <link
-    href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-    rel="stylesheet" />
-  <link href="../css/sb-admin-2.min.css" rel="stylesheet" />
-  <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="../css/loginModal.css" />
-  <link rel="stylesheet" href="roadmap.css" />
+    <!-- Estilos -->
+    <link href="../vendo/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/loginModal.css">
+    <link rel="stylesheet" href="roadmap.css">
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"
-    integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/"
-    crossorigin="anonymous"></script>
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script> -->
-  <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.2.3/jspdf.plugin.autotable.min.js"></script>
-
-  <title>eGovERA&copy;</title>
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.2.3/jspdf.plugin.autotable.min.js"></script>
+	<script type="text/javascript" src="../JSBuild/pdfCreation.js"></script>
 </head>
-
 <body id="page-top">
-  <div id="wrapper">
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled" id="accordionSidebar"></ul>
+    <div id="wrapper">
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled" id="accordionSidebar"></ul>
 
-    <div id="content-wrapper" class="d-flex flex-column">
-      <div id="content">
-        <div class="container-fluid" style="padding-top: 20px">
-          <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 id="header-test" class="h3 mb-0 text-gray-800">
-              2. Decision support tools
-            </h1>
-            <div id="content-test" class="row mr-5">
-              <div class="sectionpdfdiv">
-                <button class="sectionpdfbutton" id="pdfButton">
-                  <span class="download-btn-txt" id="pdfButtonTxt">Export the survey results in PDF</span>
-                </button>
-              </div>
-              <!-- <button id="reset-work" class="btn btn-primary mr-2 d-none" type="reset"
-                style="height: 80%; margin-top: 2%">
-                Reset work
-              </button> -->
-              <a id="file-selector-link" href="#"
-                class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm col-6"
-                style="height: 80%; margin-top: 2%"><i class="far fa-folder-open" data-toggle="tooltip"
-                  data-placement="top" title="Choose the capability assessment result"></i>
-                <input type="file" id="file-selector" accept=".txt, .json" data-toggle="tooltip" data-placement="top"
-                  title="Choose the capability assessment result" /></a>
-              <img src="../img/european_commission.svg_.png" alt="European Commission" style="width: 100px;"
-                class="ml-2 mr-2">
-              <div id="login-btn" class="col-2"></div>
-              <div id="google_translate_element" class="col-2 pt-2"></div>
-            </div>
-          </div>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <div class="container-fluid" style="padding-top: 20px">
+                    <!-- INICIO HEADER -->
+                    <div class="d-lg-flex align-items-center justify-content-between mb-4" id="divtitle">
+                        <h1 class="h3 mb-0 text-gray-800">2. Decision support tools</h1>
+                        
+                    <!-- PRUEBA HEADER 1 LINEA 
+                   <div class="row">
+                      <div class="col-md-12">
+                        <div class="row">
+                  
+                          <div class="col-sm-3">
+                            <button class="d-none d-md-inline-block btn btn-md btn-primary shadow-lg" id="pdfButton">
+                              <span class="download-btn-txt" id="pdfButtonTxt">Export the survey results in PDF</span>
+                            </button>
+                          </div>
+                            <div class="col-sm-5">
+                              <a id="file-selector-link" href="#"
+                                class="d-none d-md-inline-block btn btn-sm btn-primary shadow-lg">
+                                <i class="far fa-folder-open" data-toggle="tooltip" data-placement="top"
+                                  title="Choose the capability assessment result"></i>
+                                <input type="file" id="file-selector" accept=".txt, .json" data-toggle="tooltip" data-placement="top"
+                                  title="Choose the capability assessment result" />
+                              </a>
+                            </div>
+                          </div>
+                    
+                        </div>
+                      </div>
+                     FINAL PRUEBA 1 LINEA -->
+
+                        <img src="../img/european_commission.svg_.png" alt="European Commission" style="width: 100px;" class="ml-auto mr-2">
+                        <div id="login-btn"></div>
+                        <div id="google_translate_element"></div>
+                    </div>
+
+                    <div class="row" style="margin-bottom: 50px;">
+                      <div class="col-md-8">
+                        <div class="row">
+                          <div class="col-sm-6">
+                            <button class="d-none d-lg-inline-block btn btn-md btn-primary shadow-lg" id="pdfButton">
+                              <span class="download-btn-txt" id="pdfButtonTxt">Export the survey results in PDF</span>
+                            </button>
+                          </div>
+                            <div class="col-sm-6">
+                              <a id="file-selector-link" href="#"
+                                class="d-none d-lg-inline-block btn btn-sm btn-primary shadow-lg">
+                                <i class="far fa-folder-open" data-toggle="tooltip" data-placement="top"
+                                  title="Choose the capability assessment result"></i>
+                                <input type="file" id="file-selector" accept=".txt, .json" data-toggle="tooltip" data-placement="top"
+                                  title="Choose the capability assessment result" />
+                              </a>
+                            </div>
+                          </div>
+                    
+                        </div>
+                      </div>
+                    </div>
+
+                <!-- FINAL HEADER -->
+
+          <!-- INICIO PORTFOLIO -->
+
 
           <div class="row">
             <div class="col-12">
+
+
+              <div aria-label="A chart">
                 <div class="card shadow mb-4">
-                    <a href="#collapseCardExample3" class="d-block card-header py" data-toggle="collapse" role="button"
-                        aria-expanded="false" aria-controls="collapseCardExample3">
-                        <h6 class="m-0 font-weight-bold text-primary text-center">
-                            <span data-toggle="tooltip" data-placement="right" title="Cells with gray borders are editable.">
-                                <i class="fa fa-question-circle text-primary"></i>
-                            </span>
-                            eGovERA&copy; portfolio management decision support
-                        </h6>
-                    </a>
-                    <div id="egovera-portofolio" class="container-fluid d-none">
-                        <!-- Fila para myGridTable y quadrantChart -->
-                        <div class="row">
-                            <!-- Columna para myGridTable -->
-                            <div class="col-xl-6">
-                                <div id="myGridTable"></div>
-                                <div id="totalBudgetDisplay" style="text-align: right; margin-top: 10px;"><b>
-                                        Total Budget: <span id="totalBudgetValue"><b>0</b></span> mill €</b>
-                                </div>
-                                <div id="tableLegend" style="text-align: left; margin-top: 10px;">
-                                    <p style="margin-bottom: 40px; margin-top: -20px;">*Click in a cell to edit the value</p>
-                                </div>
-                            </div>
-                            <!-- Columna para quadrantChart -->
-                            <div class="col-xl-6">
-                                <div class="col-x1-5 quadCol">
-                                    <p>*Change the x axis</p>
-                                    <select id="xAxisSelector">
+                  <a href="#collapseCardExample3" class="d-block card-header py" data-toggle="collapse" role="button"
+                    aria-expanded="false" aria-controls="collapseCardExample3">
+                    <h6 class="m-0 font-weight-bold text-primary text-center">
+                      <span data-toggle="tooltip" data-placement="right" title="Cells with gray borders are editable.">
+                        <i class="fa fa-question-circle text-primary"></i>
+                      </span>
+                      eGovERA&copy; portfolio management decision support
+                    </h6>
+                  </a>
+                  <div id="egovera-portofolio" class="container-fluid d-none">
+                    <!-- Fila para myGridTable y quadrantChart -->
+                    <div class="row">
+                     
+                     
+                      <!-- Columna para myGridTable -->
+                      <div class="col-lg-12">
+                        <div aria-label="A chart">
+                          <div id="tableLegend" style="text-align: left; margin-top: 10px;">
+                            <p style="margin-bottom: 20px; margin-top: 20px;">*Click in a cell to edit the value</p>
+                          </div>
+                          <div id="myGridTable"></div>
+                          <div id="totalBudgetDisplay" style="text-align: right; margin-top: 10px;">
+                            Total Budget:<b> <span id="totalBudgetValue">0</span> mill €</b>
+                          </div>
+                        </div>
+
+
+                        <!-- Columna para quadrantChart -->
+                             <!-- X axis section -->
+
+                                <div class="col-lg-12" style="margin-top: 10px; margin-bottom: 50px; display: inline-flex;">
+                                  <div class="col-lg-6" style="text-align: left; margin-top: 10px;">
+                                    <b>*Change the X axis</b>
+                                    <div class="col-lg-6" style="text-align: left; margin-top: 10px; display: inline;">
+                                      <select id="xAxisSelector">
                                         <option value="strategicFit">Strategic Fit</option>
                                         <option value="expPublicValue">Expected Public Value</option>
-                                    </select>
-                                    <div class="quadrantChartBox" style="width: 700px; height: 700px;">
-                                        <canvas id="quadrantChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Fila para el chart tipo araña -->
-                        <div class="row">
-                            <div class="col-xl-6">
-                                <div>
-                                    <canvas id="myChart"></canvas>
-                                </div>
-                                <p>*Click on the legend to hide/show the DBC's</p>
-                                <div class="card-body" id="dashboard_div" style="padding-bottom: 0px; padding-top: 0px">
-                                  <div class="filters-div">
-                                    <div id="visibility_control_div"></div>
-                                    <div id="x-axis-div">
-                                      <div class="select-input">
-                                        <div>
-                                          <div class="goog-menu goog-menu-vertical" role="menu" aria-haspopup="true"
-                                            style="user-select: none; display: none">
-                                            <div value="National digital strategy Fit" class="goog-menuitem" role="menuitem"
-                                              style="user-select: none" id=":g">
-                                              <div class="goog-menuitem-content" style="user-select: none">
-                                                National digital strategy Fit
-                                              </div>
-                                            </div>
-                                            <div value="Expected public value" class="goog-menuitem" role="menuitem"
-                                              style="user-select: none" id=":h">
-                                              <div class="goog-menuitem-content" style="user-select: none">
-                                                Expected public value
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
+                                      </select>
                                   </div>
-                                  <div>
-                                    <div id="dashboard_strategicSlider_div"></div>
-                                    <div id="dashboard_expPubValSlider_div"></div>
-                                    <div id="dashboard_abiToSupdBusCapSlider_div"></div>
-                                    <div id="budget_filtering_div"></div>
                                   </div>
-                                </div>
-                            </div>
+                              </div>     
                        
-                        <!-- Fila para los sliders y botones de filtros -->
-                            <div class="centered-content col-xl-6">
-                                <div class="collapse" style="margin-top: 10%;" id="matrixBCs">
-                                  <p>*Move the sliders to see DBCs that match the filters criteria.</p>
-                                  <select id="dbcFilter" style="margin-bottom: 10px;">
-                                    <option value="all">All DBC's</option>
-                                  </select>
-                                </div>
-        
-                                <style>
-                                  #filters label {
-                                    display: inline-block;
-                                    width: 200px;
-                                    vertical-align: top;
-                                  }
-                                </style>
-                                <div id="filters" class="text-center" style="margin-bottom: 10px;">
-                                  <label>Strategic Fit:</label>
-                                  <input type="range" id="filter-strategicFit" min="0" max="5" value="5">
-                                  <span id="value-strategicFit">5</span>
-                                  <br>
-        
-                                  <label>Expected Public Value:</label>
-                                  <input type="range" id="filter-expPublicValue" min="0" max="5" value="5">
-                                  <span id="value-expPublicValue">5</span>
-                                  <br>
-        
-                                  <label>DBC Support Ability:</label>
-                                  <input type="range" id="filter-dbcSupportAbility" min="0" max="5" value="5">
-                                  <span id="value-dbcSupportAbility">5</span>
-                                  <br>
-        
-                                  <label>Estimated Budget (mill €):</label>
-                                  <input type="range" id="filter-budget" min="0" max="20" value="5">
-                                  <span id="value-budget">5</span>
-                                </div>
-                                <div class="text-center">
-                                    <button class="custom-button" id="applyFilters">Apply Filters</button>
-                                    <button class="custom-button" id="resetFilters">Reset Filters</button>
-                                </div>
+                         <!-- Bubble chart section -->
+              
+                      <div class="row">
+
+                        <div class="col-lg-12" style="margin-bottom: 20px;">
+                          <b>*Click on the legend to hide/show the DBC's</b>
+                        </div>
+                        <div class="col-lg-6">
+                            <div style="width: 625px; height: 625px;">
+                              <canvas id="quadrantChart"></canvas>
                             </div>
                           </div>
 
+                      <!-- Fila para el chart tipo araña ?????? -->
+                        <div class="col-lg-6">
+                            <div>
+                              <canvas id="myChart" width="625" height="625"></canvas>
+                          </div>
+                        </div>
+                      </div>
+                    
 
+
+                      <div class="card-body" id="dashboard_div" style="padding: 50px" ;>
+                        <div class="filters-div">
+                          <div id="visibility_control_div"></div>
+                          <div id="x-axis-div">
+                            <div class="select-input">
+                              <div>
+                                <div class="goog-menu goog-menu-vertical" role="menu" aria-haspopup="true"
+                                  style="user-select: none; display: none">
+                                  <div value="National digital strategy Fit" class="goog-menuitem" role="menuitem"
+                                    style="user-select: none" id=":g">
+                                    <div class="goog-menuitem-content" style="user-select: none">
+                                      National digital strategy Fit
+                                    </div>
+                                  </div>
+                                  <div value="Expected public value" class="goog-menuitem" role="menuitem"
+                                    style="user-select: none" id=":h">
+                                    <div class="goog-menuitem-content" style="user-select: none">
+                                      Expected public value
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                          <div>
+                            <div id="dashboard_strategicSlider_div"></div>
+                          <div id="dashboard_expPubValSlider_div"></div>
+                            <div id="dashboard_abiToSupdBusCapSlider_div"></div>
+                            <div id="budget_filtering_div"></div>
+                          </div>
+                      </div>
                     </div>
+                  
+                
+                    <!-- Fila para los sliders y botones de filtros -->
+                    <div class="centered-content col-xl-6" style="display: flex; align-content: center;">
+                      <div class="collapse" style="margin-top: 10%;" id="matrixBCs">
+                        <p>*Move the sliders to see DBCs that match the filters criteria.</p>
+                        <select id="dbcFilter" style="margin-bottom: 10px;">
+                          <option value="all">All DBC's</option>
+                        </select>
+                      </div>
+
+                      <style>
+                        #filters label {
+                          display: inline-block;
+                          width: 200px;
+                          vertical-align: top;
+                        }
+                      </style>
+                      <div id="filters" class="text-center" style="margin-bottom: 10px;">
+                        <label>Strategic Fit:</label>
+                        <input type="range" id="filter-strategicFit" min="0" max="5" value="5">
+                        <span id="value-strategicFit">5</span>
+                        <br>
+
+                        <label>Expected Public Value:</label>
+                        <input type="range" id="filter-expPublicValue" min="0" max="5" value="5">
+                        <span id="value-expPublicValue">5</span>
+                        <br>
+
+                        <label>DBC Support Ability:</label>
+                        <input type="range" id="filter-dbcSupportAbility" min="0" max="5" value="5">
+                        <span id="value-dbcSupportAbility">5</span>
+                        <br>
+
+                        <label>Estimated Budget (mill €):</label>
+                        <input type="range" id="filter-budget" min="0" max="20" value="5">
+                        <span id="value-budget">5</span>
+                      </div>
+                      <div class="text-center">
+                        <button class="custom-button" id="applyFilters">Apply Filters</button>
+                        <button class="custom-button" id="resetFilters">Reset Filters</button>
+                      </div>
+                    </div>
+                  </div>
+
+
                 </div>
+              </div>
             </div>
-        </div>
+            </div>
+          </div>
+
+<!-- INICIO ROADMAP DECISION-->
+
           <div class="row">
             <div class="col-xl-12 col-lg-12">
               <div class="card shadow mb-4">
@@ -204,10 +264,10 @@
                   <div class="card-body">
                     <div id="dps-netwok">
                       <!--  <p class="align-instructions text-primary">
-                        <b>Click on any Digital Public Service</b>
-                      </p> -->
+                              <b>Click on any Digital Public Service</b>
+                            </p> -->
                       <div class="row">
-                        <div class="col-sm-3">
+                        <div class="col-lg-3">
                           <div id="dps-network-info">
                             <div>
                               <p style="height: 48px; margin-bottom: 0.5rem">
@@ -225,7 +285,7 @@
                           </div>
                         </div>
 
-                        <div class="col-sm-9 adjust-heights">
+                        <div class="col-lg-9 adjust-heights">
                           <div class="chart-area" style="border: 1px solid lightgray; height: 100%"
                             id="dps-network-div"></div>
                         </div>
@@ -239,7 +299,7 @@
                           Roadmap where you need further detail</b>
                       </p>
                       <div class="row adjust-heights">
-                        <div class="col-sm-3">
+                        <div class="col-lg-3">
                           <div id="network_control">
                             <p>
                               <b>Selected digital business capability:</b>
@@ -324,14 +384,14 @@
                                   <b>Show business agnostic nodes </b>
                                 </div>
                                 <div class="col-3">
-                                  <input type="checkbox" checked data-toggle="toggle" data-size="small"
+                                  <input type="checkbox" checked data-toggle="toggle" data-size="lgall"
                                     id="infratoogle" />
                                 </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                        <div class="col-sm-9 adjust-heights">
+                        <div class="col-lg-9 adjust-heights">
                           <div class="chart-area" style="border: 1px solid lightgray; height: 100%" id="network_div">
                           </div>
                         </div>
@@ -431,23 +491,18 @@
                       title="TOGAF® defines a building block as a package of functionality defined to meet business needs.">
                       eGovERA&copy; Building Blocks
                     </h6>
-                    <table class="table table-hover" id="bbTable" width="100%" cellspacing="0"
-                      style="font-size: 14px; padding: 0px"></table>
+                    <table class="table table-hover" id="bbTable" style="font-size: 14px;"></table>
                   </div>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
-
-      <div id="footer"></div>
     </div>
-  </div>
-
-  <!-- <a class="scroll-to-top rounded" href="#page-top">
-      <i class="fas fa-angle-up"></i>
-    </a> -->
+    <!-- FINAL ROADMAP DECISION -->
+    
+</div>
+<div id="footer"></div>
+</div>
+</div>
   <div class="scroll-to-dps rounded">
     <div class="scroll-to-top-icon-container">
       <i class="fas fa-angle-up"></i>
@@ -475,6 +530,7 @@
             <span aria-hidden="true">×</span>
           </button>
         </div>
+
         <div class="modal-body">
           Select "Logout" below if you are ready to end your current session.
         </div>
@@ -526,14 +582,12 @@
   <script src="../JSBuild/requests.js"></script>
   <script src="../JSBuild/authentication.js"></script>
   <script src="../JSBuild/customElements.js"></script>
-
+  <!-- <script src="../JSBuild/pdfCreation.js"></script> -->
+  <script src="../JSBuild/survey.js"></script>
   <script src="../JSBuild/loginModal.js"></script>
   <script src="../JSBuild/loginButton.js"></script>
-
   <script src="../JSBuild/authenticationModal.js"></script>
-
   <script src="../JSBuild/roadmap.js" defer></script>
-
   <script src="../js/sb-admin-2.min.js"></script>
 </body>
 

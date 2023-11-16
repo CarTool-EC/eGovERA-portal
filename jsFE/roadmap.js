@@ -3,9 +3,12 @@ import 'chartjs-plugin-annotation';
 import { Grid } from "gridjs";
 import FILES from "./requestSurvey";
 
+
+
+
 let demo = true;
 google.charts.load("current", {
-  packages: ["corechart", "controls"],
+	packages: ["corechart", "controls"],
 });
 //let chartBubble;
 //let data;
@@ -48,30 +51,30 @@ let fileContent = {};
 let jsonDBCs = null;
 let jsonDPSs = null;
 let jsonABBs = null;
-
+export {clickedDPSs};
 let myChart;
 const hAxisLabes = {
-  1: "National Digital Strategy Fit",
-  5: "Expected Public Value",
+	1: "National Digital Strategy Fit",
+	5: "Expected Public Value",
 };
 
 const policyColors = {
-  health: "#e74a3b",
-  tax: "#4e73df",
-  "business agnostic": "#1cc88a",
-  infrastructure: "#1cc88a",
+	health: "#e74a3b",
+	tax: "#4e73df",
+	"business agnostic": "#1cc88a",
+	infrastructure: "#1cc88a",
 };
 const policyColorsWithOpacity = {
-  health: "#e74a3b80",
-  tax: "#4e73df80",
-  "business agnostic": "#1cc88a80",
-  infrastructure: "#1cc88a80",
+	health: "#e74a3b80",
+	tax: "#4e73df80",
+	"business agnostic": "#1cc88a80",
+	infrastructure: "#1cc88a80",
 };
 
 const policyImages = {
-  health: "../img/health.png",
-  tax: "../img/tax.png",
-  "business agnostic": "../img/tech.png",
+	health: "../img/health.png",
+	tax: "../img/tax.png",
+	"business agnostic": "../img/tech.png",
 };
 
 const natDigStrategicFitTooltip = `It reports the strategic priority assigned to the Digital Business Capability by the national digital agenda of the country.`;
@@ -88,35 +91,35 @@ const optimalAvgTooltip = `It measures the perspective ability to support a Digi
  * Create an object from the array of DPS and group them by id
  */
 let groupDPSsByID = (array) => {
-  return array.reduce((obj, item) => {
-    let id = item.ID.toString();
-    let policy = item.Policy.trim().toLowerCase().replace(/ /g, " ");
-    let name = item.Name.toString();
-    let description = (item.Description || "").trim();
-    let abbs = [];
-    let dBCs = [];
+	return array.reduce((obj, item) => {
+		let id = item.ID.toString();
+		let policy = item.Policy.trim().toLowerCase().replace(/ /g, " ");
+		let name = item.Name.toString();
+		let description = (item.Description || "").trim();
+		let abbs = [];
+		let dBCs = [];
 
-    if (
-      item["Digital_Business_Capability"] &&
-      item["Digital_Business_Capability"] !== null
-    ) {
-      let tempDBCS = item["Digital_Business_Capability"].toString().trim();
-      dBCs = tempDBCS.split(";").filter(Boolean);
-    }
+		if (
+			item["Digital_Business_Capability"] &&
+			item["Digital_Business_Capability"] !== null
+		) {
+			let tempDBCS = item["Digital_Business_Capability"].toString().trim();
+			dBCs = tempDBCS.split(";").filter(Boolean);
+		}
 
-    let tempObj = {
-      [id]: {
-        id,
-        policy,
-        name,
-        description,
-        dBCs,
-        abbs,
-      },
-    };
+		let tempObj = {
+			[id]: {
+				id,
+				policy,
+				name,
+				description,
+				dBCs,
+				abbs,
+			},
+		};
 
-    return { ...obj, ...tempObj };
-  }, {});
+		return { ...obj, ...tempObj };
+	}, {});
 };
 
 /**
@@ -124,68 +127,68 @@ let groupDPSsByID = (array) => {
  * Create an object from the array of ABBs and group them by id
  */
 let groupABBByID = (array) => {
-  return array.reduce((obj, item) => {
-    let id = item.ID.toString();
-    let policy = item.Policy.trim().toLowerCase();
-    let policyToCompare = policy.split(" ").filter(Boolean).join("-");
+	return array.reduce((obj, item) => {
+		let id = item.ID.toString();
+		let policy = item.Policy.trim().toLowerCase();
+		let policyToCompare = policy.split(" ").filter(Boolean).join("-");
 
-    let view = item.View.split(" ")
-      .filter((v) => v.toLowerCase() !== "view")
-      .filter(Boolean)
-      .join("")
-      .toLowerCase();
-    let area = item.Area.trim()
-      .split("-")
-      .filter(Boolean)
-      .map((str) => str.trim())
-      .map((str) => str.toLowerCase())
-      .join("-");
-    let abb = item["Architecture_Building_Block"].trim();
-    let description = (item.Description || "").trim();
-    let ability = null;
-    let successors = [];
-    let digPubServ = [];
+		let view = item.View.split(" ")
+			.filter((v) => v.toLowerCase() !== "view")
+			.filter(Boolean)
+			.join("")
+			.toLowerCase();
+		let area = item.Area.trim()
+			.split("-")
+			.filter(Boolean)
+			.map((str) => str.trim())
+			.map((str) => str.toLowerCase())
+			.join("-");
+		let abb = item["Architecture_Building_Block"].trim();
+		let description = (item.Description || "").trim();
+		let ability = null;
+		let successors = [];
+		let digPubServ = [];
 
-    if (item.successors !== undefined && item.successors !== null) {
-      let tempSuccessors = item.successors.toString();
-      successors = tempSuccessors.split(";").filter(Boolean);
-    }
+		if (item.successors !== undefined && item.successors !== null) {
+			let tempSuccessors = item.successors.toString();
+			successors = tempSuccessors.split(";").filter(Boolean);
+		}
 
-    if (
-      item["Digital_Public_Service"] !== undefined &&
-      item["Digital_Public_Service"] !== null
-    ) {
-      let tempDPS = item["Digital_Public_Service"].toString();
-      digPubServ = tempDPS.split(";").filter(Boolean);
-    }
+		if (
+			item["Digital_Public_Service"] !== undefined &&
+			item["Digital_Public_Service"] !== null
+		) {
+			let tempDPS = item["Digital_Public_Service"].toString();
+			digPubServ = tempDPS.split(";").filter(Boolean);
+		}
 
-    let abbObject = {
-      id,
-      policy,
-      view,
-      area,
-      abb,
-      description,
-      ability,
-      successors,
-      digPubServ,
-    };
+		let abbObject = {
+			id,
+			policy,
+			view,
+			area,
+			abb,
+			description,
+			ability,
+			successors,
+			digPubServ,
+		};
 
-    let tempObj = {
-      [id]: abbObject,
-    };
+		let tempObj = {
+			[id]: abbObject,
+		};
 
-    if (policyToCompare === "business-agnostic") {
-      for (let x in viewsInfra) {
-        if (viewsInfra[x].name == view) {
-          viewsInfra[x].bbs.push(abbObject);
-          break;
-        }
-      }
-    }
+		if (policyToCompare === "business-agnostic") {
+			for (let x in viewsInfra) {
+				if (viewsInfra[x].name == view) {
+					viewsInfra[x].bbs.push(abbObject);
+					break;
+				}
+			}
+		}
 
-    return { ...obj, ...tempObj };
-  }, {});
+		return { ...obj, ...tempObj };
+	}, {});
 };
 
 /**
@@ -193,690 +196,72 @@ let groupABBByID = (array) => {
  * Create an object from the array of dBusCaps and group them by id
  */
 let groupBCByID = (array) => {
-  return array.reduce((obj, item) => {
-    let id = item.ID.toString().trim();
-    let policy = item.Policy.trim();
-    let name = item.Name.trim();
-    let description = item.Description.toString().trim();
-    let bbs = [];
-    let dps = [];
-    let views = [];
-    let view0 = createView("legal", idLdom, policy);
-    let view1 = createView("organisational", idOdom, policy);
-    let view2 = createView("semantic", idSdom, policy);
-    let view3 = createView("technical-application", idTAdom, policy);
-    let view4 = createView("technical-infrastructure", idTIdom, policy);
-    let priority = null;
-    let avgAbility = null;
-    let prospectiveAbility = null;
+	return array.reduce((obj, item) => {
+		let id = item.ID.toString().trim();
+		let policy = item.Policy.trim();
+		let name = item.Name.trim();
+		let description = item.Description.toString().trim();
+		let bbs = [];
+		let dps = [];
+		let views = [];
+		let view0 = createView("legal", idLdom, policy);
+		let view1 = createView("organisational", idOdom, policy);
+		let view2 = createView("semantic", idSdom, policy);
+		let view3 = createView("technical-application", idTAdom, policy);
+		let view4 = createView("technical-infrastructure", idTIdom, policy);
+		let priority = null;
+		let avgAbility = null;
+		let prospectiveAbility = null;
 
-    views.push(view0);
-    views.push(view1);
-    views.push(view2);
-    views.push(view3);
-    views.push(view4);
+		views.push(view0);
+		views.push(view1);
+		views.push(view2);
+		views.push(view3);
+		views.push(view4);
 
-    obj[id] = {
-      id,
-      policy,
-      name,
-      description,
-      views,
-      priority,
-      avgAbility,
-      bbs,
-      dps,
-      prospectiveAbility,
-    };
+		obj[id] = {
+			id,
+			policy,
+			name,
+			description,
+			views,
+			priority,
+			avgAbility,
+			bbs,
+			dps,
+			prospectiveAbility,
+		};
 
-    return obj;
-  }, {});
+		return obj;
+	}, {});
 };
 
-// *********************************************************
-// PDF Creation Functionality (with jspdf & jspdf.autotalbe)
-// *********************************************************
-
-/**
- * Adds the explanatory texts in the PDF
- * 
- * @param {Object} pdf PDF Object
- * @param {Number} startX x coordinate  
- * @param {Number} startY y coordinate
- * @param {Number} sentenceNum key for the addExplanatoryText
- */
-function addExplanatoryText(pdf, startX, startY, sentenceNum) {
-  const explanatorySentences = {
-    1: ["The quadrant represents the",
-      "scores assigned to the evaluated digital",
-      "business capability/ies, according to the",
-      "following parameters:",
-      "   • National Strategy Fit",
-      "   • Ability to support the dBusCap",
-      "   • Target Perspective Ability to Support",
-      "     dBusCap",
-      "   • Expected Public Value and the",
-      "   • Estimated budget (in millions EUR)",],
-    2: ["In addition to the information visible from the quadrant, in the following table you can find a summary of the Capability ",
-      "Assessment Results. In particular, the below table shows the current MS's ability to support the evaluated digital ",
-      "business capability/ies and the target ability to support the evaluated Digital Business Capabilities. As a result, the ",
-      "estimated budget aims to fulfil the GAP between the 'AS IS ability' and the target prospective ability. Moreover, the ",
-      "scores are reported per area/view (legal, organisation, semantic, technical-application and technical infrastructure).",
-      "Finally, you find a summary of the assigned parameters (National Digital fit, Expected Public Value and Estimated ",
-      "Budget) to evaluated Digital Business Capability/ies."],
-    3: ["The following table sumarises the selected Digital Business Capabilities"],
-    4: ["Below, you have a summary table and a graphical representation of all the Digital Public Services in",
-      "scope, meaning the ones supporting the selected Digital Business Capability"],
-    5: ["The following graph represents the MS's Digital Transformation Roadmap, by which the user can",
-      "select the different orientation for the implementation of the selected digital bysiness capability"],
-    6: ["The following table summarises the selected Digital Business Capabilities"],
-    7: ["Below you can see the graphical representation of the functionalities (i.e. Skills, expertise, experience",
-      "etc.) supporting the selected Digital Business Capability, based on the MS's orientation (legal,",
-      "organizational, semantic and technical) priority chosen. The content of the nodes (expressed by the",
-      "blue color) is variable because it reflects the relation between the ABBs and the ability to support",
-      "the selected Digital Business Capability"],
-    8: ["The following is a table containing the list of the functionalities (i.e. Skills, expertise, experience, etc.)",
-      "needed to implement the selected Digital Business Capability"],
-  };
-
-  // Gap between lines
-  let lineGap;
-  // set font parameters
-  if (sentenceNum === 2) {
-    pdf.setFontSize(10);
-    lineGap = 5;
-  } else {
-    pdf.setFontSize(12);
-    lineGap = 7;
-  }
-  pdf.setFontType('italic');
-  pdf.setTextColor(0, 0, 0); // black
-
-  // Add the sentences into the PDF
-  let text = explanatorySentences[sentenceNum];
-  let y = startY;
-  for (let i = 0; i < text.length; i++) {
-    pdf.text(text[i], startX, y);
-    y = y + lineGap;
-  }
-}
-
-/**
- * Creates the header and footer for the PDF
- * 
- * @param {*} pdf PDF Object
- * @param {*} title PDF's title
- */
-function addPageTemplate(pdf, titleNum) {
-  // Title's object
-  const titleInfo = {
-    1: { title: "Introduction", coordinates: [88, 20] },
-    2: { title: "Portfolio Management Decision Support", coordinates: [45, 20] },
-    3: { title: "Digital Transformation Roadmap Decision Support", coordinates: [30, 20] },
-    4: { title: "eGovERA© Building Blocks", coordinates: [65, 20] },
-  };
-
-  // Add top right icon
-  const rightIcon = new Image();
-  rightIcon.src = "../img/ec2.png";
-  const rightIconCoords = [180, 1, 25, 18]; // x, y, width, height
-  pdf.addImage(rightIcon, 'png', ...rightIconCoords);
-
-  // Add top left icon and sentence
-  const leftIcon = new Image();
-  leftIcon.src = "../img/egovera-icon2.png";
-  const leftIconCoords = [4, 2, 12, 11];
-  pdf.addImage(leftIcon, 'png', ...leftIconCoords);
-  const topSentCoords = [15, 10]; // x, y
-  const topSentence = "eGovERA ©";
-  pdf.setTextColor(0, 0, 0); // black
-  pdf.setFontType('normal');
-  pdf.setFontSize(15);
-  pdf.text(topSentence, ...topSentCoords);
-
-  // Add bottom left sentence
-  const leftSentCoords = [10, 292]; // x, y
-  const leftSentence = "Copyright © European Commission 2022";
-  pdf.setFontSize(10);
-  pdf.setTextColor(192, 192, 192);
-  pdf.setFontType('italic');
-  pdf.text(leftSentence, ...leftSentCoords);
-
-  // Add bottom right sentence and underline
-  const rightSentCoords = [160, 292]; // x, y
-  const rightSentence = "ISA product license v1.4";
-  pdf.setFontSize(10);
-  pdf.setTextColor(102, 178, 255); // light blue
-  pdf.text(rightSentence, ...rightSentCoords);
-  pdf.setLineWidth(0.1);
-  pdf.setDrawColor(102, 178, 255); // light blue
-  pdf.line(160, 293, 198, 293) // startX, startY, endX, endY
-
-  // Add title
-  const titleCoords = titleInfo[titleNum].coordinates;
-  const titleSentence = titleInfo[titleNum].title;
-  pdf.setFontSize(17);
-  pdf.setTextColor(0, 153, 0); // green
-  pdf.setFontType('bold');
-  pdf.text(titleSentence, ...titleCoords);
-}
-
-/**
- * Creates the Introductory Page for the PDF
- * 
- * @param {Object} pdf PDF Object
- */
-function addIntroductoryPage(pdf) {
-  //pdf.addPage();
-  addPageTemplate(pdf, 1);
-
-  // Add sentence1
-  const sentence1 = "DG DIGIT";
-  const sentence1Coords = [90, 60];
-  pdf.setFontSize(20);
-  pdf.setTextColor(0, 0, 0); // black
-  pdf.setFontType('bold');
-  pdf.text(sentence1, ...sentence1Coords);
-
-  // Add sentence2
-  const sentence2 = "Unit.D2";
-  const sentence2Coords = [93, 70];
-  pdf.text(sentence2, ...sentence2Coords);
-
-  // Add sentence3
-  const sentence3 = "eGovERA © portal";
-  const sentence3Coords = [52, 100];
-  pdf.setFontSize(35);
-  pdf.setTextColor(51, 153, 255); // blue
-  pdf.text(sentence3, ...sentence3Coords);
-
-  // Add sentence4
-  const sentence4 = "Decision support section";
-  const sentence4Coords = [49, 130];
-  pdf.setTextColor(0, 153, 0); // light green
-  pdf.setFontSize(27);
-  pdf.text(sentence4, ...sentence4Coords);
-
-  // Add sentence5
-  const sentence5 = "PDF export results";
-  const sentence5Coords = [65, 145];
-  pdf.text(sentence5, ...sentence5Coords);
-
-  // Add user's information 
-  pdf.setTextColor(0, 0, 0); // black
-  pdf.setFontSize(12);
-  pdf.setFontType('bold');
-  pdf.text("User name and surname:", 10, 250);
-  pdf.text("Organisation:", 10, 258);
-  pdf.text("Country:", 10, 266);
-  pdf.text("Contact E-mail:", 10, 274);
-  pdf.setFontType('normal');
-  pdf.text(fileContent.fullName, 62, 250);
-  pdf.text(fileContent.organisation, 39, 258);
-  pdf.text(fileContent.country, 29, 266);
-  pdf.text(fileContent.email, 43, 274);
-}
-
-// Start the loading functionality for the PDF Download button
-function startLoader(textId, buttonId) {
-  document.querySelector(`#${textId}`).classList.add('download-btn-text-hidden');
-  document.querySelector(`#${buttonId}`).classList.add('button-loader');
-}
-
-// Stop the loading functionality for the PDF Download button
-function stopLoader(textId, buttonId) {
-  document.querySelector(`#${textId}`).classList.remove('download-btn-text-hidden');
-  document.querySelector(`#${buttonId}`).classList.remove('button-loader');
-}
-
-// When the pdf download button is clicked
-document.getElementById('pdfButton').addEventListener('click', createPDF);
-
-/**
- * Structure the PDF
- */
-function createPDF() {
-  // Create the PDF Object
-  var pdf = new jsPDF();
-  var pdfName = 'decision-support.pdf';
-
-  startLoader("pdfButtonTxt", "pdfButton");
-
-  // Add to the PDF Object the Portfolio Management Table and Graph
-  html2canvas(document.querySelector('[aria-label="A chart."]')).then(canvas => {
-    if (!(canvas.height === 0) && !(canvas.width === 0)) {
-
-      addIntroductoryPage(pdf);
-
-      // Add the Graph of the Portofolio Management Section
-      pdf.addPage();
-      addPageTemplate(pdf, 2);
-      addExplanatoryText(pdf, 15, 55, 1);
-      addExplanatoryText(pdf, 15, 160, 2);
-      let img = canvas.toDataURL('image/url');
-      pdf.addImage(img, 'png', 95, 30, 105, 120);
-
-      // Add the Table of the Portofolio Management Section
-      var titles = [
-        ["ID"],
-        ["Policy Domain"],
-        ["Digital Business Capability"],
-        ["National Digital Strategy Fit"],
-        ["Target Prospective Ability to support the dBusCap"],
-        ["Estimated budget (in millions EUR)"],
-        ["Expected Public Value"],
-        ["Overall ability to support the dBusCap"],
-        ["View Name"],
-        ["Ability to support the dBusCap per view"]
-      ];
-
-      // If dBusCap selected
-      let currentBcList;
-      if (selectedValue) {
-        currentBcList = { [selectedValue]: bcList[selectedValue] };
-      } else {
-        currentBcList = bcList;
-      }
-
-      let data = [];
-      let count = 0;
-      // Populate the rows of the table
-      for (let key in currentBcList) {
-        for (let viewKey in currentBcList[key]['views']) {
-          let row = [
-            currentBcList[key]['views'][viewKey]['name'],
-            currentBcList[key]['views'][viewKey]['avgAbility'],
-          ];
-          if (count % 5 === 0) {
-            row.unshift({
-              rowSpan: 5,
-              content: currentBcList[key]['id'],
-              styles: { valign: 'middle', halign: 'center' },
-            }, {
-              rowSpan: 5,
-              content: currentBcList[key]['policy'],
-              styles: { valign: 'middle', halign: 'center' },
-            }, {
-              rowSpan: 5,
-              content: currentBcList[key]['name'],
-              styles: { valign: 'middle', halign: 'center' },
-            }, {
-              rowSpan: 5,
-              content: currentBcList[key]['prospectiveAbility'],
-              styles: { valign: 'middle', halign: 'center' },
-            }, {
-              rowSpan: 5,
-              content: currentBcList[key]['priority'],
-              styles: { valign: 'middle', halign: 'center' },
-            }, {
-              rowSpan: 5,
-              content: currentBcList[key]['budget'],
-              styles: { valign: 'middle', halign: 'center' },
-            }, {
-              rowSpan: 5,
-              content: currentBcList[key]['expRandom'],
-              styles: { valign: 'middle', halign: 'center' },
-            }, {
-              rowSpan: 5,
-              content: currentBcList[key]['avgAbility'],
-              styles: { valign: 'middle', halign: 'center' },
-            }
-            );
-          }
-          data.push(row);
-          count++;
-        }
-      }
-      pdf.autoTable(
-        titles,
-        data,
-        {
-          columnStyles: {
-            0: { cellWidth: 17 },
-            1: { cellWidth: 16 },
-            2: { cellWidth: 16 },
-            3: { cellWidth: 16 },
-            4: { cellWidth: 18 },
-            5: { cellWidth: 18 },
-            6: { cellWidth: 19 },
-            7: { cellWidth: 20 },
-            8: { cellWidth: 25 },
-            9: { columnWidth: 14 },
-          },
-          theme: 'grid',
-          headStyles: { fillColor: [8, 161, 88], fontSize: 7, halign: 'center', valign: 'middle', },
-          margin: { right: 20 },
-          startY: 200,
-          margin: { top: 30 },
-          didDrawPage: function () { addPageTemplate(pdf, 2) },
-        }
-      );
-
-      // Add the Information for the first section of the Digital Transformation Roadmap
-      html2canvas(document.querySelector('#dps-network-info')).then(canvas => {
-        if (!(canvas.height === 0) && !(canvas.width === 0)) {
-          pdf.addPage();
-          addPageTemplate(pdf, 3);
-          addExplanatoryText(pdf, 15, 35, 3);
-          addExplanatoryText(pdf, 15, 93, 4);
-
-          var titles1 = [
-            ["Selected Digital Business Capability"]
-          ];
-          var titles2 = [
-            ["Table of Digital Public Services in scope"]
-          ];
-          var data1 = [
-            [
-              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[0].textContent.split(":")[0],
-              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[0].textContent.split(":")[1],
-            ],
-            [
-              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[1].textContent.split(":")[0],
-              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[1].textContent.split(":")[1],
-            ],
-            [
-              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[2].textContent.split(":")[0],
-              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[2].textContent.split(":")[1],
-            ],
-            [
-              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[3].textContent.split(":")[0],
-              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[3].textContent.split(":")[1],
-            ],
-          ];
-          var data2 = [];
-          let liItemsArr = [];
-          var liItems = document.getElementById("dps-select-info").getElementsByTagName('li');
-          for (let i = 0; i < liItems.length; i++) {
-            if (clickedDPSs.length !== 0) {
-              let id = liItems[i].textContent.split("-")[0].trim()
-              for (let j = 0; j < clickedDPSs.length; j++) {
-                if (id === clickedDPSs[j]) {
-                  liItemsArr.push(liItems[i].textContent);
-                }
-              }
-            } else {
-              liItemsArr.push(liItems[i].textContent);
-            }
-          }
-
-          // Create rows of three liItems
-          let num = 0;
-          for (let i = 0; i < Math.floor(liItemsArr.length / 3) + 1; i++) {
-            let currRow = [];
-            for (let j = 0; j < 3; j++) {
-              if (num < liItemsArr.length) {
-                currRow.push(liItemsArr[num]);
-              }
-              num += 1;
-            }
-            if (currRow.length > 0) {
-              data2.push(currRow);
-            }
-          }
-
-          pdf.autoTable({
-            startY: 42,
-            head: [[{ content: titles1, colSpan: 2, styles: { halign: 'center', fillColor: [8, 161, 88], }, },],],
-            body: data1,
-            theme: "grid",
-            talbeWidth: 900,
-          });
-
-          pdf.autoTable({
-            startY: 105,
-            head: [[{ content: titles2, colSpan: 3, styles: { halign: 'center', fillColor: [8, 161, 88], }, },],],
-            body: data2,
-            theme: "grid",
-          });
-
-          // Add the Graph for the first section of the Digital Transformation Roadmap
-          html2canvas(document.querySelector('#dps-network-div')).then(canvas => {
-            if (!(canvas.height === 0) && !(canvas.width === 0)) {
-              // set the space between the table and the graph
-              let decreasedSpace = 0;
-              switch (data2.length) {
-                case 1:
-                  decreasedSpace = 45;
-                  break;
-                case 2:
-                  decreasedSpace = 35;
-                  break;
-                case 3:
-                  decreasedSpace = 24;
-                  break;
-                case 4:
-                  decreasedSpace = 11;
-                  break;
-                case 5:
-                  decreasedSpace = 0;
-                  break;
-              }
-              let img = canvas.toDataURL('image/url');
-              let imgProps = pdf.getImageProperties(img);
-              let pdfWidth = pdf.internal.pageSize.getWidth();
-              let pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-              pdf.addImage(img, 'png', 14, 180 - decreasedSpace, pdfWidth - 24, pdfHeight);
-
-              const graphTitle1 = "Graphical representation of the Digital Public services in scope";
-              pdf.autoTable({
-                startY: 174 - decreasedSpace,
-                head: [[{ content: graphTitle1, styles: { halign: 'center', fillColor: [8, 161, 88], }, },],],
-                margin: { right: 10 },
-              });
-
-              // Add the Information for the second section of the Digital Transformation Roadmap
-              html2canvas(document.querySelector('#network_control')).then(canvas => {
-                if (!(canvas.height === 0) && !(canvas.width === 0)) {
-                  pdf.addPage();
-                  addPageTemplate(pdf, 3);
-                  addExplanatoryText(pdf, 15, 35, 5);
-
-                  let title = [["Implementation orientation for the digital transformation"]];
-                  let data = [
-                    ["Legal Orientation: a member state has a legal orientation when its first priority, in the digital public service design, is to address and implement legal requirements"],
-                    ["Organizational/Governance Orientation: a member state has a governance orientation when its first priority, in the digital public service design, is to address the possible channels for the public service delivery, and the definition of Governance model"],
-                    ["Semantic/Intergration Orientation: a member state has a semantic/intergration orientation when its first priority, in the digital public service design, is to address the possible source of data (e.g. base registry), how data will be exchanged and to define guidelines and agreements for the sharing data"],
-                    ["Technical Orientation: a member state has a legal orientation when its first priority, in the digital public service design, is to reuse/share software components (e.g. registry services), to address exchanging capabilities of data (e.g. interfaces) and to define technical interoperability agreements"],
-                  ];
-
-                  pdf.autoTable({
-                    startY: 160,
-                    head: [[{ content: title, styles: { halign: 'center', fillColor: [8, 161, 88], }, fontStyle: 'bold', },],],
-                    body: data,
-                    theme: "grid",
-                  });
-
-                  // Add the Graph for the second section of the Digital Transformation Roadmap
-                  html2canvas(document.querySelector('#network_div')).then(canvas => {
-                    if (!(canvas.height === 0) && !(canvas.width === 0)) {
-                      let img = canvas.toDataURL('image/url');
-                      let imgProps = pdf.getImageProperties(img);
-                      let pdfWidth = pdf.internal.pageSize.getWidth();
-                      let pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-                      pdf.addImage(img, 'png', 14, 51, pdfWidth - 24, pdfHeight);
-
-                      // Add the title
-                      let graphTitle2 = "Steps of the Digital Transformation Roadmap";
-                      pdf.autoTable({
-                        startY: 48,
-                        head: [[{ content: graphTitle2, styles: { halign: 'center', fillColor: [8, 161, 88], }, },],],
-                        margin: { right: 10 },
-                      });
-
-                      // Add the Information for the third section of the Digital Transformation Roadmap
-                      html2canvas(document.querySelector('#graph3_info')).then(canvas => {
-                        if (!(canvas.height === 0) && !(canvas.width === 0)) {
-                          pdf.addPage();
-                          addPageTemplate(pdf, 3);
-                          addExplanatoryText(pdf, 15, 35, 6);
-                          addExplanatoryText(pdf, 15, 90, 7);
-                          var titles1 = [
-                            ["Digital Business Capability"],
-                          ];
-                          var data1 = [
-                            [
-                              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[0].textContent.split(":")[0],
-                              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[0].textContent.split(":")[1]
-                            ],
-                            [
-                              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[1].textContent.split(":")[0] + " domain",
-                              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[1].textContent.split(":")[1],
-                            ],
-                            [
-                              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[2].textContent.split(":")[0],
-                              document.getElementById("dps-network-bc-info").getElementsByTagName('p')[2].textContent.split(":")[1],
-                            ],
-                            [
-                              "Estimated Budget (in millions EUR)",
-                              `${maxBudget}`
-                            ],
-                          ];
-
-                          pdf.autoTable({
-                            startY: 40,
-                            head: [[{ content: titles1, colSpan: 2, styles: { halign: 'center', fillColor: [8, 161, 88], }, },],],
-                            body: data1,
-                            theme: "grid",
-                            talbeWidth: 900,
-                          });
-                        }
-                        // Add the Graph for the third section of the Digital Transformation Roadmap
-                        html2canvas(document.querySelector('#network_div2')).then(canvas => {
-                          if (!(canvas.height === 0) && !(canvas.width === 0)) {
-                            let img = canvas.toDataURL('image/url');
-                            let imgProps = pdf.getImageProperties(img);
-                            let pdfWidth = pdf.internal.pageSize.getWidth();
-                            let pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-                            pdf.addImage(img, 'png', 14, 132, pdfWidth - 24, pdfHeight);
-
-                            let graphTitle3 = "Functionalities supporting the Digital Business Capability";
-                            pdf.autoTable({
-                              startY: 125,
-                              head: [[{ content: graphTitle3, styles: { halign: 'center', fillColor: [8, 161, 88], }, },],],
-                              margin: { right: 10 },
-                            });
-                          }
-
-                          // Add the Building Blocks Table
-                          html2canvas(document.querySelector('#bb-div')).then(canvas => {
-                            if (!(canvas.height === 0) && !(canvas.width === 0)) {
-                              pdf.addPage();
-                              addPageTemplate(pdf, 4);
-                              addExplanatoryText(pdf, 15, 35, 8);
-                              var titles = [
-                                ["ID"],
-                                ["View"],
-                                ["Area"],
-                                ["Name"],
-                                ["Description"],
-                                ["Ability to support the dBusCap"],
-                                ["ID's succesors"],
-                              ];
-
-                              var data = [];
-                              for (let key in currentBBTableBody) {
-                                var row = [
-                                  currentBBTableBody[key]['id'],
-                                  currentBBTableBody[key]['view'],
-                                  currentBBTableBody[key]['area'],
-                                  currentBBTableBody[key]['abb'],
-                                  currentBBTableBody[key]['description'],
-                                  currentBBTableBody[key]['ability'],
-                                  currentBBTableBody[key]['successors'],
-                                ];
-                                data.push(row);
-                              }
-
-                              pdf.autoTable(
-                                titles,
-                                data,
-                                {
-                                  startY: 50,
-                                  headStyles: { fillColor: [8, 161, 88], },
-                                  rowPageBreak: 'auto',
-                                  bodyStyles: { valign: 'top' },
-                                  columnStyles: {
-                                    0: { cellWidth: 15 },
-                                    1: { cellWidth: 12 },
-                                    2: { cellWidth: 20 },
-                                    3: { cellWidth: 25 },
-                                    4: { cellWidth: 60 },
-                                    5: { cellWidth: 10 },
-                                    6: { cellWidth: 20 },
-                                    text: { cellWidth: 'auto' },
-                                  },
-                                  theme: 'grid',
-                                  margin: { top: 30 },
-                                  didDrawPage: function () { addPageTemplate(pdf, 4) },
-                                }
-                              );
-                              stopLoader("pdfButtonTxt", "pdfButton");
-                              pdf.save(pdfName);
-                            } else {
-                              stopLoader("pdfButtonTxt", "pdfButton");
-                              pdf.save(pdfName);
-                            }
-                          });
-                        });
-                      });
-                    } else {
-                      stopLoader("pdfButtonTxt", "pdfButton");
-                      pdf.save(pdfName);
-                    }
-                  });
-                } else {
-                  stopLoader("pdfButtonTxt", "pdfButton");
-                  pdf.save(pdfName);
-                }
-              });
-            } else {
-              stopLoader("pdfButtonTxt", "pdfButton");
-              pdf.save(pdfName);
-            }
-          });
-        } else {
-          stopLoader("pdfButtonTxt", "pdfButton");
-          pdf.save(pdfName);
-        }
-      });
-    } else {
-      stopLoader("pdfButtonTxt", "pdfButton");
-      window.alert("Select a JSON file");
-    }
-  });
-}
-
-// ******************************
-// PDF Creation Functionality END
-// ******************************
-
 function groupBy(obj, key, keyToKeep) {
-  if (keyToKeep) {
-    return obj.reduce(function (prevObj, current) {
-      const tempKey = current[key];
-      (prevObj[tempKey] = prevObj[tempKey] || []).push(current[keyToKeep]);
-      return prevObj;
-    }, {});
-  }
-  return obj.reduce(function (prevObj, current) {
-    const tempKey = current[key];
-    (prevObj[tempKey] = prevObj[tempKey] || []).push(current);
-    return prevObj;
-  }, {});
+	if (keyToKeep) {
+		return obj.reduce(function (prevObj, current) {
+			const tempKey = current[key];
+			(prevObj[tempKey] = prevObj[tempKey] || []).push(current[keyToKeep]);
+			return prevObj;
+		}, {});
+	}
+	return obj.reduce(function (prevObj, current) {
+		const tempKey = current[key];
+		(prevObj[tempKey] = prevObj[tempKey] || []).push(current);
+		return prevObj;
+	}, {});
 }
 
 function sumOfArray(arr) {
-  return arr.reduce(function (previousValue, currentValue) {
-    return previousValue + currentValue;
-  }, 0);
+	return arr.reduce(function (previousValue, currentValue) {
+		return previousValue + currentValue;
+	}, 0);
 }
 
 function maxOfArray(arr) {
-  return arr.reduce(function (previousValue, currentValue) {
-    if (previousValue < currentValue) return currentValue;
-    return previousValue;
-  }, 0);
+	return arr.reduce(function (previousValue, currentValue) {
+		if (previousValue < currentValue) return currentValue;
+		return previousValue;
+	}, 0);
 }
 
 /**
@@ -885,73 +270,76 @@ function maxOfArray(arr) {
  * @returns {DOMElement}
  */
 function thWithTextNode(valueOnTextNode) {
-  let th = document.createElement("th");
-  let text = document.createTextNode(valueOnTextNode);
-  th.appendChild(text);
-  return th;
+	let th = document.createElement("th");
+	let text = document.createTextNode(valueOnTextNode);
+	th.appendChild(text);
+	return th;
 }
 
 /**
  * Create span with question icon and the title attribute is the tooltip
  */
 const createTooltipSpan = (tooltip) => {
-  let tooltipSpan = document.createElement("span");
-  tooltipSpan.className = "ml-1";
+	let tooltipSpan = document.createElement("span");
+	tooltipSpan.className = "ml-1";
 
-  tooltipSpan.setAttribute("title", tooltip);
+	tooltipSpan.setAttribute("title", tooltip);
 
-  const icon = document.createElement("i");
-  icon.className = "fa fa-question-circle text-primary";
-  tooltipSpan.appendChild(icon);
-  return tooltipSpan;
+	const icon = document.createElement("i");
+	icon.className = "fa fa-question-circle text-primary";
+	tooltipSpan.appendChild(icon);
+	return tooltipSpan;
 };
 
 /**
  * create th with span inside
  */
 function thWithSpanNode(valueOnTextNode, tooltip = "") {
-  let th = document.createElement("th");
-  let span = document.createElement("span");
-  span.innerText = valueOnTextNode;
+	let th = document.createElement("th");
+	let span = document.createElement("span");
+	span.innerText = valueOnTextNode;
 
-  if (tooltip) {
-    span.appendChild(createTooltipSpan(tooltip));
-  }
+	if (tooltip) {
+		span.appendChild(createTooltipSpan(tooltip));
+	}
 
-  th.appendChild(span);
-  return th;
+	th.appendChild(span);
+	return th;
 }
 
 /**
  * Capitalize a string
  */
 function CA(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
+	return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 async function init(JSONObj) {
-  $("#networkBBs").collapse("hide");
-  $("#listBBs").collapse("hide");
-  document.getElementById("egovera-portofolio").classList.remove("d-none");
-  await draw(JSONObj);
+	$("#networkBBs").collapse("hide");
+	$("#listBBs").collapse("hide");
+	document.getElementById("egovera-portofolio").classList.remove("d-none");
+	await draw(JSONObj);
 }
+
+
+// LEER DATOS DE JSON
 
 const fileSelector = document.getElementById("file-selector");
 fileSelector.addEventListener("change", function (event) {
-  const file = event.target.files[0];
-  if (file == null) {
-    return;
-  }
-  var reader = new FileReader();
-  reader.onload = async function (event) {
-    var testo = event.target.result;
-    var json = JSON.parse(testo);
-    fileContent = json;
-    await init(json);
-  };
-  reader.readAsText(file);
-  this.parentElement.className = "";
-  this.parentElement.classList.add("d-none");
+	const file = event.target.files[0];
+	if (file == null) {
+		return;
+	}
+	var reader = new FileReader();
+	reader.onload = async function (event) {
+		var testo = event.target.result;
+		var json = JSON.parse(testo);
+		fileContent = json;
+		await init(json);
+	};
+	reader.readAsText(file);
+	this.parentElement.className = "";
+	this.parentElement.classList.add("d-none");
 });
 
 
@@ -963,582 +351,636 @@ let quadChart;
  *
  */
 async function callBackForRequest(response, json) {
-  //inputBCJSON = response.dBusCaps;
-  //inputBBJSON = response.abb;
-  //inputDPSJSON = response.dPubSer;
-  //initInputfromJSON();
-  //readSurveyResult(json);
-  // createBusinessCapabilityTable();
-  // drawBusinessCapabilityChart();
-  // resizeQuandrant();
-  const jsonFiles = await FILES;
-  jsonABBs = jsonFiles[0];
-  jsonDBCs = jsonFiles[1];
-  jsonDPSs = jsonFiles[2];
+	// inputBCJSON = response.dBusCaps;
+	// inputBBJSON = response.abb;
+	// inputDPSJSON = response.dPubSer;
+	// initInputfromJSON();
+	// readSurveyResult(json);
+	// createBusinessCapabilityTable();
+	// drawBusinessCapabilityChart();
+	// resizeQuandrant();
+	const jsonFiles = await FILES;
+	jsonABBs = jsonFiles[0];
+	jsonDBCs = jsonFiles[1];
+	jsonDPSs = jsonFiles[2];
 
-  const tableData = processSurveyResult(json);
-  let originalData = [...tableData];
-  editedData = [...tableData];
-  updateTotalBudget();
+	const tableData = processSurveyResult(json);
+	let originalData = [...tableData];
+	editedData = [...tableData];
+	updateTotalBudget();
 
-  const tableGrid = new Grid({
-    columns: [
-      { id: 'dbc', name: 'DBC' },
-      // { id: 'policy', name: 'Policy Domain' },
-      { id: 'strategicFit', name: 'Strategic Fit', attributes: { "contenteditable": "true" }},
-      { id: 'dbcSupportAbility', name: 'DBC Support Ability', attributes: { "contenteditable": "true" } },
-      { id: 'supportTargetAbility', name: 'Support Target Ability', attributes: { "contenteditable": "true" } },
-      { id: 'expPublicValue', name: 'Expected Public Value', attributes: { "contenteditable": "true" } },
-      { id: 'budget', name: 'Estimated Budget (mill €)', attributes: { "contenteditable": "true" } }
-    ],
-    data: editedData,
-    style: {
-      table: {
-        border: '3px solid #ccc'
-      },
-      th: {
-        'background-color': 'rgba(0, 0, 0, 0.1)',
-        color: '#000',
-        //'border': '3px solid #ccc',
-        'border-bottom': '3px solid #ccc',
-        'border-left': '5px',
-        'border-right': '5px',
-        'text-align': 'center'
-      },
-      td: {
-        'text-align': 'center'
-      }      
-    }
-  });
-  populateDBCDropdown(editedData);
+	const tableGrid = new Grid({
+		columns: [
+			{ id: 'dbc', name: 'DBC' },
+			// { id: 'policy', name: 'Policy Domain' },
+			{ id: 'strategicFit', name: 'Strategic Fit', attributes: { "contenteditable": "true" } },
+			{ id: 'dbcSupportAbility', name: 'DBC Support Ability', attributes: { "contenteditable": "true" } },
+			{ id: 'supportTargetAbility', name: 'Support Target Ability', attributes: { "contenteditable": "true" } },
+			{ id: 'expPublicValue', name: 'Expected Public Value', attributes: { "contenteditable": "true" } },
+			{ id: 'budget', name: 'Estimated Budget (mill €)', attributes: { "contenteditable": "true" } }
+		],
+		data: editedData,
+		style: {
+			table: {
+				border: '3px solid #ccc'
+			},
+			th: {
+				'background-color': 'rgba(0, 0, 0, 0.1)',
+				color: '#000',
+				//'border': '3px solid #ccc',
+				'border-bottom': '3px solid #ccc',
+				'border-left': '5px',
+				'border-right': '5px',
+				'text-align': 'center'
+			},
+			td: {
+				'text-align': 'center'
+			}
+		}
+	});
+	populateDBCDropdown(editedData);
 
-  tableGrid.render(document.getElementById('myGridTable'));
+	tableGrid.render(document.getElementById('myGridTable'));
 
-  document.getElementById('myGridTable').addEventListener('input', function (e) {
-    const cell = e.target;
-    const rowIndex = cell.parentElement.rowIndex - 1;
-
-
-    if (cell.hasAttribute('contenteditable') && cell.getAttribute('contenteditable') === "true") {
-      const validValue = cell.textContent.replace(/[^0-5]/g, '');
+	document.getElementById('myGridTable').addEventListener('input', function (e) {
+		const cell = e.target;
+		const rowIndex = cell.parentElement.rowIndex - 1;
 
 
-      if (validValue.length > 1 || validValue > 5) {
-        cell.textContent = '';
-      } else {
-        cell.textContent = validValue;
-      }
-
-      switch (cell.cellIndex) {
-        case 1:
-          editedData[rowIndex].strategicFit = parseFloat(cell.textContent) || 0;
-          break;
-        case 2:
-          editedData[rowIndex].dbcSupportAbility = parseFloat(cell.textContent) || 0;
-          break;
-        case 3:
-          editedData[rowIndex].supportTargetAbility = parseFloat(cell.textContent) || 0;
-          break;
-        case 4:
-          editedData[rowIndex].expPublicValue = parseFloat(cell.textContent) || 0;
-          break;
-        case 5:
-          editedData[rowIndex].budget = parseFloat(cell.textContent) || 0;
-          updateTotalBudget();
-          break;
-        default:
-          break;
-      }
-
-      console.log("Dato editado!");
-
-      if (currentlyFilteredDBC === 'all' || currentlyFilteredDBC === editedData[rowIndex].dbc) {
-        const updatedData = prepareChartData(editedData);
-        const datasetIndex = myChart.data.datasets.findIndex(dataset => dataset.label === editedData[rowIndex].dbc);
-        const updateQuadData = prepareQuadChartData(editedData);
-        quadChart.data = updateQuadData;
-        quadChart.update();
-
-        if (datasetIndex !== -1) {
-          myChart.data.datasets[datasetIndex] = updatedData.datasets[datasetIndex];
-          myChart.update();
-        }
-
-      }
-    }
-  });
+		if (cell.hasAttribute('contenteditable') && cell.getAttribute('contenteditable') === "true") {
+			const validValue = cell.textContent.replace(/[^0-5]/g, '');
 
 
+			if (validValue.length > 1 || validValue > 5) {
+				cell.textContent = '';
+			} else {
+				cell.textContent = validValue;
+			}
 
-  var chartData = prepareChartData(editedData);
-  var quadrantCharData = prepareQuadChartData(editedData);
-  renderChart(chartData);
-  renderQuadrantChart(quadrantCharData);
+			switch (cell.cellIndex) {
+				case 1:
+					editedData[rowIndex].strategicFit = parseFloat(cell.textContent) || 0;
+					break;
+				case 2:
+					editedData[rowIndex].dbcSupportAbility = parseFloat(cell.textContent) || 0;
+					break;
+				case 3:
+					editedData[rowIndex].supportTargetAbility = parseFloat(cell.textContent) || 0;
+					break;
+				case 4:
+					editedData[rowIndex].expPublicValue = parseFloat(cell.textContent) || 0;
+					break;
+				case 5:
+					editedData[rowIndex].budget = parseFloat(cell.textContent) || 0;
+					updateTotalBudget();
+					break;
+				default:
+					break;
+			}
+
+			console.log("Dato editado!");
+
+			if (currentlyFilteredDBC === 'all' || currentlyFilteredDBC === editedData[rowIndex].dbc) {
+				const updatedData = prepareChartData(editedData);
+				const datasetIndex = myChart.data.datasets.findIndex(dataset => dataset.label === editedData[rowIndex].dbc);
+				const updateQuadData = prepareQuadChartData(editedData);
+				quadChart.data = updateQuadData;
+				quadChart.update();
+
+				if (datasetIndex !== -1) {
+					myChart.data.datasets[datasetIndex] = updatedData.datasets[datasetIndex];
+					myChart.update();
+				}
+
+			}
+		}
+	});
+
+
+
+	var chartData = prepareChartData(editedData);
+	var quadrantCharData = prepareQuadChartData(editedData);
+	renderChart(chartData);
+	renderQuadrantChart(quadrantCharData);
 
 }
 
 function prepareChartData(tableData) {
-  // Las etiquetas para el gráfico serán las diferentes dimensiones que mencionaste
-  const labels = ["Strategic Fit", "DBC Support Ability", "Support Target Ability", "Expected Public Value", "Estimated Budget (mill €)"];
+	// Las etiquetas para el gráfico serán las diferentes dimensiones que mencionaste
+	const labels = ["Strategic Fit", "DBC Support Ability", "Support Target Ability", "Expected Public Value", "Estimated Budget (mill €)"];
 
-  const datasets = tableData.map(entry => {
-    return {
-      label: entry.dbc,
-      backgroundColor: "rgba(172,194,132,0.2)",
-      borderColor: "#" + Math.floor(Math.random() * 16777215).toString(16),
-      pointBackgroundColor: "#fff",
-      pointBorderColor: "#9DB86D",
-      data: [
-        parseFloat(entry.strategicFit) || 0,
-        parseFloat(entry.dbcSupportAbility) || 0,
-        parseFloat(entry.supportTargetAbility) || 0,
-        parseFloat(entry.expPublicValue) || 0,
-        parseFloat(entry.budget) || 0
-      ]
-    }
-  });
-  console.log("Prepared chart data:", { labels: labels, datasets: datasets }); // Debug
+	const datasets = tableData.map(entry => {
+		return {
+			ID: entry.ID,
+			label: entry.dbc,
+			backgroundColor: "rgba(172,194,132,0.2)",
+			borderColor: "#" + Math.floor(Math.random() * 16777215).toString(16),
+			pointBackgroundColor: "#fff",
+			pointBorderColor: "#9DB86D",
+			data: [
+				parseFloat(entry.strategicFit) || 0,
+				parseFloat(entry.dbcSupportAbility) || 0,
+				parseFloat(entry.supportTargetAbility) || 0,
+				parseFloat(entry.expPublicValue) || 0,
+				parseFloat(entry.budget) || 0
+			]
+		}
+	});
+	// console.log("Prepared chart data:", { labels: labels, datasets: datasets }); // Debug
 
-  return {
-    labels: labels,
-    datasets: datasets
-  };
+	return {
+		labels: labels,
+		datasets: datasets
+	};
 }
 
+//CONFIG DEL GRAFICO DE ARAÑA
+
 function renderChart(data) {
-  if (!myChart) {
-    var ctx = document.getElementById('myChart').getContext('2d');
-    myChart = new Chart(ctx, {
-      type: 'radar',
-      data: data,
-      options: {
-        scale: {
-          ticks: {
-            beginAtZero: true
-          },
-          pointLabels: {
-            fontSize: 14
-          },
-        }
-      }
-    });
-  } else {
-    myChart.data.labels = data.labels;
-    myChart.data.datasets = data.datasets;
-    myChart.update();
-  }
+	if (!myChart) {
+		var ctx = document.getElementById('myChart').getContext('2d');
+		myChart = new Chart(ctx, {
+			type: 'radar',
+			data: data,
+			options: {
+				scale: {
+					ticks: {
+						beginAtZero: true
+					},
+					pointLabels: {
+						fontSize: 14
+					},
+				}
+			}
+		});
+	} else {
+		myChart.data.labels = data.labels;
+		myChart.data.datasets = data.datasets;
+		myChart.update();
+	}
 }
 //plugin quadrant block
 
 const quadrantLines = {
-  id: 'quadrantLines',
+	id: 'quadrantLines',
 
-  beforeDatasetsDraw(chart, args, pluginOptions) {
-    const ctx = chart.ctx;
-    const xAxis = chart.scales["x-axis-0"];
-    const yAxis = chart.scales["y-axis-0"];
+	beforeDatasetsDraw(chart, args, pluginOptions) {
+		const ctx = chart.ctx;
+		const xAxis = chart.scales["x-axis-0"];
+		const yAxis = chart.scales["y-axis-0"];
 
-    drawScatterArbitraryLine(2.5, 2.5, 0, 5);
-    drawScatterArbitraryLine(0, 5, 2.5, 2.5);
+		drawScatterArbitraryLine(2.5, 2.5, 0, 5);
+		drawScatterArbitraryLine(0, 5, 2.5, 2.5);
 
-    function drawScatterArbitraryLine (xS, xE, yS, yE) {
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(xAxis.getPixelForValue(xS), yAxis.getPixelForValue(yS));
-      ctx.lineTo(xAxis.getPixelForValue(xE), yAxis.getPixelForValue(yE));
-      ctx.stroke();
-      ctx.closePath();
-      ctx.restore();
-    }
-  }
+		function drawScatterArbitraryLine(xS, xE, yS, yE) {
+			ctx.save();
+			ctx.beginPath();
+			ctx.moveTo(xAxis.getPixelForValue(xS), yAxis.getPixelForValue(yS));
+			ctx.lineTo(xAxis.getPixelForValue(xE), yAxis.getPixelForValue(yE));
+			ctx.stroke();
+			ctx.closePath();
+			ctx.restore();
+		}
+	}
 };
 
+
+//CONFIGURACION DE LA TABLA DE BURBUJASSS
 //config quadrant block
 const quadConfig = {
-  type: "bubble",
-  data: {},
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    aspectRatio: 1,
-    layout: {
-      padding: {
-        top: 5,
-        right: 15
-      }
-    },
-    scales: {
-      xAxes: [{
-        scaleLabel: {
-          display: true,
-          labelString: 'Strategic Fit',
-          fontSize: 20,
-        },
-        gridLines: {
-          display: false,
-        },
-        ticks: {
-          beginAtZero: true,
-          min: 0,
-          max: 5,
-          stepSize: 0.5,
-          callback: function(value, index, values) {
-            if (value == 0) {
-              return "low"
-            } else if (value == 2.5) {
-              return "medium"
-            } else if (value == 5) {
-              return "high"
-            }
+	type: "bubble",
+	data: {},
+	options: {
+		responsive: true,
+		maintainAspectRatio: false,
+		aspectRatio: 1,
+		layout: {
+			padding: {
+				top: 5,
+				right: 35
+			}
+		},
+		scales: {
+			xAxes: [{
+				scaleLabel: {
+					display: true,
+					labelString: 'Strategic Fit',
+					fontSize: 20,
+				},
+				gridLines: {
+					display: false,
+				},
+				ticks: {
+					beginAtZero: true,
+					min: 0,
+					max: 5,
+					stepSize: 0.5,
+					callback: function (value, index, values) {
+						if (value == 0) {
+							return "low"
+						} else if (value == 2.5) {
+							return "medium"
+						} else if (value == 5) {
+							return "high"
+						}
 
-            return "";
-          },
-        }
-      }],
-      yAxes: [{
-        scaleLabel: {
-          display: true,
-          labelString: "DBC Support Ability",
-          fontSize: 20,
-        },
-        gridLines: {
-          display: false,
-        },
-        ticks: {
-          beginAtZero: true,
-          min: 0,
-          max: 5,
-          stepSize: 0.5,
-          callback: function(value, index, values) {
-            if (value == 0) {
-              return "low"
-            } else if (value == 2.5) {
-              return "medium"
-            } else if (value == 5) {
-              return "high"
-            }
+						return "";
+					},
+				}
+			}],
+			yAxes: [{
+				scaleLabel: {
+					display: true,
+					labelString: "DBC Support Ability",
+					fontSize: 20,
+				},
+				gridLines: {
+					display: false,
+				},
+				ticks: {
+					beginAtZero: true,
+					min: 0,
+					max: 7,
+					stepSize: 0.5,
+					callback: function (value, index, values) {
+						if (value == 0) {
+							return "low"
+						} else if (value == 2.5) {
+							return "medium"
+						} else if (value == 5) {
+							return "high"
+						}
 
-            return "";
-          },
-        }
-      }],
-    },
-    tooltips: {
-      callbacks: {
-        label: function (item, data) {
-          var labelText = [
-            " " + data.datasets[item.datasetIndex].label,
-            "   x: " + data.datasets[item.datasetIndex].data[item.index].x,
-            "   y: " + data.datasets[item.datasetIndex].data[item.index].y,
-            "   budget:" + data.datasets[item.datasetIndex].data[item.index].budget + " mill €"
-          ];
+						return "";
+					},
+				}
+			}],
+		},
+		tooltips: {
+			callbacks: {
+				label: function (item, data) {
+					var labelText = [
+						" " + data.datasets[item.datasetIndex].label,
+						"   x: " + data.datasets[item.datasetIndex].data[item.index].x,
+						"   y: " + data.datasets[item.datasetIndex].data[item.index].y,
+						"   budget:" + data.datasets[item.datasetIndex].data[item.index].budget + " mill €"
+					];
 
-          return labelText;
-        },
-      },
-    },
-  },
-  plugins: [
-    quadrantLines,
-    {
-      beforeInit: function(chart, options) {
-        chart.legend.afterFit = function() {
-          this.height = this.height + 10;
-        };
-      },
-    },
-  ],
+					return labelText;
+				},
+			},
+		},
+	},
+	plugins: [
+		quadrantLines,
+		{
+			beforeInit: function (chart, options) {
+				chart.legend.afterFit = function () {
+					this.height = this.height + 10;
+				};
+			},
+		},
+	],
 };
 
 
 
 
 function updateXAxis(choice) {
-  if (choice === 'strategicFit') {
-    quadChart.scales["x-axis-0"].options.scaleLabel.display = true;
-    quadChart.scales["x-axis-0"].options.scaleLabel.labelString = 'Strategic Fit';
-  } else if (choice === 'expPublicValue') {
-    quadChart.scales["x-axis-0"].options.scaleLabel.display = true;
-    quadChart.scales["x-axis-0"].options.scaleLabel.labelString = 'Expected Public Value';
-  }
+	if (choice === 'strategicFit') {
+		quadChart.scales["x-axis-0"].options.scaleLabel.display = true;
+		quadChart.scales["x-axis-0"].options.scaleLabel.labelString = 'Strategic Fit';
+	} else if (choice === 'expPublicValue') {
+		quadChart.scales["x-axis-0"].options.scaleLabel.display = true;
+		quadChart.scales["x-axis-0"].options.scaleLabel.labelString = 'Expected Public Value';
+	}
 
-  quadChart.update(); // Actualiza el gráfico después de realizar cambios en las opciones.
+	quadChart.update(); // Actualiza el gráfico después de realizar cambios en las opciones.
 }
 
 function renderQuadrantChart(chartData) {
-  quadConfig.data = chartData;
-  if (!quadChart) {
-    quadChart = new Chart(document.getElementById("quadrantChart").getContext("2d"), quadConfig);
-  } else {
-    quadChart.data = quadConfig.data;
-    quadChart.update();
-  }
+	quadConfig.data = chartData;
+	console.log(quadConfig);
+	if (!quadChart) {
+		quadChart = new Chart(document.getElementById("quadrantChart").getContext("2d"), quadConfig);
+	} else {
+		quadChart.data = quadConfig.data;
+		quadChart.update();
+	}
 
 
-  quadChart.canvas.onclick = function (evt) {
-    /*
-    var activePoints = quadChart.getElementsAtEventForMode(evt, 'point', quadChart.options);
-    if (activePoints.length === 0) {
-        console.error('No se hizo clic en ninguna burbuja.');
-        return;
-    }
-
-    var firstPoint = activePoints[0];
-    var datasetIndex = firstPoint._datasetIndex;
-    var dataIndex = firstPoint._index;
-
-    var dataset = quadChart.data.datasets[datasetIndex];
-    if (!dataset) {
-        console.error('No se pudo obtener el dataset.');
-        return;
-    }
-    
-    var bubbleData = quadChart.data.datasets[datasetIndex].data[dataIndex];
-    if (!bubbleData) {
-        console.error('No se pudo obtener los datos de la burbuja.');
-        return;
-    }
-
-    var dbcName = dataset.label; 
-    if (!dbcName) {
-        console.error('No se pudo obtener el nombre del DBC.');
-        return;
-    }
-
-    const dbcData = editedData.find(data => data.dbc === dbcName);
-
-    if (!dbcData) {
-        console.error(`No se encontraron datos para el DBC con nombre ${dbcName}`);
-        return;
-    }
-
-    createBuildingBlocksTableUpdated(dbcData);
-    */
-    selectHandler(evt);
-  };
+	quadChart.canvas.onclick = function (evt) {
+		/*
+		var activePoints = quadChart.getElementsAtEventForMode(evt, 'point', quadChart.options);
+		if (activePoints.length === 0) {
+			console.error('No se hizo clic en ninguna burbuja.');
+			return;
+		}
+	
+		var firstPoint = activePoints[0];
+		var datasetIndex = firstPoint._datasetIndex;
+		var dataIndex = firstPoint._index;
+	
+		var dataset = quadChart.data.datasets[datasetIndex];
+		if (!dataset) {
+			console.error('No se pudo obtener el dataset.');
+			return;
+		}
+	    
+		var bubbleData = quadChart.data.datasets[datasetIndex].data[dataIndex];
+		if (!bubbleData) {
+			console.error('No se pudo obtener los datos de la burbuja.');
+			return;
+		}
+	
+		var dbcName = dataset.label; 
+		if (!dbcName) {
+			console.error('No se pudo obtener el nombre del DBC.');
+			return;
+		}
+	
+		const dbcData = editedData.find(data => data.dbc === dbcName);
+	
+		if (!dbcData) {
+			console.error(`No se encontraron datos para el DBC con nombre ${dbcName}`);
+			return;
+		}
+	
+		createBuildingBlocksTableFromDBC(dbcData);
+		*/
+		selectHandler(evt);
+	};
 
 }
-function createBuildingBlocksTableUpdated(dbcData) {
-  document.getElementById("bb-div").classList.remove("d-none");
+function createBuildingBlocksTableFromDBC(dbcData) {
+	document.getElementById("bb-div").classList.remove("d-none");
 
-  if (!dbcData) {
-      console.error('No se pudieron obtener los datos necesarios para rellenar la tabla.');
-      return;
-  }
+	if (!dbcData) {
+		console.error('No se pudieron obtener los datos necesarios para rellenar la tabla.');
+		return;
+	}
 
-  let dbcName = dbcData.dbc; 
-  let dbcId = `http://data.europa.eu/dr8/egovera/${dbcName.replace(/\s+/g, '')}Capability`; 
-  let relevantABBs = jsonABBs.filter(abb => abb.DBCs.includes(dbcId));
-  //const dBusCapId = dbcId;
-  
-  let table = document.getElementById("bbTable");
-  table.innerHTML = "";
-  let thead = table.createTHead();
-  let headRow = thead.insertRow();
-  ["ID", "View", "Area", "Architecture_Building_Block", "Description", "IDs' successors", "Digital Public service"].forEach(text => {
-      let th = document.createElement("th");
-      th.appendChild(document.createTextNode(text));
-      headRow.appendChild(th);
-  });
+	//let dbcName = dbcData.dbc; 
+	//let dbcId = `http://data.europa.eu/dr8/egovera/${dbcName.replace(/\s+/g, '')}Capability`; 
+	let relevantABBs = jsonABBs.filter(abb => abb.DBCs.includes(dbcData.ID));
+	//const dBusCapId = dbcId;
 
-  let tbody = document.createElement("tbody");
-  table.appendChild(tbody);
-  
-  relevantABBs.forEach(abb => {
-      let row = tbody.insertRow();
-      row.insertCell().appendChild(document.createTextNode(abb.ID || ""));
-      row.insertCell().appendChild(document.createTextNode(abb.View || ""));
-      row.insertCell().appendChild(document.createTextNode(abb.Area || ""));
-      row.insertCell().appendChild(document.createTextNode(abb.Architecture_Building_Block || ""));
-      row.insertCell().appendChild(document.createTextNode(abb.Description || ""));
-      row.insertCell().appendChild(document.createTextNode(abb.successors.join("\n") || ""));
-      row.insertCell().appendChild(document.createTextNode(abb["Digital_Public_Service"].join("\n") || ""));
-  });
+	let table = document.getElementById("bbTable");
+	table.innerHTML = "";
+	let thead = table.createTHead();
+	let headRow = thead.insertRow();
+	["ID", "View", "Area", "Architecture Building Block", "Description", "IDs' successors", "Digital Public service"].forEach(text => {
+		let th = document.createElement("th");
+		th.appendChild(document.createTextNode(text));
+		headRow.appendChild(th);
+	});
+
+	let tbody = document.createElement("tbody");
+	table.appendChild(tbody);
+
+	relevantABBs.forEach(abb => {
+		var successors = [];
+		var abbDPS = []
+		abb.successors.forEach(element => successors.push(prettyfyUri(element)));
+		abb["Digital_Public_Service"].forEach(element => abbDPS.push(prettyfyUri(element)));
+		let row = tbody.insertRow()
+		row.insertCell().appendChild(document.createTextNode(prettyfyUri(abb.ID)|| ""));
+		row.insertCell().appendChild(document.createTextNode(abb.View || ""));
+		row.insertCell().appendChild(document.createTextNode(abb.Area || ""));
+		row.insertCell().appendChild(document.createTextNode(abb.Architecture_Building_Block || ""));
+		row.insertCell().appendChild(document.createTextNode(abb.Description || ""));
+		row.insertCell().appendChild(document.createTextNode(successors.join("\n") || ""));
+		row.insertCell().appendChild(document.createTextNode(abbDPS.join("\n") || ""));
+	});
+	console.log(relevantABBs);
 }
 
+function prettyfyUri(uri) {
+	if (uri.includes("egovera")) {
+		return uri.replace("http://data.europa.eu/dr8/egovera/", "egovera:");
+	} else {
+		return uri.replace("http://data.europa.eu/dr8/", "eira:");
+	}
+}
+
+function createBuildingBlocksTableFromView(view) {
+	document.getElementById("bb-div").classList.remove("d-none");
+
+	if (!view) {
+		console.error('No se pudieron obtener los datos necesarios para rellenar la tabla.');
+		return;
+	}
+
+	let table = document.getElementById("bbTable");
+	table.innerHTML = "";
+	let thead = table.createTHead();
+	let headRow = thead.insertRow();
+	["ID", "View", "Area", "Architecture_Building_Block", "Description", "IDs' successors", "Digital Public service"].forEach(text => {
+		let th = document.createElement("th");
+		th.appendChild(document.createTextNode(text));
+		headRow.appendChild(th);
+	});
+
+	let tbody = document.createElement("tbody");
+	table.appendChild(tbody);
+
+	view.bbs.forEach(abb => {
+		let row = tbody.insertRow();
+		row.insertCell().appendChild(document.createTextNode(abb.ID || ""));
+		row.insertCell().appendChild(document.createTextNode(abb.View || ""));
+		row.insertCell().appendChild(document.createTextNode(abb.Area || ""));
+		row.insertCell().appendChild(document.createTextNode(abb.Architecture_Building_Block || ""));
+		row.insertCell().appendChild(document.createTextNode(abb.Description || ""));
+		row.insertCell().appendChild(document.createTextNode(abb.successors.join("\n") || ""));
+		row.insertCell().appendChild(document.createTextNode(abb["Digital_Public_Service"].join("\n") || ""));
+	});
+}
 
 //data quadrant block
 function prepareQuadChartData(tableData, xAxisField = 'strategicFit') {
-  const datasets = tableData.map(entry => {
-    return {
-      label: entry.dbc,
-      borderColor: "#" + Math.floor(Math.random() * 16777215).toString(16),
-      backgroundColor: "#" + Math.floor(Math.random() * 16777215).toString(16),
-      data: [{
-        x: parseFloat(entry[xAxisField]) || 0,  // Usa el campo seleccionado para el eje X
-        y: parseFloat(entry.dbcSupportAbility) || 0,
-        budget: parseFloat(entry.budget) || 0,
-      }],
-      // Si necesitas más propiedades para el conjunto de datos, agréguelas aquí
-      hoverRadius: 8.0,
-      radius: context => {
-        return context.dataset.data[context.dataIndex].budget + 6.0;
-      },
-    }
-  });
+	const datasets = tableData.map(entry => {
+		return {
+			ID: entry.ID,
+			label: entry.dbc,
+			borderColor: "#" + Math.floor(Math.random() * 16777215).toString(16),
+			backgroundColor: "#" + Math.floor(Math.random() * 16777215).toString(16),
+			data: [{
+				x: parseFloat(entry[xAxisField]) || 0,  // Usa el campo seleccionado para el eje X
+				y: parseFloat(entry.dbcSupportAbility) || 0,
+				budget: parseFloat(entry.budget) || 0,
+			}],
+			// Si necesitas más propiedades para el conjunto de datos, agréguelas aquí
+			hoverRadius: 8.0,
+			radius: context => {
+				return context.dataset.data[context.dataIndex].budget + 6.0;
+			},
+		}
+	});
 
-  console.log("Prepared quadrant chart data:", { datasets: datasets }); // Debug
+	// console.log("Prepared quadrant chart data:", { datasets: datasets }); // Debug
 
-  return {
-    datasets: datasets
-  };
+	return {
+		datasets: datasets
+	};
 }
 
 document.getElementById('xAxisSelector').addEventListener('change', function (e) {
-  const selectedValue = e.target.value;
+	const selectedValue = e.target.value;
 
-  // Actualiza el conjunto de datos según el valor seleccionado
-  const quadrantCharData = prepareQuadChartData(editedData, selectedValue);
+	// Actualiza el conjunto de datos según el valor seleccionado
+	const quadrantCharData = prepareQuadChartData(editedData, selectedValue);
 
-  // Vuelve a dibujar el gráfico con el nuevo conjunto de datos
-  updateXAxis(this.value);
-  renderQuadrantChart(quadrantCharData);
+	// Vuelve a dibujar el gráfico con el nuevo conjunto de datos
+	updateXAxis(this.value);
+	renderQuadrantChart(quadrantCharData);
 });
 
 function processSurveyResult(json) {
-  const dataEntries = json.data;
-  const tableData = [];
-  const processedTopics = {};
-
-  for (let key in dataEntries) {
-    const parts = key.split(" - ");
-    const topic = parts[0];
-    const detail = parts[1];
-
-
-    if (!processedTopics[topic]) {
-      processedTopics[topic] = {
-        dbc: topic,
-        policy: "Business Agnostic",
-        strategicFit: "",
-        dbcSupportAbility: "",
-        supportTargetAbility: "",
-        expPublicValue: "",
-        budget: ""
-      };
-    }
-
-    switch (detail) {
-      case "Target Prospective Ability":
-        processedTopics[topic].supportTargetAbility = dataEntries[key].toString();
-        break;
-      case "Total Score":
-        processedTopics[topic].dbcSupportAbility = dataEntries[key].toString();
-        break;
-      case "Expected Public Value":
-        processedTopics[topic].expPublicValue = dataEntries[key].toString();
-        break;
-      case "Estimated Budget (mill €)":
-        processedTopics[topic].budget = dataEntries[key].toString();
-        break;
-      case "Rating":
-        processedTopics[topic].strategicFit = dataEntries[key].toString();
-        break;
-    }
-  }
+	const dataEntries = json.data;
+	const tableData = [];
+	const processedTopics = {};
+	
+	for (let key in dataEntries) {
+		const parts = key.split(" - ");
+		const topic = parts[0];
+		const id = parts[1]
+		const detail = parts[2];
 
 
-  for (let topic in processedTopics) {
-    tableData.push(processedTopics[topic]);
-  }
-  return tableData;
+		if (!processedTopics[topic]) {
+			processedTopics[topic] = {
+				ID: id,
+				dbc: topic,
+				policy: "Business Agnostic",
+				strategicFit: "",
+				dbcSupportAbility: "",
+				supportTargetAbility: "",
+				expPublicValue: "",
+				budget: ""
+			};
+		}
+		processedTopics[topic].ID = id;
+		switch (detail) {
+			case "Target Prospective Ability":
+				processedTopics[topic].supportTargetAbility = dataEntries[key].toString();
+				break;
+			case "Total Score":
+				processedTopics[topic].dbcSupportAbility = dataEntries[key].toFixed(2).toString();
+				break;
+			case "Expected Public Value":
+				processedTopics[topic].expPublicValue = dataEntries[key].toString();
+				break;
+			case "Estimated Budget (mill €)":
+				processedTopics[topic].budget = dataEntries[key].toString();
+				break;
+			case "Rating":
+				processedTopics[topic].strategicFit = dataEntries[key].toString();
+				break;
+		}
+	}
+
+
+	for (let topic in processedTopics) {
+		tableData.push(processedTopics[topic]);
+	}
+	return tableData;
 }
 
 function populateDBCDropdown(data) {
-  const dropdown = document.getElementById('dbcFilter');
+	const dropdown = document.getElementById('dbcFilter');
 
-  data.forEach(entry => {
-    const option = document.createElement('option');
-    option.value = entry.dbc;
-    option.textContent = entry.dbc;
-    dropdown.appendChild(option);
-  });
+	data.forEach(entry => {
+		const option = document.createElement('option');
+		option.value = entry.id;
+		option.textContent = entry.dbc;
+		dropdown.appendChild(option);
+	});
 }
 
 
 
 document.getElementById('dbcFilter').addEventListener('change', function (e) {
-  console.log("Dropdown change detected:", e.target.value);
+	console.log("Dropdown change detected:", e.target.value);
 
-  const selectedValue = e.target.value;
-  applyDBCFilters(selectedValue);
+	const selectedValue = e.target.value;
+	applyDBCFilters(selectedValue);
 });
 
 function applyDBCFilters(filterValue) {
-  let filteredData = editedData;
-  currentlyFilteredDBC = filterValue;
+	let filteredData = editedData;
+	currentlyFilteredDBC = filterValue;
 
 
-  console.log("Values in editedData:", editedData.map(entry => entry.dbc));
-  console.log("Trying to match filterValue:", filterValue);
+	console.log("Values in editedData:", editedData.map(entry => entry.dbc));
+	console.log("Trying to match filterValue:", filterValue);
 
-  if (filterValue !== 'all') {
-    filteredData = editedData.filter(entry => entry.dbc === filterValue);
-  }
+	if (filterValue !== 'all') {
+		filteredData = editedData.filter(entry => entry.dbc === filterValue);
+	}
 
 
-  const chartData = prepareChartData(filteredData);
-  const quadChartData = prepareQuadChartData(filteredData);
-  renderChart(chartData);
-  renderQuadrantChart(quadChartData);
+	const chartData = prepareChartData(filteredData);
+	const quadChartData = prepareQuadChartData(filteredData);
+	renderChart(chartData);
+	renderQuadrantChart(quadChartData);
 }
 
 document.getElementById('applyFilters').addEventListener('click', function () {
-  applyAllFilters();
+	applyAllFilters();
 });
 
 function applyAllFilters() {
-  const filterValues = {
-    strategicFit: document.getElementById('filter-strategicFit').value,
-    expPublicValue: document.getElementById('filter-expPublicValue').value,
-    dbcSupportAbility: document.getElementById('filter-dbcSupportAbility').value,
-    budget: document.getElementById('filter-budget').value
-  };
+	const filterValues = {
+		strategicFit: document.getElementById('filter-strategicFit').value,
+		expPublicValue: document.getElementById('filter-expPublicValue').value,
+		dbcSupportAbility: document.getElementById('filter-dbcSupportAbility').value,
+		budget: document.getElementById('filter-budget').value
+	};
 
-  let filteredData = editedData.filter(entry =>
-    entry.strategicFit <= filterValues.strategicFit &&
-    entry.expPublicValue <= filterValues.expPublicValue &&
-    entry.dbcSupportAbility <= filterValues.dbcSupportAbility &&
-    entry.budget <= filterValues.budget
-  );
+	let filteredData = editedData.filter(entry =>
+		entry.strategicFit <= filterValues.strategicFit &&
+		entry.expPublicValue <= filterValues.expPublicValue &&
+		entry.dbcSupportAbility <= filterValues.dbcSupportAbility &&
+		entry.budget <= filterValues.budget
+	);
 
-  const chartData = prepareChartData(filteredData);
-  const quadrantCharData = prepareQuadChartData(filteredData);
-  renderChart(chartData);
-  renderQuadrantChart(quadrantCharData);
+	const chartData = prepareChartData(filteredData);
+	const quadrantCharData = prepareQuadChartData(filteredData);
+	renderChart(chartData);
+	renderQuadrantChart(quadrantCharData);
 }
 
 document.querySelectorAll('input[type="range"]').forEach(input => {
-  input.addEventListener('input', function () {
-    document.getElementById('value-' + input.id.replace('filter-', '')).textContent = input.value;
-  });
+	input.addEventListener('input', function () {
+		document.getElementById('value-' + input.id.replace('filter-', '')).textContent = input.value;
+	});
 });
 
 function resetFilters() {
-  document.getElementById('dbcFilter').value = 'all';
+	document.getElementById('dbcFilter').value = 'all';
 
-  const initialChartData = prepareChartData(editedData);
-  const initialQuadChartData = prepareQuadChartData(editedData);
-  renderChart(initialChartData);
-  renderQuadrantChart(initialQuadChartData);
+	const initialChartData = prepareChartData(editedData);
+	const initialQuadChartData = prepareQuadChartData(editedData);
+	renderChart(initialChartData);
+	renderQuadrantChart(initialQuadChartData);
 }
 document.getElementById('resetFilters').addEventListener('click', resetFilters);
 
 function updateTotalBudget() {
-  const total = editedData.reduce((acc, entry) => acc + (parseFloat(entry.budget) || 0), 0);
-  document.getElementById("totalBudgetValue").innerText = total.toFixed(1);
+	const total = editedData.reduce((acc, entry) => acc + (parseFloat(entry.budget) || 0), 0);
+	document.getElementById("totalBudgetValue").innerText = total.toFixed(1);
 }
 
 async function draw(json) {
-  // document.getElementById("reset-work").classList.remove("d-none");
-  bcList = {};
-  viewsInfra = [];
-  $("#listBCs").collapse("show");
-  $("#matrixBCs").collapse("show");
+	// document.getElementById("reset-work").classList.remove("d-none");
+	bcList = {};
+	viewsInfra = [];
+	$("#listBCs").collapse("show");
+	$("#matrixBCs").collapse("show");
 
-  let response = await fetch("/api/backoffice/get-files-old");
-  response = await response.json();
-  callBackForRequest(response, json);
+	let response = await fetch("/api/backoffice/get-files-old");
+	response = await response.json();
+	callBackForRequest(response, json);
 }
 /**
  *
@@ -1550,15 +992,15 @@ async function draw(json) {
  * @returns {Array}
  */
 function createView(name, id, policy, avgAbility, bbs) {
-  avgAbility = avgAbility || null;
-  bbs = bbs || [];
-  var view = {};
-  view.name = name;
-  view.id = id;
-  view.policy = policy;
-  view.avgAbility = avgAbility;
-  view.bbs = bbs;
-  return view;
+	avgAbility = avgAbility || null;
+	bbs = bbs || [];
+	var view = {};
+	view.name = name;
+	view.id = id;
+	view.policy = policy;
+	view.avgAbility = avgAbility;
+	view.bbs = bbs;
+	return view;
 }
 /*
 function initInputfromJSON() {
@@ -1577,9 +1019,9 @@ function initInputfromJSON() {
   let view3 = createView("technical-application", idTAinf, "business agnostic");
 
   let view4 = createView(
-    "technical-infrastructure",
-    idTIinf,
-    "business agnostic"
+	"technical-infrastructure",
+	idTIinf,
+	"business agnostic"
   );
 
   viewsInfra.push(view0);
@@ -1612,36 +1054,36 @@ const createBcListObject = () => {
   const DBCArray = Object.values(DBCs);
 
   DPSArray.forEach((dps) => {
-    const { id } = dps;
+	const { id } = dps;
 
-    ABBArray.forEach((abb) => {
-      if (abb.digPubServ.indexOf(id) > -1) tempDPSs[id].abbs.push(abb);
-    });
+	ABBArray.forEach((abb) => {
+	  if (abb.Digital_Public_Service.indexOf(id) > -1) tempDPSs[id].abbs.push(abb);
+	});
   });
 
   DBCArray.forEach((dbc) => {
-    const { id } = dbc;
+	const { id } = dbc;
 
-    DPSArray.forEach((dps) => {
-      if (dps.dBCs.indexOf(id) > -1) tempDBCs[id].dps.push(dps);
-    });
+	DPSArray.forEach((dps) => {
+	  if (dps.dBCs.indexOf(id) > -1) tempDBCs[id].dps.push(dps);
+	});
   });
 
   Object.values(tempDBCs).forEach((bc) => {
-    let abbs = [];
-    const { dps, id } = bc;
-    dps.forEach((dp) => {
-      const { abbs: bbs } = dp;
-      abbs = [...abbs, ...bbs];
-    });
-    abbs = [...new Set(abbs)];
-    tempDBCs[id].bbs = abbs;
+	let abbs = [];
+	const { dps, id } = bc;
+	dps.forEach((dp) => {
+	  const { abbs: bbs } = dp;
+	  abbs = [...abbs, ...bbs];
+	});
+	abbs = [...new Set(abbs)];
+	tempDBCs[id].bbs = abbs;
 
-    abbs.forEach((abb) => {
-      tempDBCs[id].views.forEach((view) => {
-        if (abb.view === view.name) view.bbs.push(abb);
-      });
-    });
+	abbs.forEach((abb) => {
+	  tempDBCs[id].views.forEach((view) => {
+		if (abb.view === view.name) view.bbs.push(abb);
+	  });
+	});
   });
   return tempDBCs;
 };
@@ -1656,171 +1098,171 @@ const createBcListObject = () => {
 // });
 
 function quadrantWidth() {
-  const quadrant = document.querySelector("#quadrant_div");
-  const test = quadrant.getBoundingClientRect();
-  const width = test.width;
-  quadrant.style.height = width + "px";
-  return width;
+	const quadrant = document.querySelector("#quadrant_div");
+	const test = quadrant.getBoundingClientRect();
+	const width = test.width;
+	quadrant.style.height = width + "px";
+	return width;
 }
 
 function resizeQuandrant() {
-  let width = quadrantWidth();
-  drawBusinessCapabilityChart(width);
+	let width = quadrantWidth();
+	drawBusinessCapabilityChart(width);
 }
 
 const mapFilterResultstoBcList = (json) => {
-  const dictionary = {
-    id: "id",
-    "National Digital Strategy Fit": "priority",
-    "Expected Public Value": "expRandom",
-    "Ability to support the dBusCap": "abbRandom",
-    "Ability to deliver": "ability",
-    "Target Prospective Average Ability": "prospectiveAbility",
-    budget: "budget",
-  };
+	const dictionary = {
+		id: "id",
+		"National Digital Strategy Fit": "priority",
+		"Expected Public Value": "expRandom",
+		"Ability to support the dBusCap": "abbRandom",
+		"Ability to deliver": "ability",
+		"Target Prospective Average Ability": "prospectiveAbility",
+		budget: "budget",
+	};
 
-  const { fullName, organisation, email, country, ...surveyResults } = json;
+	const { fullName, organisation, email, country, ...surveyResults } = json;
 
-  let tempBcList = { ...bcList };
+	let tempBcList = { ...bcList };
 
-  for (let policy in surveyResults) {
-    const { BC: busCaps, BB: buildingBlocks } = surveyResults[policy];
+	for (let policy in surveyResults) {
+		const { BC: busCaps, BB: buildingBlocks } = surveyResults[policy];
 
-    for (let bcIdx = 0; bcIdx < busCaps.length; bcIdx++) {
-      const { id, ...answers } = busCaps[bcIdx];
-      if (tempBcList[id]) {
-        for (let answer in answers) {
-          if (!answers.selectedBC) break;
-          tempBcList[id][dictionary[answer]] = answers[answer];
-        }
-      }
-    }
+		for (let bcIdx = 0; bcIdx < busCaps.length; bcIdx++) {
+			const { id, ...answers } = busCaps[bcIdx];
+			if (tempBcList[id]) {
+				for (let answer in answers) {
+					if (!answers.selectedBC) break;
+					tempBcList[id][dictionary[answer]] = answers[answer];
+				}
+			}
+		}
 
-    for (let bbIdx = 0; bbIdx < buildingBlocks.length; bbIdx++) {
-      const {
-        id,
-        "Ability to support the dBusCap": bbAbility,
-      } = buildingBlocks[bbIdx];
+		for (let bbIdx = 0; bbIdx < buildingBlocks.length; bbIdx++) {
+			const {
+				id,
+				"Ability to support the dBusCap": bbAbility,
+			} = buildingBlocks[bbIdx];
 
-      for (let bc in bcList) {
-        const { bbs } = bcList[bc];
-        const bb = bbs.filter((bb) => bb.id === id);
-        if (bb.length !== 1) continue;
-        bb[0].ability = bbAbility;
-      }
-    }
-  }
+			for (let bc in bcList) {
+				const { bbs } = bcList[bc];
+				const bb = bbs.filter((bb) => bb.id === id);
+				if (bb.length !== 1) continue;
+				bb[0].ability = bbAbility;
+			}
+		}
+	}
 
-  Object.values(tempBcList).forEach((bc) => {
-    bc.dps.forEach((dps) => {
-      dps.dpsAbility = avgDpsAbility(dps.abbs);
-    });
-  });
+	Object.values(tempBcList).forEach((bc) => {
+		bc.dps.forEach((dps) => {
+			dps.dpsAbility = avgDpsAbility(dps.abbs);
+		});
+	});
 
-  const finalBCList = {};
-  for (let policy in surveyResults) {
-    const { BC, BB } = surveyResults[policy];
-    for (let bc of BC) {
-      const { id } = bc;
-      finalBCList[id] = tempBcList[id];
-    }
-  }
+	const finalBCList = {};
+	for (let policy in surveyResults) {
+		const { BC, BB } = surveyResults[policy];
+		for (let bc of BC) {
+			const { id } = bc;
+			finalBCList[id] = tempBcList[id];
+		}
+	}
 
-  bcList = finalBCList;
+	bcList = finalBCList;
 };
 /*
 const randomizeQuandrantValues = () => {
   const bcValues = Object.values(bcList);
 
   for (let idx = 0; idx < bcValues.length; idx++) {
-    bcValues[idx].avgAbility = +(Math.random() * 9 + 1).toFixed(2);
-    bcValues[idx].priority = +(Math.random() * 4 + 1).toFixed(0);
+	bcValues[idx].avgAbility = +(Math.random() * 9 + 1).toFixed(2);
+	bcValues[idx].priority = +(Math.random() * 4 + 1).toFixed(0);
   }
 };
-
+*/
 function readSurveyResult(json) {
-  mapFilterResultstoBcList(json);
+	mapFilterResultstoBcList(json);
 
-  // Go through the survey json file to get the items with the new id
-  // New id: id_abb - id_dBusCap
-  const { fullName, organisation, email, country, ...surveyResults } = json;
-  var buildingBlocks = [];
-  for (let policy in surveyResults) {
-    // For every policy keep the abbs objects
-    for (let i = 0; i < surveyResults[policy].BB.length; i++) {
-      buildingBlocks.push(surveyResults[policy].BB[i]);
-    }
-  }
+	// Go through the survey json file to get the items with the new id
+	// New id: id_abb - id_dBusCap
+	const { fullName, organisation, email, country, ...surveyResults } = json;
+	var buildingBlocks = [];
+	for (let policy in surveyResults) {
+		// For every policy keep the abbs objects
+		for (let i = 0; i < surveyResults[policy].BB.length; i++) {
+			buildingBlocks.push(surveyResults[policy].BB[i]);
+		}
+	}
 
-  // Initialize customBBs
-  customBBs = buildingBlocks;
+	// Initialize customBBs
+	customBBs = buildingBlocks;
 
-  // Initialize the bbs.ability for every dBusCap
-  for (let index = 0; index < buildingBlocks.length; index++) {
-    let abbId = buildingBlocks[index]['id'].split("-")[0].replace(" ", "");
-    let dBusCapId = buildingBlocks[index]['id'].split("-")[1].replace(" ", "");
-    let a = buildingBlocks[index]['Ability to support the dBusCap'];
-    try {
-      bcList[dBusCapId]['bbs'].find(function (el) {
-        return el.id === abbId;
-      })['ability'] = a;
-    }
-    catch {
-      console.log("No match found!")
-    }
-  }
+	// Initialize the bbs.ability for every dBusCap
+	for (let index = 0; index < buildingBlocks.length; index++) {
+		let abbId = buildingBlocks[index]['id'].split("-")[0].replace(" ", "");
+		let dBusCapId = buildingBlocks[index]['id'].split("-")[1].replace(" ", "");
+		let a = buildingBlocks[index]['Ability to support the dBusCap'];
+		try {
+			bcList[dBusCapId]['bbs'].find(function (el) {
+				return el.id === abbId;
+			})['ability'] = a;
+		}
+		catch {
+			console.log("No match found!")
+		}
+	}
 
-  for (var z in bcList) {
-    // filter the abbs to keep only the ones with the current dBusCap id 
-    var filteredBuildingBlocksByAbbId = buildingBlocks.filter(ob => {
-      return z === ob.id.split("-")[1].replace(" ", "");
-    });
+	for (var z in bcList) {
+		// filter the abbs to keep only the ones with the current dBusCap id 
+		var filteredBuildingBlocksByAbbId = buildingBlocks.filter(ob => {
+			return z === ob.id.split("-")[1].replace(" ", "");
+		});
 
-    // Calculate current dBusCap ability to support.
-    var count = 0;
-    var average = 0;
-    for (let i = 0; i < filteredBuildingBlocksByAbbId.length; i++) {
-      let ability = filteredBuildingBlocksByAbbId[i]['Ability to support the dBusCap'];
-      count += 1;
-      average += ability;
-    }
+		// Calculate current dBusCap ability to support.
+		var count = 0;
+		var average = 0;
+		for (let i = 0; i < filteredBuildingBlocksByAbbId.length; i++) {
+			let ability = filteredBuildingBlocksByAbbId[i]['Ability to support the dBusCap'];
+			count += 1;
+			average += ability;
+		}
 
-    average /= count;
-    bcList[z].avgAbility = Math.round((average || 0) * 10) / 10;
+		average /= count;
+		bcList[z].avgAbility = Math.round((average || 0) * 10) / 10;
 
-    let views = bcList[z].views;
-    for (var j in views) {
-      var count_view = 0;
-      var average_view = 0;
-      let bbs_view = views[j].bbs;
+		let views = bcList[z].views;
+		for (var j in views) {
+			var count_view = 0;
+			var average_view = 0;
+			let bbs_view = views[j].bbs;
 
-      for (var k in bbs_view) {
-        count_view += 1;
-        average_view += bbs_view[k].ability;
-      }
-      average_view /= count_view;
+			for (var k in bbs_view) {
+				count_view += 1;
+				average_view += bbs_view[k].ability;
+			}
+			average_view /= count_view;
 
-      views[j].avgAbility = Math.round((average_view || 0) * 10) / 10;
-    }
-  }
+			views[j].avgAbility = Math.round((average_view || 0) * 10) / 10;
+		}
+	}
 
-  // if (demo) randomizeQuandrantValues();
+	// if (demo) randomizeQuandrantValues();
 }
-
+/*
 function controlWrapper(controlType, containerId, options) {
   return new google.visualization.ControlWrapper({
-    controlType: controlType,
-    containerId: containerId,
-    options: options,
+	controlType: controlType,
+	containerId: containerId,
+	options: options,
   });
 }
 */
 var view;
 
-let strategicSlider;
-let expPubValSlider;
-let abiToSupdBusCapSlider;
-let budgetSlider;
+//let strategicSlider;
+//let expPubValSlider;
+//let abiToSupdBusCapSlider;
+//let budgetSlider;
 let policyDomainFilter;
 
 let order = [0, 1, 2, 3, 4, 5];
@@ -1828,39 +1270,40 @@ let order = [0, 1, 2, 3, 4, 5];
 /**
  * Calculate the max of all the budgets
  */
+/*
 function firstInitMaxBudget() {
   let bcObject = groupBy(Object.values(bcList), "policy");
   let max = 0;
 
   for (let policy in bcObject) {
-    let temp = groupBy(bcObject[policy], "policy", "budget");
-    let currentMax = maxOfArray(temp[policy]);
-    max = currentMax > max ? currentMax : max;
+	let temp = groupBy(bcObject[policy], "policy", "budget");
+	let currentMax = maxOfArray(temp[policy]);
+	max = currentMax > max ? currentMax : max;
   }
   maxBudget = max;
 }
-
+*/
 /**
  * Make all the words in the string policy lowercase
  */
 const normalizePolicy = (policy) => {
-  return policy
-    .split(" ")
-    .map((x) => x.toLowerCase())
-    .join(" ");
+	return policy
+		.split(" ")
+		.map((x) => x.toLowerCase())
+		.join(" ");
 };
 
 const getColorPerPolicy = (policy, opacity = false) => {
-  const normalizedPolicy = normalizePolicy(policy);
-  const temp = opacity ? policyColorsWithOpacity : policyColors;
+	const normalizedPolicy = normalizePolicy(policy);
+	const temp = opacity ? policyColorsWithOpacity : policyColors;
 
-  return temp[normalizedPolicy] || "#858796";
+	return temp[normalizedPolicy] || "#858796";
 };
 
 const getImagePerPolicy = (policy) => {
-  const normalizedPolicy = normalizePolicy(policy);
+	const normalizedPolicy = normalizePolicy(policy);
 
-  return policyImages[normalizedPolicy] || "../img/dps.png";
+	return policyImages[normalizedPolicy] || "../img/dps.png";
 };
 
 /**
@@ -1884,329 +1327,348 @@ function drawBusinessCapabilityChart(height) {
   const colors = [];
 
   for (var x in bcList) {
-    var bc = bcList[x];
-    if (bc.priority == null) continue;
-    data.addRow([
-      bc.id,
-      bc.priority,
-      bc.avgAbility,
-      bc.policy,
-      bc.budget,
-      bc.expRandom,
-    ]);
+	var bc = bcList[x];
+	if (bc.priority == null) continue;
+	data.addRow([
+	  bc.id,
+	  bc.priority,
+	  bc.avgAbility,
+	  bc.policy,
+	  bc.budget,
+	  bc.expRandom,
+	]);
 
-    const color = getColorPerPolicy(bc.policy);
-    if (colors.indexOf(color) === -1) colors.push(color);
+	const color = getColorPerPolicy(bc.policy);
+	if (colors.indexOf(color) === -1) colors.push(color);
   }
 
   view.setColumns(order);
 
   dashboard = new google.visualization.Dashboard(
-    document.getElementById("dashboard_div")
+	document.getElementById("dashboard_div")
   );
 
   strategicSlider = controlWrapper(
-    "NumberRangeFilter",
-    "dashboard_strategicSlider_div",
-    {
-      filterColumnLabel: "National Digital Strategy Fit",
-      ui: {
-        labelStacking: "horizontal",
-      },
-      minValue: 1,
-      maxValue: 5,
-    }
+	"NumberRangeFilter",
+	"dashboard_strategicSlider_div",
+	{
+	  filterColumnLabel: "National Digital Strategy Fit",
+	  ui: {
+		labelStacking: "horizontal",
+	  },
+	  minValue: 1,
+	  maxValue: 5,
+	}
   );
   expPubValSlider = controlWrapper(
-    "NumberRangeFilter",
-    "dashboard_expPubValSlider_div",
-    {
-      filterColumnLabel: "Expected Public Value",
-      ui: {
-        labelStacking: "horizontal",
-      },
-      minValue: 1,
-      maxValue: 5,
-    }
+	"NumberRangeFilter",
+	"dashboard_expPubValSlider_div",
+	{
+	  filterColumnLabel: "Expected Public Value",
+	  ui: {
+		labelStacking: "horizontal",
+	  },
+	  minValue: 1,
+	  maxValue: 5,
+	}
   );
   abiToSupdBusCapSlider = controlWrapper(
-    "NumberRangeFilter",
-    "dashboard_abiToSupdBusCapSlider_div",
-    {
-      filterColumnLabel: "Ability to support the dBusCap",
-      ui: {
-        labelStacking: "horizontal",
-      },
-      minValue: 1,
-      maxValue: 5,
-    }
+	"NumberRangeFilter",
+	"dashboard_abiToSupdBusCapSlider_div",
+	{
+	  filterColumnLabel: "Ability to support the dBusCap",
+	  ui: {
+		labelStacking: "horizontal",
+	  },
+	  minValue: 1,
+	  maxValue: 5,
+	}
   );
   budgetSlider = controlWrapper("NumberRangeFilter", "budget_filtering_div", {
-    filterColumnLabel: "Estimated budget",
-    ui: {
-      labelStacking: "horizontal",
-      label: "Estimated budget (in millions EUR)",
-    },
-    minValue: 0,
-    maxValue: maxBudget,
+	filterColumnLabel: "Estimated budget",
+	ui: {
+	  labelStacking: "horizontal",
+	  label: "Estimated budget (in millions EUR)",
+	},
+	minValue: 0,
+	maxValue: maxBudget,
   });
 
   policyDomainFilter = controlWrapper(
-    "CategoryFilter",
-    "visibility_control_div",
-    {
-      filterColumnLabel: "Policy domain",
-      ui: {
-        label: "",
-        selectedValuesLayout: "aside",
-        caption: "Policy domain",
-        cssClass: "filters-div-google",
-      },
-    }
+	"CategoryFilter",
+	"visibility_control_div",
+	{
+	  filterColumnLabel: "Policy domain",
+	  ui: {
+		label: "",
+		selectedValuesLayout: "aside",
+		caption: "Policy domain",
+		cssClass: "filters-div-google",
+	  },
+	}
   );
 
   var options1 = {
-    height: height,
-    title: { position: "none" },
-    hAxis: {
-      title: hAxisLabes[order[1]],
-      minValue: 0,
-      maxValue: 5,
-      ticks: [
-        { v: 0, f: "low" },
-        { v: 2.5, f: "medium" },
-        { v: 5, f: "high" },
-      ],
-      gridlines: { color: "#747675" },
-      baselineColor: "#747675",
-    },
-    vAxis: {
-      title: "Ability to support the dBusCap",
-      minValue: 0,
-      maxValue: 5,
-      ticks: [
-        { v: 0, f: "low" },
-        { v: 2.5, f: "med" },
-        { v: 5, f: "high" },
-      ],
-    },
-    bubble: {
-      textStyle: {
-        fontSize: 10,
-      },
-      opacity: 0.5,
-    },
-    sizeAxis: {
-      minSize: 20,
-    },
-    colors,
-    chartArea: { width: "82%", height: "82%" },
-    legend: { position: "top", alignement: "center" },
+	height: height,
+	title: { position: "none" },
+	hAxis: {
+	  title: hAxisLabes[order[1]],
+	  minValue: 0,
+	  maxValue: 5,
+	  ticks: [
+		{ v: 0, f: "low" },
+		{ v: 2.5, f: "medium" },
+		{ v: 5, f: "high" },
+	  ],
+	  gridlines: { color: "#747675" },
+	  baselineColor: "#747675",
+	},
+	vAxis: {
+	  title: "Ability to support the dBusCap",
+	  minValue: 0,
+	  maxValue: 5,
+	  ticks: [
+		{ v: 0, f: "low" },
+		{ v: 2.5, f: "med" },
+		{ v: 5, f: "high" },
+	  ],
+	},
+	bubble: {
+	  textStyle: {
+		fontSize: 10,
+	  },
+	  opacity: 0.5,
+	},
+	sizeAxis: {
+	  minSize: 20,
+	},
+	colors,
+	chartArea: { width: "82%", height: "82%" },
+	legend: { position: "top", alignement: "center" },
   };
 
   chartBubble = new google.visualization.ChartWrapper({
-    chartType: "BubbleChart",
-    containerId: "quadrant_div",
-    options: options1,
+	chartType: "BubbleChart",
+	containerId: "quadrant_div",
+	options: options1,
   });
 
   dashboard.bind(
-    [
-      strategicSlider,
-      policyDomainFilter,
-      expPubValSlider,
-      abiToSupdBusCapSlider,
-      budgetSlider,
-    ],
-    chartBubble
+	[
+	  strategicSlider,
+	  policyDomainFilter,
+	  expPubValSlider,
+	  abiToSupdBusCapSlider,
+	  budgetSlider,
+	],
+	chartBubble
   );
   dashboard.draw(view.toDataTable());
 
   google.visualization.events.addListener(chartBubble, "ready", function () {
-    google.visualization.events.addListener(
-      chartBubble,
-      "select",
-      selectHandler
-    );
-    google.visualization.events.addListener(
-      policyDomainFilter,
-      "statechange",
-      function (event) {
-        const state = policyDomainFilter.getState();
-        filteringBcTable(state.selectedValues, false);
-      }
-    );
-    google.visualization.events.addListener(
-      chartBubble,
-      "statechange",
-      function () {
-        alert(chartBubble.getDataTable().getNumberOfRows());
-      }
-    );
+	google.visualization.events.addListener(
+	  chartBubble,
+	  "select",
+	  selectHandler
+	);
+	google.visualization.events.addListener(
+	  policyDomainFilter,
+	  "statechange",
+	  function (event) {
+		const state = policyDomainFilter.getState();
+		filteringBcTable(state.selectedValues, false);
+	  }
+	);
+	google.visualization.events.addListener(
+	  chartBubble,
+	  "statechange",
+	  function () {
+		alert(chartBubble.getDataTable().getNumberOfRows());
+	  }
+	);
   });
 }
 */
 const scrollToElement = (selector) => {
-  $([document.documentElement, document.body]).animate(
-    {
-      scrollTop: $(selector).offset().top - 40,
-    },
-    500
-  );
+	$([document.documentElement, document.body]).animate(
+		{
+			scrollTop: $(selector).offset().top - 40,
+		},
+		500
+	);
 };
 
 const bcInfoNodes = (id, policy, name, budget, spanID) => {
-  const pID = document.createElement("p");
-  const pPolicy = document.createElement("p");
-  const pName = document.createElement("p");
-  const pBudget = document.createElement("p");
+	const pID = document.createElement("p");
+	const pPolicy = document.createElement("p");
+	const pName = document.createElement("p");
+	const pBudget = document.createElement("p");
 
-  pID.innerText = "ID: " + id;
-  pPolicy.innerText = "Policy: " + policy;
-  pName.innerText = "Name: " + name;
-  pBudget.innerHTML =
-    "Estimated budget (in millions EUR): " +
-    `<span id="${spanID}">${budget} </span `;
+	pID.innerText = "ID: " + id;
+	pPolicy.innerText = "Policy: " + policy;
+	pName.innerText = "Name: " + name;
+	pBudget.innerHTML =
+		"Estimated budget (in millions EUR): " +
+		`<span id="${spanID}">${budget} </span `;
 
-  const parent = document.createElement("div");
+	const parent = document.createElement("div");
 
-  parent.appendChild(pID);
-  parent.appendChild(pPolicy);
-  parent.appendChild(pName);
-  parent.appendChild(pBudget);
+	parent.appendChild(pID);
+	parent.appendChild(pPolicy);
+	parent.appendChild(pName);
+	parent.appendChild(pBudget);
 
-  return parent;
+	return parent;
 };
 
 function selectHandler(evt) {
-  var activePoints = quadChart.getElementsAtEventForMode(evt, 'point', quadChart.options);
-  if (activePoints.length === 0) {
-      console.error('No se hizo clic en ninguna burbuja.');
-      return;
-  }
+	var activePoints = quadChart.getElementsAtEventForMode(evt, 'point', quadChart.options);
+	if (activePoints.length === 0) {
+		console.error('No se hizo clic en ninguna burbuja.');
+		return;
+	}
 
-  var firstPoint = activePoints[0];
-  var datasetIndex = firstPoint._datasetIndex;
-  var dataIndex = firstPoint._index;
+	var firstPoint = activePoints[0];
+	var datasetIndex = firstPoint._datasetIndex;
+	var dataIndex = firstPoint._index;
 
-  var dataset = quadChart.data.datasets[datasetIndex];
-  if (!dataset) {
-      console.error('No se pudo obtener el dataset.');
-      return;
-  }
-  
-  var bubbleData = quadChart.data.datasets[datasetIndex].data[dataIndex];
-  if (!bubbleData) {
-      console.error('No se pudo obtener los datos de la burbuja.');
-      return;
-  }
+	var dataset = quadChart.data.datasets[datasetIndex];
+	if (!dataset) {
+		console.error('No se pudo obtener el dataset.');
+		return;
+	}
 
-  var dbcName = dataset.label; 
-  if (!dbcName) {
-      console.error('No se pudo obtener el nombre del DBC.');
-      return;
-  }
+	var bubbleData = quadChart.data.datasets[datasetIndex].data[dataIndex];
+	if (!bubbleData) {
+		console.error('No se pudo obtener los datos de la burbuja.');
+		return;
+	}
 
-  const dbcData = editedData.find(data => data.dbc === dbcName);
+	// var dbcName = dataset.label;
+	var dbcId = dataset.ID;
+	if (!dbcId) {
+		console.error('No se pudo obtener el id del DBC.');
+		return;
+	}
 
-  if (!dbcData) {
-      console.error(`No se encontraron datos para el DBC con nombre ${dbcName}`);
-      return;
-  }
+	// const dbcData = editedData.find(data => data.dbc === dbcName);
+	const dbcData = editedData.find(data => data.ID === dbcId);
+	if (!dbcData) {
+		console.error(`No se encontraron datos para el DBC con ID ${dbcId}`);
+		return;
+	}
 
-  dbcData.ID = `http://data.europa.eu/dr8/egovera/${dbcName.replace(/\s+/g, '')}Capability`; 
-  dbcData.DPSs = [];
-  jsonDBCs.filter(dbc => dbc.ID == dbcData.ID).forEach(dbc => {
-    dbc["Digital_Public_Services"].forEach(dbcDPS => {
-      let dps = jsonDPSs.filter(dps => dps.ID == dbcDPS.ID)[0];
-      dps.dbcSupportAbility = dbcData.dbcSupportAbility;
-      dps.supportTargetAbility = dbcData.supportTargetAbility;
-      dbcData.DPSs.push(dps);
-    });
-  });
-  dbcData.DPSs = [...new Set(dbcData.DPSs)];
+	// dbcData.ID = `http://data.europa.eu/dr8/egovera/${dbcName.replace(/\s+/g, '')}Capability`;
+	dbcData.DPSs = [];
+	jsonDBCs.filter(dbc => dbc.ID == dbcData.ID).forEach(dbc => {
+		dbc["Digital_Public_Services"].forEach(dbcDPS => {
+			let dps = jsonDPSs.filter(dps => dps.ID == dbcDPS.ID)[0];
+			dps.dbcSupportAbility = dbcData.dbcSupportAbility;
+			dps.supportTargetAbility = dbcData.supportTargetAbility;
+			dbcData.DPSs.push(dps);
+		});
+	});
+	dbcData.DPSs = [...new Set(dbcData.DPSs)];
 
-  dbcData.views = [];
-  dbcData.views.push(createView("legal", idLdom, dbcData.policy));
-  dbcData.views.push(createView("organisational", idOdom, dbcData.policy));
-  dbcData.views.push(createView("semantic", idSdom, dbcData.policy));
-  dbcData.views.push(createView("technical-application", idTAdom, dbcData.policy));
-  dbcData.views.push(createView("technical-infrastructure", idTIdom, dbcData.policy));
+	dbcData.views = [];
+	/*
+	dbcData.views.push(createView("legal", idLdom, dbcData.policy));
+	dbcData.views.push(createView("organisational", idOdom, dbcData.policy));
+	dbcData.views.push(createView("semantic", idSdom, dbcData.policy));
+	dbcData.views.push(createView("technical-application", idTAdom, dbcData.policy));
+	dbcData.views.push(createView("technical-infrastructure", idTIdom, dbcData.policy));
+	*/
 
-  selectedDBC = dbcData;
-  //console.log("DBC NAME:", dbcName);
-  //console.log("DBC ID .:", dbcData.ID);
-  //console.log("DBC DATA:", dbcData);
+	let view = createView("legal", idLdom, dbcData.policy, 1, []);
+	view.bbs = jsonABBs.filter(abb => (abb.DBCs.includes(dbcData.ID) && abb.View.toLowerCase() == view.name.toLowerCase()));
+	dbcData.views.push(view);
+	view = createView("organisational", idOdom, dbcData.policy, 1, []);
+	view.bbs = jsonABBs.filter(abb => (abb.DBCs.includes(dbcData.ID) && abb.View.toLowerCase() == view.name.toLowerCase()));
+	dbcData.views.push(view);
+	view = createView("semantic", idSdom, dbcData.policy, 1, []);
+	view.bbs = jsonABBs.filter(abb => (abb.DBCs.includes(dbcData.ID) && abb.View.toLowerCase() == view.name.toLowerCase()));
+	dbcData.views.push(view);
+	view = createView("technical-application", idTAdom, dbcData.policy, 1, []);
+	view.bbs = jsonABBs.filter(abb => (abb.DBCs.includes(dbcData.ID) && abb.View.toLowerCase() == view.name.toLowerCase()));
+	dbcData.views.push(view);
+	view = createView("technical-infrastructure", idTIdom, dbcData.policy, 1, []);
+	view.bbs = jsonABBs.filter(abb => (abb.DBCs.includes(dbcData.ID) && abb.View.toLowerCase() == view.name.toLowerCase()));
+	dbcData.views.push(view);
 
-  $("#networkBBs2").fadeOut();
-  $("#network_div").fadeOut(function () {
-    if ($("#infratoogle").prop("checked") == false) {
-      $("#infratoogle").prop("checked", true);
-      toogleInfra = true;
-    }
+	selectedDBC = dbcData;
+	//console.log("DBC NAME:", dbcName);
+	//console.log("DBC ID .:", dbcData.ID);
+	//console.log("DBC DATA:", dbcData);
 
-    busOrientation = 1;
-    $("#radio1").prop("checked", true);
-    $("#networkBBs").collapse("show");
-    $("#listBBs").collapse("show");
-    $("#network_div").fadeIn();
+	$("#networkBBs2").fadeOut();
+	$("#network_div").fadeOut(function () {
+		if ($("#infratoogle").prop("checked") == false) {
+			$("#infratoogle").prop("checked", true);
+			toogleInfra = true;
+		}
 
-    drawViewsPredecessorsChart(selectedDBC);
-    dpsNetworkAndCheckbox(selectedDBC);
-    
-    scrollToElement("#networkBBs");
+		busOrientation = 1;
+		$("#radio1").prop("checked", true);
+		$("#networkBBs").collapse("show");
+		$("#listBBs").collapse("show");
+		$("#network_div").fadeIn();
 
-    bbsFillInfo(selectedDBC);
+		drawViewsPredecessorsChart(selectedDBC);
+		dpsNetworkAndCheckbox(selectedDBC);
 
-    document.getElementById("bcDetail").innerHTML = bcInfoNodes(
-      dbcData.ID,
-      CA(dbcData.policy),
-      dbcData.dbc,
-      dbcData.budget,
-      "bcDetails-budget"
-    ).innerHTML;
-    document.getElementById("dps-network-bc-info").innerHTML = bcInfoNodes(
-      dbcData.ID,
-      CA(dbcData.policy),
-      dbcData.dbc,
-      dbcData.budget,
-      "bcDetails-budget-copy"
-    ).innerHTML;
-    document.getElementById("bbDetail").innerHTML =
-      "<i>please select a builidng block</i>";
-    
-    createBuildingBlocksTableUpdated(selectedDBC);
-  });
+		scrollToElement("#networkBBs");
+
+		bbsFillInfo(selectedDBC);
+
+		document.getElementById("bcDetail").innerHTML = bcInfoNodes(
+			dbcData.ID,
+			CA(dbcData.policy),
+			dbcData.dbc,
+			dbcData.budget,
+			"bcDetails-budget"
+		).innerHTML;
+		document.getElementById("dps-network-bc-info").innerHTML = bcInfoNodes(
+			dbcData.ID,
+			CA(dbcData.policy),
+			dbcData.dbc,
+			dbcData.budget,
+			"bcDetails-budget-copy"
+		).innerHTML;
+		document.getElementById("bbDetail").innerHTML =
+			"<i>please select a builidng block</i>";
+
+		createBuildingBlocksTableFromDBC(selectedDBC);
+	});
 }
 
 $("#orientation").on("change", function () {
-  if (document.getElementById("radio1").checked) {
-    busOrientation = 1;
-  } else if (document.getElementById("radio2").checked) {
-    busOrientation = 2;
-  } else if (document.getElementById("radio3").checked) {
-    busOrientation = 3;
-  } else {
-    busOrientation = 4;
-  }
-  drawViewsPredecessorsChart(selectedDBC);
+	if (document.getElementById("radio1").checked) {
+		busOrientation = 1;
+	} else if (document.getElementById("radio2").checked) {
+		busOrientation = 2;
+	} else if (document.getElementById("radio3").checked) {
+		busOrientation = 3;
+	} else {
+		busOrientation = 4;
+	}
+	drawViewsPredecessorsChart(selectedDBC);
 });
 
 $("#infratoogle").on("change", function () {
-  if (toogleInfra) {
-    toogleInfra = false;
-  } else {
-    toogleInfra = true;
-  }
-  drawViewsPredecessorsChart(selectedDBC);
+	if (toogleInfra) {
+		toogleInfra = false;
+	} else {
+		toogleInfra = true;
+	}
+	drawViewsPredecessorsChart(selectedDBC);
 });
 
 $(document).ready(function () {
-  $('[data-toggle="tooltip"]').tooltip();
+	$('[data-toggle="tooltip"]').tooltip();
 });
 
 window.addEventListener("resize", () => {
-  resizeQuandrant();
+	resizeQuandrant();
 });
 
 /**
@@ -2221,172 +1683,172 @@ window.addEventListener("resize", () => {
  * Create option html element with attributes
  */
 function selectHTMLWithOptions(options, attribuesList) {
-  attribuesList = attribuesList || [];
-  let select = document.createElement("select");
-  for (let attr in attribuesList) {
-    select.setAttribute(attr, attribuesList[attr]);
-  }
+	attribuesList = attribuesList || [];
+	let select = document.createElement("select");
+	for (let attr in attribuesList) {
+		select.setAttribute(attr, attribuesList[attr]);
+	}
 
-  for (let i = 0; i < options.length; i++) {
-    let policy = options[i];
-    let option = document.createElement("option");
-    option.setAttribute("value", policy);
-    option.text = policy;
-    select.appendChild(option);
-  }
-  return select;
+	for (let i = 0; i < options.length; i++) {
+		let policy = options[i];
+		let option = document.createElement("option");
+		option.setAttribute("value", policy);
+		option.text = policy;
+		select.appendChild(option);
+	}
+	return select;
 }
 
 /**
  * Create number input html element with attributes
  */
 function htmlInputNumb(attribuesList) {
-  let input = document.createElement("input");
-  input.setAttribute("type", "number");
-  for (let attr in attribuesList) {
-    input.setAttribute(attr, attribuesList[attr]);
-  }
-  return input;
+	let input = document.createElement("input");
+	input.setAttribute("type", "number");
+	for (let attr in attribuesList) {
+		input.setAttribute(attr, attribuesList[attr]);
+	}
+	return input;
 }
 
 /**
  * Create paragraph html element with attributes
  */
 function htmlParagNumb(attribuesList) {
-  let input = document.createElement("p");
-  for (let attr in attribuesList) {
-    input.setAttribute(attr, attribuesList[attr]);
-  }
-  return input;
+	let input = document.createElement("p");
+	for (let attr in attribuesList) {
+		input.setAttribute(attr, attribuesList[attr]);
+	}
+	return input;
 }
 
 /**
  * Create dropdow element
  */
 function dropDownCheckBox(options, header) {
-  let dropdown = document.createElement("div");
-  dropdown.classList.add(["dropdown", "show"]);
+	let dropdown = document.createElement("div");
+	dropdown.classList.add(["dropdown", "show"]);
 
-  dropdown.setAttribute("id", "dropdown_div");
+	dropdown.setAttribute("id", "dropdown_div");
 
-  let headerEl = document.createElement("div");
-  headerEl.classList.add("dropdown-toggle");
-  headerEl.setAttribute("id", "dropdownMenuLink");
-  headerEl.setAttribute("data-toggle", "dropdown");
-  headerEl.setAttribute("aria-haspopup", "true");
-  headerEl.setAttribute("aria-expanded", "false");
-  let headerText = document.createTextNode(header);
-  headerEl.appendChild(headerText);
+	let headerEl = document.createElement("div");
+	headerEl.classList.add("dropdown-toggle");
+	headerEl.setAttribute("id", "dropdownMenuLink");
+	headerEl.setAttribute("data-toggle", "dropdown");
+	headerEl.setAttribute("aria-haspopup", "true");
+	headerEl.setAttribute("aria-expanded", "false");
+	let headerText = document.createTextNode(header);
+	headerEl.appendChild(headerText);
 
-  let dropdownMenu = document.createElement("div");
-  dropdownMenu.classList.add("dropdown-menu");
+	let dropdownMenu = document.createElement("div");
+	dropdownMenu.classList.add("dropdown-menu");
 
-  dropdown.appendChild(headerEl);
-  dropdown.appendChild(dropdownMenu);
+	dropdown.appendChild(headerEl);
+	dropdown.appendChild(dropdownMenu);
 
-  for (let i = 0; i < options.length; i++) {
-    let id = options[i];
-    const label = createLabelWithInputChild(id);
-    dropdownMenu.appendChild(label);
-  }
+	for (let i = 0; i < options.length; i++) {
+		let id = options[i];
+		const label = createLabelWithInputChild(id);
+		dropdownMenu.appendChild(label);
+	}
 
-  dropdown.addEventListener("change", filteringHandler);
+	dropdown.addEventListener("change", filteringHandler);
 
-  return dropdown;
+	return dropdown;
 }
 /**
  * Filter bc table and quandrant
  */
 function filteringBcTable(values, quadrant_filtering) {
-  const table = document.getElementById("bcTable");
-  let tr = table.getElementsByTagName("tr");
-  for (let i = 0; i < tr.length; i++) {
-    let tds = tr[i].getElementsByTagName("td");
-    if (tds.length < 1) continue;
-    let policyColumn = tds[1]
-      .querySelector("[policyValue]")
-      .getAttribute("policyValue");
-    const tempCond = values.map(function (value) {
-      return "'" + policyColumn + "' === '" + value + "'";
-    });
+	const table = document.getElementById("bcTable");
+	let tr = table.getElementsByTagName("tr");
+	for (let i = 0; i < tr.length; i++) {
+		let tds = tr[i].getElementsByTagName("td");
+		if (tds.length < 1) continue;
+		let policyColumn = tds[1]
+			.querySelector("[policyValue]")
+			.getAttribute("policyValue");
+		const tempCond = values.map(function (value) {
+			return "'" + policyColumn + "' === '" + value + "'";
+		});
 
-    let condition = tempCond.join(" || ");
-    let valid = condition ? eval(condition) : true;
-    if (valid) {
-      tr[i].style.display = "";
-    } else {
-      tr[i].style.display = "none";
-    }
-  }
-  if (quadrant_filtering) {
-    policyDomainFilter.setState({ selectedValues: values });
-    policyDomainFilter.draw();
-  } else {
-    const dropdown = document.getElementById("dropdown_div");
-    let inputs = dropdown.querySelectorAll("input[type=checkbox]");
-    for (let i = 0; i < inputs.length; i++) {
-      let input = inputs[i];
-      input.checked = false;
-    }
+		let condition = tempCond.join(" || ");
+		let valid = condition ? eval(condition) : true;
+		if (valid) {
+			tr[i].style.display = "";
+		} else {
+			tr[i].style.display = "none";
+		}
+	}
+	if (quadrant_filtering) {
+		policyDomainFilter.setState({ selectedValues: values });
+		policyDomainFilter.draw();
+	} else {
+		const dropdown = document.getElementById("dropdown_div");
+		let inputs = dropdown.querySelectorAll("input[type=checkbox]");
+		for (let i = 0; i < inputs.length; i++) {
+			let input = inputs[i];
+			input.checked = false;
+		}
 
-    for (let i = 0; i < inputs.length; i++) {
-      let input = inputs[i];
-      for (let i = 0; i < values.length; i++) {
-        let value = values[i];
-        const id = input.getAttribute("id").split("-")[0];
-        if (id.includes(value)) input.checked = true;
-      }
-    }
-  }
+		for (let i = 0; i < inputs.length; i++) {
+			let input = inputs[i];
+			for (let i = 0; i < values.length; i++) {
+				let value = values[i];
+				const id = input.getAttribute("id").split("-")[0];
+				if (id.includes(value)) input.checked = true;
+			}
+		}
+	}
 }
 
 function createLabelWithInputChild(id) {
-  let input = document.createElement("input");
-  input.setAttribute("type", "checkbox");
-  input.setAttribute("id", id + "-dropdown");
-  input.setAttribute("value", id);
-  let label = document.createElement("label");
-  label.setAttribute("for", id + "-dropdown");
-  label.appendChild(input);
-  let textContent = document.createTextNode(" " + id);
-  label.appendChild(textContent);
-  label.classList.add("dropdown-item");
+	let input = document.createElement("input");
+	input.setAttribute("type", "checkbox");
+	input.setAttribute("id", id + "-dropdown");
+	input.setAttribute("value", id);
+	let label = document.createElement("label");
+	label.setAttribute("for", id + "-dropdown");
+	label.appendChild(input);
+	let textContent = document.createTextNode(" " + id);
+	label.appendChild(textContent);
+	label.classList.add("dropdown-item");
 
-  return label;
+	return label;
 }
 
 function range(start, end) {
-  let ans = [];
-  for (let i = start; i <= end; i++) {
-    ans.push(i);
-  }
-  return ans;
+	let ans = [];
+	for (let i = start; i <= end; i++) {
+		ans.push(i);
+	}
+	return ans;
 }
 
 function changeSumPerPolicy(inputField) {
-  let bcObject = groupBy(Object.values(bcList), "policy");
+	let bcObject = groupBy(Object.values(bcList), "policy");
 
-  let policy = inputField.getAttribute("policy");
-  let id = "#" + policy + "-sum";
-  policy = policy.split("-").join(" ");
-  document.querySelector(id).innerHTML = sumOfArray(
-    groupBy(bcObject[policy], "policy", "budget")[policy]
-  );
+	let policy = inputField.getAttribute("policy");
+	let id = "#" + policy + "-sum";
+	policy = policy.split("-").join(" ");
+	document.querySelector(id).innerHTML = sumOfArray(
+		groupBy(bcObject[policy], "policy", "budget")[policy]
+	);
 }
 
 function filteringHandler() {
-  let dropdown = document.querySelector("#dropdown_div > div.dropdown-menu");
-  let inputs = dropdown.querySelectorAll("input[type=checkbox]");
-  const values = [];
-  for (let i = 0; i < inputs.length; i++) {
-    let input = inputs[i];
-    if (input.checked) {
-      const value = input.getAttribute("id").split("-")[0];
-      values.push(value);
-    }
-  }
+	let dropdown = document.querySelector("#dropdown_div > div.dropdown-menu");
+	let inputs = dropdown.querySelectorAll("input[type=checkbox]");
+	const values = [];
+	for (let i = 0; i < inputs.length; i++) {
+		let input = inputs[i];
+		if (input.checked) {
+			const value = input.getAttribute("id").split("-")[0];
+			values.push(value);
+		}
+	}
 
-  filteringBcTable(values, true);
+	filteringBcTable(values, true);
 }
 /*
 const updateBcDetailsBudget = (budget, currentBc) => {
@@ -2420,25 +1882,25 @@ function createBusinessCapabilityTable() {
   let name = thWithTextNode("Digital Business Capability");
 
   let dStrategicFit = thWithSpanNode(
-    "National Digital Strategy Fit",
-    natDigStrategicFitTooltip
+	"National Digital Strategy Fit",
+	natDigStrategicFitTooltip
   );
 
   let publicValue = thWithSpanNode("Expected Public Value", expPubValueTooltip);
 
   let abilityToSupport = thWithSpanNode(
-    "Ability to support the dBusCap",
-    abToSuppDbusCapTooltip
+	"Ability to support the dBusCap",
+	abToSuppDbusCapTooltip
   );
 
   let budgetAlloc = thWithSpanNode(
-    "Estimated budget (in millions EUR)",
-    budgetTooltip
+	"Estimated budget (in millions EUR)",
+	budgetTooltip
   );
 
   const optimalAvg = thWithSpanNode(
-    "Target Prospective Ability to support the dBusCap",
-    optimalAvgTooltip
+	"Target Prospective Ability to support the dBusCap",
+	optimalAvgTooltip
   );
 
   row.appendChild(id);
@@ -2453,160 +1915,160 @@ function createBusinessCapabilityTable() {
   let bcObject = groupBy(Object.values(bcList), "policy");
   let policies = Object.keys(bcObject);
   for (let policy in bcObject) {
-    let policyArray = bcObject[policy];
+	let policyArray = bcObject[policy];
 
-    for (let i = 0; i < policyArray.length; i++) {
-      let bc = policyArray[i];
-      let row = table.insertRow();
-      row.insertCell().appendChild(document.createTextNode(bc.id));
-      let policySpan = document.createElement("span");
-      policySpan.setAttribute("policyValue", bc.policy);
-      let policyTextNode = document.createTextNode(bc.policy);
-      policySpan.appendChild(policyTextNode);
-      row.insertCell().appendChild(policySpan);
-      row.insertCell().appendChild(document.createTextNode(bc.name));
+	for (let i = 0; i < policyArray.length; i++) {
+	  let bc = policyArray[i];
+	  let row = table.insertRow();
+	  row.insertCell().appendChild(document.createTextNode(bc.id));
+	  let policySpan = document.createElement("span");
+	  policySpan.setAttribute("policyValue", bc.policy);
+	  let policyTextNode = document.createTextNode(bc.policy);
+	  policySpan.appendChild(policyTextNode);
+	  row.insertCell().appendChild(policySpan);
+	  row.insertCell().appendChild(document.createTextNode(bc.name));
 
-      let natDigStrFit = selectHTMLWithOptions(range(1, 5), {
-        priority: "mySelect",
-        bc: bc.id,
-      });
+	  let natDigStrFit = selectHTMLWithOptions(range(1, 5), {
+		priority: "mySelect",
+		bc: bc.id,
+	  });
 
-      natDigStrFit.value = bc.priority;
-      natDigStrFit.addEventListener("change", function () {
-        for (let y in bcList) {
-          if (bcList[y].id == this.getAttribute("bc")) {
-            bcList[y].priority = Number(this.value);
-            let height = quadrantWidth();
-            drawBusinessCapabilityChart(height);
+	  natDigStrFit.value = bc.priority;
+	  natDigStrFit.addEventListener("change", function () {
+		for (let y in bcList) {
+		  if (bcList[y].id == this.getAttribute("bc")) {
+			bcList[y].priority = Number(this.value);
+			let height = quadrantWidth();
+			drawBusinessCapabilityChart(height);
 
-            filteringHandler();
-            return;
-          }
-        }
-      });
-      const natDigStrFitContainer = containerWithSelectAndSpan(natDigStrFit, 5);
-      row.insertCell().appendChild(natDigStrFitContainer);
+			filteringHandler();
+			return;
+		  }
+		}
+	  });
+	  const natDigStrFitContainer = containerWithSelectAndSpan(natDigStrFit, 5);
+	  row.insertCell().appendChild(natDigStrFitContainer);
 
-      let abiToSupdBusCap = selectHTMLWithOptions(range(1, 5), {
-        priority: "mySelect",
-        bc: bc.id,
-      });
-      abiToSupdBusCap.value = Math.round(bc.avgAbility);
-      abiToSupdBusCap.addEventListener("change", function () {
-        for (let y in bcList) {
-          if (bcList[y].id == this.getAttribute("bc")) {
-            bcList[y].avgAbility = Number(this.value);
-            let height = quadrantWidth();
-            drawBusinessCapabilityChart(height);
-            filteringHandler();
-            return;
-          }
-        }
-      });
+	  let abiToSupdBusCap = selectHTMLWithOptions(range(1, 5), {
+		priority: "mySelect",
+		bc: bc.id,
+	  });
+	  abiToSupdBusCap.value = Math.round(bc.avgAbility);
+	  abiToSupdBusCap.addEventListener("change", function () {
+		for (let y in bcList) {
+		  if (bcList[y].id == this.getAttribute("bc")) {
+			bcList[y].avgAbility = Number(this.value);
+			let height = quadrantWidth();
+			drawBusinessCapabilityChart(height);
+			filteringHandler();
+			return;
+		  }
+		}
+	  });
 
 
-      const abiToSupdBusCapContainer = containerWithSelectAndSpan(abiToSupdBusCap, 5);
-      row.insertCell().appendChild(abiToSupdBusCapContainer);
+	  const abiToSupdBusCapContainer = containerWithSelectAndSpan(abiToSupdBusCap, 5);
+	  row.insertCell().appendChild(abiToSupdBusCapContainer);
 
-      // Insert prospective Average value
-      let prospAbility = selectHTMLWithOptions(range(1, 5), {
-        priority: "mySelect",
-        bc: bc.id,
-      });
-      prospAbility.value = Number(bc.prospectiveAbility).toFixed(0);
+	  // Insert prospective Average value
+	  let prospAbility = selectHTMLWithOptions(range(1, 5), {
+		priority: "mySelect",
+		bc: bc.id,
+	  });
+	  prospAbility.value = Number(bc.prospectiveAbility).toFixed(0);
 
-      // functionality when the user selects another value from the dropdown list
-      prospAbility.addEventListener("change", function () {
-        for (let y in bcList) {
-          if (bcList[y].id == this.getAttribute("bc")) {
-            bcList[y].prospectiveAbility = Number(this.value);
-            filteringHandler();
-            return;
-          }
-        }
-      });
+	  // functionality when the user selects another value from the dropdown list
+	  prospAbility.addEventListener("change", function () {
+		for (let y in bcList) {
+		  if (bcList[y].id == this.getAttribute("bc")) {
+			bcList[y].prospectiveAbility = Number(this.value);
+			filteringHandler();
+			return;
+		  }
+		}
+	  });
 
-      const prospectiveAbilityContainer = containerWithSelectAndSpan(prospAbility, 5);
-      row.insertCell().appendChild(prospectiveAbilityContainer);
+	  const prospectiveAbilityContainer = containerWithSelectAndSpan(prospAbility, 5);
+	  row.insertCell().appendChild(prospectiveAbilityContainer);
 
-      let expPubVal = selectHTMLWithOptions(range(1, 5), {
-        priority: "mySelect",
-        bc: bc.id,
-      });
-      expPubVal.value = bc.expRandom;
-      expPubVal.addEventListener("change", function () {
-        for (let y in bcList) {
-          if (bcList[y].id == this.getAttribute("bc")) {
-            bcList[y].expRandom = Number(this.value);
-            let height = quadrantWidth();
-            drawBusinessCapabilityChart(height);
-            filteringHandler();
-            return;
-          }
-        }
-      });
+	  let expPubVal = selectHTMLWithOptions(range(1, 5), {
+		priority: "mySelect",
+		bc: bc.id,
+	  });
+	  expPubVal.value = bc.expRandom;
+	  expPubVal.addEventListener("change", function () {
+		for (let y in bcList) {
+		  if (bcList[y].id == this.getAttribute("bc")) {
+			bcList[y].expRandom = Number(this.value);
+			let height = quadrantWidth();
+			drawBusinessCapabilityChart(height);
+			filteringHandler();
+			return;
+		  }
+		}
+	  });
 
-      const expPubValContainer = containerWithSelectAndSpan(expPubVal, 5);
-      row.insertCell().appendChild(expPubValContainer);
+	  const expPubValContainer = containerWithSelectAndSpan(expPubVal, 5);
+	  row.insertCell().appendChild(expPubValContainer);
 
-      let budgetFiled = htmlInputNumb({
-        priority: "mySelect",
-        policy: policy.split(" ").join("-"),
-        bc: bc.id,
-        min: 0,
-        id: "total-" + bc.id,
-      });
-      budgetFiled.value = bc.budget;
+	  let budgetFiled = htmlInputNumb({
+		priority: "mySelect",
+		policy: policy.split(" ").join("-"),
+		bc: bc.id,
+		min: 0,
+		id: "total-" + bc.id,
+	  });
+	  budgetFiled.value = bc.budget;
 
-      budgetFiled.addEventListener("change", function () {
-        for (let y in bcList) {
-          if (bcList[y].id == this.getAttribute("bc")) {
-            let newBudget = Number(Number(this.value).toFixed(2));
-            if (newBudget < 0) newBudget = 0;
-            bcList[y].budget = newBudget;
-            this.value = newBudget;
-            let height = quadrantWidth();
-            drawBusinessCapabilityChart(height);
-            changeSumPerPolicy(this);
-            filteringHandler();
-            updateBcDetailsBudget(newBudget, y);
-            return;
-          }
-        }
-      });
-      row.insertCell().appendChild(budgetFiled);
-    }
-    let row = table.insertRow();
+	  budgetFiled.addEventListener("change", function () {
+		for (let y in bcList) {
+		  if (bcList[y].id == this.getAttribute("bc")) {
+			let newBudget = Number(Number(this.value).toFixed(2));
+			if (newBudget < 0) newBudget = 0;
+			bcList[y].budget = newBudget;
+			this.value = newBudget;
+			let height = quadrantWidth();
+			drawBusinessCapabilityChart(height);
+			changeSumPerPolicy(this);
+			filteringHandler();
+			updateBcDetailsBudget(newBudget, y);
+			return;
+		  }
+		}
+	  });
+	  row.insertCell().appendChild(budgetFiled);
+	}
+	let row = table.insertRow();
 
-    row.insertCell().appendChild(document.createTextNode(""));
+	row.insertCell().appendChild(document.createTextNode(""));
 
-    let policySumParag = htmlParagNumb({
-      id: policy + "-policyField",
-      policyValue: policy,
-    });
-    policySumParag.innerHTML = policy;
-    row.insertCell().appendChild(policySumParag);
+	let policySumParag = htmlParagNumb({
+	  id: policy + "-policyField",
+	  policyValue: policy,
+	});
+	policySumParag.innerHTML = policy;
+	row.insertCell().appendChild(policySumParag);
 
-    row.insertCell().appendChild(document.createTextNode(""));
+	row.insertCell().appendChild(document.createTextNode(""));
 
-    row.insertCell().appendChild(document.createTextNode(""));
+	row.insertCell().appendChild(document.createTextNode(""));
 
-    row.insertCell().appendChild(document.createTextNode(""));
+	row.insertCell().appendChild(document.createTextNode(""));
 
-    row.insertCell().appendChild(document.createTextNode(""));
+	row.insertCell().appendChild(document.createTextNode(""));
 
-    let totalParagraph = htmlParagNumb({ id: policy + "-totalInAbbfiled" });
-    totalParagraph.innerHTML = "Total budget";
-    row.insertCell().appendChild(totalParagraph);
+	let totalParagraph = htmlParagNumb({ id: policy + "-totalInAbbfiled" });
+	totalParagraph.innerHTML = "Total budget";
+	row.insertCell().appendChild(totalParagraph);
 
-    let budgets = groupBy(bcObject[policy], "policy", "budget");
-    let sumOfBudgets = htmlParagNumb({
-      id: policy.split(" ").join("-") + "-sum",
-      priority: "mySelect",
-    });
-    sumOfBudgets.innerHTML = sumOfArray(budgets[policy]);
+	let budgets = groupBy(bcObject[policy], "policy", "budget");
+	let sumOfBudgets = htmlParagNumb({
+	  id: policy.split(" ").join("-") + "-sum",
+	  priority: "mySelect",
+	});
+	sumOfBudgets.innerHTML = sumOfArray(budgets[policy]);
 
-    row.insertCell().appendChild(sumOfBudgets);
+	row.insertCell().appendChild(sumOfBudgets);
   }
 
   let selectEl = dropDownCheckBox(policies, "Policy Domain");
@@ -2615,15 +2077,15 @@ function createBusinessCapabilityTable() {
   var els = document.getElementById("bcTable").getElementsByTagName("th");
 
   for (var i = 0; i < els.length; i++) {
-    els[i].style.paddingTop = "4px";
-    els[i].style.paddingBottom = "4px";
+	els[i].style.paddingTop = "4px";
+	els[i].style.paddingBottom = "4px";
   }
 
   var els = document.getElementById("bcTable").getElementsByTagName("td");
 
   for (var i = 0; i < els.length; i++) {
-    els[i].style.paddingTop = "2px";
-    els[i].style.paddingBottom = "2px";
+	els[i].style.paddingTop = "2px";
+	els[i].style.paddingBottom = "2px";
   }
 }
 */
@@ -2642,241 +2104,241 @@ function createBusinessCapabilityTable() {
  */
 
 function createDigitalTransformNode(
-  id,
-  shape,
-  image,
-  label,
-  title,
-  color,
-  x,
-  y,
-  hidden,
-  font,
-  DIR
+	id,
+	shape,
+	image,
+	label,
+	title,
+	color,
+	x,
+	y,
+	hidden,
+	font,
+	DIR
 ) {
-  if (!x && x !== 0) {
-    x = null;
-  }
-  if (!y && y !== 0) {
-    y = null;
-  }
-  (font = font || "14px arial"), (DIR = DIR || "../img/");
-  hidden = hidden || false;
-  var node = [];
-  node.id = id;
-  node.shape = shape;
-  node.image = DIR + image;
-  node.font = font;
-  node.label = label;
-  node.title = title;
-  node.color = color;
-  node.hidden = hidden;
-  node.x = x;
-  node.y = y;
-  return node;
+	if (!x && x !== 0) {
+		x = null;
+	}
+	if (!y && y !== 0) {
+		y = null;
+	}
+	(font = font || "14px arial"), (DIR = DIR || "../img/");
+	hidden = hidden || false;
+	var node = [];
+	node.id = id;
+	node.shape = shape;
+	node.image = DIR + image;
+	node.font = font;
+	node.label = label;
+	node.title = title;
+	node.color = color;
+	node.hidden = hidden;
+	node.x = x;
+	node.y = y;
+	return node;
 }
 
 const syncCheckboxAfterNodesClicked = (dps) => {
-  const inputs = dpsSelectDivList.querySelectorAll("input");
+	const inputs = dpsSelectDivList.querySelectorAll("input");
 
-  for (let idx = 0; idx < inputs.length; idx++) {
-    inputs[idx].checked = false;
-    if (inputs[idx].getAttribute("data-dig-pub-service") === dps)
-      inputs[idx].checked = true;
-  }
+	for (let idx = 0; idx < inputs.length; idx++) {
+		inputs[idx].checked = false;
+		if (inputs[idx].getAttribute("data-dig-pub-service") === dps)
+			inputs[idx].checked = true;
+	}
 };
 
 const dpsNetworkAndCheckbox = (dbcData) => {
-  drawDPSNetwork(dbcData.DPSs);
-  createFilterDPSCheckbox(dbcData.DPSs);
+	drawDPSNetwork(dbcData.DPSs);
+	createFilterDPSCheckbox(dbcData.DPSs);
 };
 
 /**
  * Create and draw dps network chart
  */
 const drawDPSNetwork = (dpss) => {
-  if (DPSnetwork !== null) {
-    DPSnetwork.destroy();
-    DPSnetwork = null;
-  }
+	if (DPSnetwork !== null) {
+		DPSnetwork.destroy();
+		DPSnetwork = null;
+	}
 
-  DPSNetNodes = new vis.DataSet();
+	DPSNetNodes = new vis.DataSet();
 
-  let length = dpss.length;
+	let length = dpss.length;
 
-  for (let idx = 0; idx < length; idx++) {
-    let dps = dpss[idx];
-    let { Policy: policy, ID: dpsID, Name: label, dbcSupportAbility: dpsAbility } = dps;
+	for (let idx = 0; idx < length; idx++) {
+		let dps = dpss[idx];
+		let { Policy: policy, ID: dpsID, Name: label, dbcSupportAbility: dpsAbility } = dps;
 
-    let title = `<div>
+		let title = `<div>
     ${dpsDetailChild("ID: ", dpsID).outerHTML}
     ${dpsDetailChild("Name: ", label).outerHTML}
     ${dpsDetailChild("Policy: ", policy).outerHTML}
     ${dpsDetailChild("Average Ability to support: ", dpsAbility).outerHTML}
     </div>`;
-    let node = {
-      id: idx,
-      image: getImagePerPolicy(policy),
-      dpsID,
-      //label: `${dpsID} - ${label}`,
-      label: `${label}`,
-      title,
-      hidden: false,
-      color: {
-        background: getColorPerPolicy(policy, true),
-      },
-    };
-    DPSNetNodes.add(node);
-  }
+		let node = {
+			id: idx,
+			image: getImagePerPolicy(policy),
+			dpsID,
+			//label: `${dpsID} - ${label}`,
+			label: `${label}`,
+			title,
+			hidden: false,
+			color: {
+				background: getColorPerPolicy(policy, true),
+			},
+		};
+		DPSNetNodes.add(node);
+	}
 
-  let options = {
-    interaction: { hover: true },
-    height: "100%",
-    width: "100%",
-    nodes: {
-      imagePadding: 11,
-      borderWidth: 1,
-      size: 30,
-      shape: "circularImage",
-      shadow: true,
-      font: { color: "#000", size: 17 },
-    },
-    interaction: {
-      navigationButtons: true,
-      keyboard: true,
-    },
-    physics: {
-      forceAtlas2Based: {
-        springLength: -10,
-      },
-      minVelocity: 0.75,
-      solver: "forceAtlas2Based",
-      timestep: 0.53,
-    },
-  };
-  let data = {
-    nodes: DPSNetNodes,
-  };
+	let options = {
+		interaction: { hover: true },
+		height: "100%",
+		width: "100%",
+		nodes: {
+			imagePadding: 11,
+			borderWidth: 1,
+			size: 30,
+			shape: "circularImage",
+			shadow: true,
+			font: { color: "#000", size: 17 },
+		},
+		interaction: {
+			navigationButtons: true,
+			keyboard: true,
+		},
+		physics: {
+			forceAtlas2Based: {
+				springLength: -10,
+			},
+			minVelocity: 0.75,
+			solver: "forceAtlas2Based",
+			timestep: 0.53,
+		},
+	};
+	let data = {
+		nodes: DPSNetNodes,
+	};
 
-  let container = document.querySelector("#dps-network-div");
-  DPSnetwork = new vis.Network(container, data, options);
+	let container = document.querySelector("#dps-network-div");
+	DPSnetwork = new vis.Network(container, data, options);
 
-  if (DPSnetwork !== null) {
-    DPSnetwork.on("click", (properties) => {
-      if (properties.nodes.length === 0) return;
+	if (DPSnetwork !== null) {
+		DPSnetwork.on("click", (properties) => {
+			if (properties.nodes.length === 0) return;
 
-      let id = properties.nodes[0];
+			let id = properties.nodes[0];
 
-      let nodes = DPSNetNodes.get();
+			let nodes = DPSNetNodes.get();
 
-      let node = nodes.find((node) => node.id === id);
-      let dps = dpss.filter((dp) => dp.ID === node.dpsID)[0];
-      clickedDPSs = [dps.ID];
-      syncCheckboxAfterNodesClicked(node.dpsID);
-      //const newBBs = bbs.filter((bb) => bb.digPubServ.includes(node.dpsID));
-      //createBuildingBlocksTable({ bbs: newBBs });
-      filternetwork2([node.dpsID]);
-      bbsMultipleDPSInfo([dps.Name]);
-      drawViewsPredecessorsChart(selectedDBC, clickedDPSs);
-    });
-  }
+			let node = nodes.find((node) => node.id === id);
+			let dps = dpss.filter((dp) => dp.ID === node.dpsID)[0];
+			clickedDPSs = [dps.ID];
+			syncCheckboxAfterNodesClicked(node.dpsID);
+			const newBBs = jsonABBs.filter((bb) => bb.Digital_Public_Service.includes(node.dpsID));
+			createBuildingBlocksTableFromView({ bbs: newBBs });
+			filternetwork2([node.dpsID]);
+			bbsMultipleDPSInfo([dps.Name]);
+			drawViewsPredecessorsChart(selectedDBC, clickedDPSs);
+		});
+	}
 };
 
 /**
  * Helper function
  */
 const dpsDetailChild = (key, value) => {
-  const div = document.createElement("div");
-  const spanLeft = document.createElement("span");
-  const spanRight = document.createElement("span");
-  div.appendChild(spanLeft);
-  div.appendChild(spanRight);
+	const div = document.createElement("div");
+	const spanLeft = document.createElement("span");
+	const spanRight = document.createElement("span");
+	div.appendChild(spanLeft);
+	div.appendChild(spanRight);
 
-  spanLeft.innerText = key;
-  spanRight.innerText = value;
+	spanLeft.innerText = key;
+	spanRight.innerText = value;
 
-  return div;
+	return div;
 };
 
 const filternetwork2 = (dpsIDS) => {
-  if (!network2Nodes) return;
-  let condition = "";
-  let dpsLength = dpsIDS.length;
+	if (!network2Nodes) return;
+	let condition = "";
+	let dpsLength = dpsIDS.length;
 
-  if (dpsLength === 0) {
-    network2Nodes.forEach((node) => {
-      let hidden = false;
-      network2Nodes.update({ id: node.id, hidden: hidden });
-    });
-    return;
-  }
+	if (dpsLength === 0) {
+		network2Nodes.forEach((node) => {
+			let hidden = false;
+			network2Nodes.update({ id: node.id, hidden: hidden });
+		});
+		return;
+	}
 
-  for (let idx = 0; idx < dpsLength; idx++) {
-    let id = dpsIDS[idx];
-    condition += `node.dps.indexOf("${id}") > -1`;
-    if (idx < dpsLength - 1) condition += " || ";
-  }
+	for (let idx = 0; idx < dpsLength; idx++) {
+		let id = dpsIDS[idx];
+		condition += `node.dps.indexOf("${id}") > -1`;
+		if (idx < dpsLength - 1) condition += " || ";
+	}
 
-  const temp = new vis.DataSet();
+	const temp = new vis.DataSet();
 
-  network2Nodes.forEach((node) => {
-    let hidden;
-    if (eval(condition)) {
-      hidden = false;
-    } else {
-      hidden = true;
-    }
+	network2Nodes.forEach((node) => {
+		let hidden;
+		if (eval(condition)) {
+			hidden = false;
+		} else {
+			hidden = true;
+		}
 
-    temp.add({ ...node, hidden });
-  });
+		temp.add({ ...node, hidden });
+	});
 
-  network2Nodes.clear();
-  temp.forEach((node) => network2Nodes.add(node));
+	network2Nodes.clear();
+	temp.forEach((node) => network2Nodes.add(node));
 };
 
 const createFilterDPSCheckbox = (dpss) => {
-  if (dpss.length === 0) {
-    return;
-  }
-  dpsSelectDivList.innerHTML = "";
+	if (dpss.length === 0) {
+		return;
+	}
+	dpsSelectDivList.innerHTML = "";
 
-  for (let idx = 0; idx < dpss.length; idx++) {
-    let dps = dpss[idx];
+	for (let idx = 0; idx < dpss.length; idx++) {
+		let dps = dpss[idx];
 
-    const li = document.createElement("li");
-    const div = document.createElement("div");
-    const dpsName = dps.Name;
-    const textNode = document.createElement("span");
-    //textNode.textContent = `${dps.ID} - ${dpsName}`;
-    textNode.textContent = `${dpsName}`;
-    const input = document.createElement("input");
-    input.setAttribute("type", "checkbox");
-    input.setAttribute("data-dig-pub-service", dps.ID);
+		const li = document.createElement("li");
+		const div = document.createElement("div");
+		const dpsName = dps.Name;
+		const textNode = document.createElement("span");
+		//textNode.textContent = `${dps.ID} - ${dpsName}`;
+		textNode.textContent = `${dpsName}`;
+		const input = document.createElement("input");
+		input.setAttribute("type", "checkbox");
+		input.setAttribute("data-dig-pub-service", dps.ID);
 
-    li.appendChild(div);
-    div.appendChild(input);
-    div.appendChild(textNode);
-    dpsSelectDivList.appendChild(li);
-  }
+		li.appendChild(div);
+		div.appendChild(input);
+		div.appendChild(textNode);
+		dpsSelectDivList.appendChild(li);
+	}
 };
 
 const calculateAvgAbilityPerViewAndDpss = (view, dpss = []) => {
-  if (dpss.length === 0) {
-    return view.avgAbility;
-  }
+	if (dpss.length === 0) {
+		return view.avgAbility;
+	}
 
-  const abbsToCalculate = view.bbs.filter((bb) => {
-    for (let idx = 0; idx < dpss.length; idx++) {
-      if (bb.digPubServ.indexOf(dpss[idx]) > -1) return true;
-    }
-    return false;
-  });
+	const abbsToCalculate = view.bbs.filter((bb) => {
+		for (let idx = 0; idx < dpss.length; idx++) {
+			if (bb.Digital_Public_Service.indexOf(dpss[idx]) > -1) return true;
+		}
+		return false;
+	});
 
-  const total = abbsToCalculate.reduce((sum, abb) => (sum += abb.ability), 0);
-  if (abbsToCalculate.length === 0) return 0;
-  const average = total / abbsToCalculate.length;
+	const total = abbsToCalculate.reduce((sum, abb) => (sum += abb.ability), 0);
+	if (abbsToCalculate.length === 0) return 0;
+	const average = total / abbsToCalculate.length;
 
-  return average;
+	return average;
 };
 
 /**
@@ -2885,22 +2347,22 @@ const calculateAvgAbilityPerViewAndDpss = (view, dpss = []) => {
 /*
 function drawViewsPredecessorsChartDEPRECATED(bc, dpss = []) {
   if (network !== null) {
-    network.destroy();
-    network = null;
+	network.destroy();
+	network = null;
   }
 
   if (bc.policy == "Business Agnostic") {
-    toogleInfra = false;
+	toogleInfra = false;
   }
 
   let showNonInfra = true;
 
   if (
-    clickedDPSs.length > 0 &&
-    clickedDPSs.every((id) => id.startsWith("BA"))
+	clickedDPSs.length > 0 &&
+	clickedDPSs.every((id) => id.startsWith("BA"))
   ) {
-    showNonInfra = false;
-    toogleInfra = true;
+	showNonInfra = false;
+	toogleInfra = true;
   }
 
   var bbs = bc.bbs;
@@ -2910,896 +2372,896 @@ function drawViewsPredecessorsChartDEPRECATED(bc, dpss = []) {
   var color = [];
   color.background = "#fff";
   var bcNode = createDigitalTransformNode(
-    idBCdom,
-    "circularImage",
-    "bc.png",
-    "ID:" +
-    bc.id +
-    ", " +
-    bc.name +
-    ", \nNational Digital Strategy Fit: " +
-    bc.priority +
-    " out of 5, \nAbility to support the dBusCap: " +
-    bc.avgAbility +
-    " out of 5",
-    "ID:" +
-    bc.id +
-    ", " +
-    bc.name +
-    ", \nNational Digital Strategy Fit: " +
-    bc.priority +
-    " out of 5, \nAbility to support the dBusCap: " +
-    bc.avgAbility +
-    " out of 5",
-    color,
-    100,
-    10
+	idBCdom,
+	"circularImage",
+	"bc.png",
+	"ID:" +
+	bc.id +
+	", " +
+	bc.name +
+	", \nNational Digital Strategy Fit: " +
+	bc.priority +
+	" out of 5, \nAbility to support the dBusCap: " +
+	bc.avgAbility +
+	" out of 5",
+	"ID:" +
+	bc.id +
+	", " +
+	bc.name +
+	", \nNational Digital Strategy Fit: " +
+	bc.priority +
+	" out of 5, \nAbility to support the dBusCap: " +
+	bc.avgAbility +
+	" out of 5",
+	color,
+	100,
+	10
   );
   nodes.push(bcNode);
 
   var color = [];
   color.background = "#fff";
   var start = createDigitalTransformNode(
-    100,
-    "circularImage",
-    "start.png",
-    "Start",
-    "Start",
-    color,
-    -10,
-    0
+	100,
+	"circularImage",
+	"start.png",
+	"Start",
+	"Start",
+	color,
+	-10,
+	0
   );
 
   nodes.push(start);
   let views = bc.views;
   var count = 0;
   if (showNonInfra) {
-    for (let i in views) {
-      count += 1;
-      let id = null;
-      var color = [];
-      var image = null;
-      var labelInit = null;
-      switch (String(views[i].name)) {
-        case "legal":
-          image = "legal.png";
-          labelInit = "L";
-          id = idLdom;
-          break;
-        case "organisational":
-          image = "org.png";
-          id = idOdom;
-          labelInit = "O";
-          break;
-        case "semantic":
-          image = "data.png";
-          id = idSdom;
-          labelInit = "S";
-          break;
-        case "technical-application":
-          image = "TA.png";
-          id = idTAdom;
-          labelInit = "TA";
-          break;
-        case "technical-infrastructure":
-          image = "tech.png";
-          id = idTIdom;
-          labelInit = "TI";
-          break;
-        default:
-          image = "tech.png";
-          break;
-      }
-      const currentAvgAbility = calculateAvgAbilityPerViewAndDpss(
-        views[i],
-        clickedDPSs
-      );
-      color.background = getColorPerPolicy(views[i].policy, true);
+	for (let i in views) {
+	  count += 1;
+	  let id = null;
+	  var color = [];
+	  var image = null;
+	  var labelInit = null;
+	  switch (String(views[i].name)) {
+		case "legal":
+		  image = "legal.png";
+		  labelInit = "L";
+		  id = idLdom;
+		  break;
+		case "organisational":
+		  image = "org.png";
+		  id = idOdom;
+		  labelInit = "O";
+		  break;
+		case "semantic":
+		  image = "data.png";
+		  id = idSdom;
+		  labelInit = "S";
+		  break;
+		case "technical-application":
+		  image = "TA.png";
+		  id = idTAdom;
+		  labelInit = "TA";
+		  break;
+		case "technical-infrastructure":
+		  image = "tech.png";
+		  id = idTIdom;
+		  labelInit = "TI";
+		  break;
+		default:
+		  image = "tech.png";
+		  break;
+	  }
+	  const currentAvgAbility = calculateAvgAbilityPerViewAndDpss(
+		views[i],
+		clickedDPSs
+	  );
+	  color.background = getColorPerPolicy(views[i].policy, true);
 
-      if (views[i].bbs.length == 0) {
-        if (labelInit === null) continue;
-        var label = labelInit + " - " + CA(bc.policy);
-      } else {
-        var label =
-          labelInit +
-          " - " +
-          CA(bc.policy) +
-          ",\n" +
-          currentAvgAbility.toFixed(1) +
-          " out of 5";
-      }
-      let node = createDigitalTransformNode(
-        id,
-        "circularImage",
-        image,
-        label,
-        label,
-        color,
-        10 * i,
-        0
-      );
-      nodes.push(node);
-    }
+	  if (views[i].bbs.length == 0) {
+		if (labelInit === null) continue;
+		var label = labelInit + " - " + CA(bc.policy);
+	  } else {
+		var label =
+		  labelInit +
+		  " - " +
+		  CA(bc.policy) +
+		  ",\n" +
+		  currentAvgAbility.toFixed(1) +
+		  " out of 5";
+	  }
+	  let node = createDigitalTransformNode(
+		id,
+		"circularImage",
+		image,
+		label,
+		label,
+		color,
+		10 * i,
+		0
+	  );
+	  nodes.push(node);
+	}
   }
   var bcInfraNode = [];
   bcInfraNode.id = idBCinf;
 
   if (toogleInfra) {
-    var color = [];
-    color.background = "#fff";
-    bcInfraNode = createDigitalTransformNode(
-      idBCinf,
-      "circularImage",
-      "bc.png",
-      "Digital business capability Infrastructure," + "\nMission Critical",
-      "Digital business capability Infrastructure," + "\nMission Critical",
-      color,
-      100,
-      50,
-      true
-    );
-    nodes.push(bcInfraNode);
+	var color = [];
+	color.background = "#fff";
+	bcInfraNode = createDigitalTransformNode(
+	  idBCinf,
+	  "circularImage",
+	  "bc.png",
+	  "Digital business capability Infrastructure," + "\nMission Critical",
+	  "Digital business capability Infrastructure," + "\nMission Critical",
+	  color,
+	  100,
+	  50,
+	  true
+	);
+	nodes.push(bcInfraNode);
 
-    for (let i in viewsInfra) {
-      let id = null;
-      var color = [];
-      var image = null;
-      var labelInit = null;
-      switch (String(viewsInfra[i].name)) {
-        case "legal":
-          image = "legal.png";
-          id = idLinf;
-          labelInit = "L";
-          break;
-        case "organisational":
-          image = "org.png";
-          id = idOinf;
-          labelInit = "O";
-          break;
-        case "semantic":
-          image = "data.png";
-          id = idSinf;
-          labelInit = "S";
-          break;
-        case "technical-application":
-          image = "TA.png";
-          id = idTAinf;
-          labelInit = "TA";
-          break;
-        case "technical-infrastructure":
-          image = "tech.png";
-          id = idTIinf;
-          labelInit = "TI";
-          break;
-        default:
-          image = "tech.png";
-          break;
-      }
+	for (let i in viewsInfra) {
+	  let id = null;
+	  var color = [];
+	  var image = null;
+	  var labelInit = null;
+	  switch (String(viewsInfra[i].name)) {
+		case "legal":
+		  image = "legal.png";
+		  id = idLinf;
+		  labelInit = "L";
+		  break;
+		case "organisational":
+		  image = "org.png";
+		  id = idOinf;
+		  labelInit = "O";
+		  break;
+		case "semantic":
+		  image = "data.png";
+		  id = idSinf;
+		  labelInit = "S";
+		  break;
+		case "technical-application":
+		  image = "TA.png";
+		  id = idTAinf;
+		  labelInit = "TA";
+		  break;
+		case "technical-infrastructure":
+		  image = "tech.png";
+		  id = idTIinf;
+		  labelInit = "TI";
+		  break;
+		default:
+		  image = "tech.png";
+		  break;
+	  }
 
-      color.background = getColorPerPolicy(viewsInfra[i].policy, true);
+	  color.background = getColorPerPolicy(viewsInfra[i].policy, true);
 
-      var label = labelInit + " - Business agnostic";
+	  var label = labelInit + " - Business agnostic";
 
-      let node = createDigitalTransformNode(
-        id,
-        "circularImage",
-        image,
-        label,
-        label,
-        color,
-        10 * i,
-        -10
-      );
+	  let node = createDigitalTransformNode(
+		id,
+		"circularImage",
+		image,
+		label,
+		label,
+		color,
+		10 * i,
+		-10
+	  );
 
-      nodes.push(node);
-    }
+	  nodes.push(node);
+	}
   }
 
   if (busOrientation == 1) {
-    const startToPoint = showNonInfra ? idLdom : idLinf;
-    var edges = new vis.DataSet([
-      { from: start.id, to: startToPoint, dashes: true },
-      { from: idLdom, to: idOdom, dashes: false },
-      { from: idOdom, to: idSdom, dashes: false },
-      { from: idOdom, to: idTIdom, dashes: false },
-      { from: idTIdom, to: idTAdom, dashes: false },
-      { from: idSdom, to: idTAdom, dashes: false },
-      // { from: idTAdom, to: bcNode.id, dashes: true },
+	const startToPoint = showNonInfra ? idLdom : idLinf;
+	var edges = new vis.DataSet([
+	  { from: start.id, to: startToPoint, dashes: true },
+	  { from: idLdom, to: idOdom, dashes: false },
+	  { from: idOdom, to: idSdom, dashes: false },
+	  { from: idOdom, to: idTIdom, dashes: false },
+	  { from: idTIdom, to: idTAdom, dashes: false },
+	  { from: idSdom, to: idTAdom, dashes: false },
+	  // { from: idTAdom, to: bcNode.id, dashes: true },
 
-      { from: idLinf, to: idLdom, dashes: true },
-      { from: idLinf, to: idOinf, dashes: false },
-      { from: idLinf, to: idSinf, dashes: false },
-      { from: idOinf, to: idOdom, dashes: true },
-      { from: idOinf, to: idSinf, dashes: false },
-      { from: idOinf, to: idTIinf, dashes: false },
-      { from: idSinf, to: idSdom, dashes: true },
-      { from: idSinf, to: idTAinf, dashes: false },
-      { from: idTIinf, to: idTIdom, dashes: true },
-      { from: idTIinf, to: idTAinf, dashes: false },
-      { from: idTAinf, to: idTAdom, dashes: true },
-      { from: idTAinf, to: bcInfraNode.id, dashes: true },
-      { from: bcInfraNode.id, to: bcNode.id, dashes: true },
-    ]);
-    if (showNonInfra) {
-      edges.add({ from: idTAdom, to: bcNode.id, dashes: true });
-    } else {
-      edges.add({ from: idTAinf, to: bcNode.id, dashes: true });
-    }
+	  { from: idLinf, to: idLdom, dashes: true },
+	  { from: idLinf, to: idOinf, dashes: false },
+	  { from: idLinf, to: idSinf, dashes: false },
+	  { from: idOinf, to: idOdom, dashes: true },
+	  { from: idOinf, to: idSinf, dashes: false },
+	  { from: idOinf, to: idTIinf, dashes: false },
+	  { from: idSinf, to: idSdom, dashes: true },
+	  { from: idSinf, to: idTAinf, dashes: false },
+	  { from: idTIinf, to: idTIdom, dashes: true },
+	  { from: idTIinf, to: idTAinf, dashes: false },
+	  { from: idTAinf, to: idTAdom, dashes: true },
+	  { from: idTAinf, to: bcInfraNode.id, dashes: true },
+	  { from: bcInfraNode.id, to: bcNode.id, dashes: true },
+	]);
+	if (showNonInfra) {
+	  edges.add({ from: idTAdom, to: bcNode.id, dashes: true });
+	} else {
+	  edges.add({ from: idTAinf, to: bcNode.id, dashes: true });
+	}
   } else if (busOrientation == 2) {
-    const startToPoint = showNonInfra ? idOdom : idOinf;
+	const startToPoint = showNonInfra ? idOdom : idOinf;
 
-    var edges = new vis.DataSet([
-      { from: start.id, to: startToPoint, dashes: true },
-      { from: idOdom, to: idTIdom, dashes: false },
-      { from: idOdom, to: idSdom, dashes: false },
-      { from: idTIdom, to: idTAdom, dashes: false },
-      { from: idSdom, to: idTAdom, dashes: false },
-      { from: idTAdom, to: idLdom, dashes: false },
-      // { from: idLdom, to: bcNode.id, dashes: true },
+	var edges = new vis.DataSet([
+	  { from: start.id, to: startToPoint, dashes: true },
+	  { from: idOdom, to: idTIdom, dashes: false },
+	  { from: idOdom, to: idSdom, dashes: false },
+	  { from: idTIdom, to: idTAdom, dashes: false },
+	  { from: idSdom, to: idTAdom, dashes: false },
+	  { from: idTAdom, to: idLdom, dashes: false },
+	  // { from: idLdom, to: bcNode.id, dashes: true },
 
-      { from: idOinf, to: idOdom, dashes: true },
-      { from: idOinf, to: idTIinf, dashes: false },
-      { from: idOinf, to: idSinf, dashes: false },
-      { from: idTIinf, to: idTIdom, dashes: true },
-      { from: idTIinf, to: idTAinf, dashes: false },
-      { from: idSinf, to: idTAinf, dashes: false },
-      { from: idSinf, to: idSdom, dashes: true },
-      { from: idTAinf, to: idLinf, dashes: false },
-      { from: idTAinf, to: idTAdom, dashes: true },
-      { from: idLinf, to: idLdom, dashes: true },
-      { from: idLinf, to: bcInfraNode.id, dashes: true },
-      { from: bcInfraNode.id, to: bcNode.id, dashes: true },
-    ]);
-    if (showNonInfra) {
-      edges.add({ from: idLdom, to: bcNode.id, dashes: true });
-    } else {
-      edges.add({ from: idLinf, to: bcNode.id, dashes: true });
-    }
+	  { from: idOinf, to: idOdom, dashes: true },
+	  { from: idOinf, to: idTIinf, dashes: false },
+	  { from: idOinf, to: idSinf, dashes: false },
+	  { from: idTIinf, to: idTIdom, dashes: true },
+	  { from: idTIinf, to: idTAinf, dashes: false },
+	  { from: idSinf, to: idTAinf, dashes: false },
+	  { from: idSinf, to: idSdom, dashes: true },
+	  { from: idTAinf, to: idLinf, dashes: false },
+	  { from: idTAinf, to: idTAdom, dashes: true },
+	  { from: idLinf, to: idLdom, dashes: true },
+	  { from: idLinf, to: bcInfraNode.id, dashes: true },
+	  { from: bcInfraNode.id, to: bcNode.id, dashes: true },
+	]);
+	if (showNonInfra) {
+	  edges.add({ from: idLdom, to: bcNode.id, dashes: true });
+	} else {
+	  edges.add({ from: idLinf, to: bcNode.id, dashes: true });
+	}
   } else if (busOrientation == 3) {
-    const startToPoint = showNonInfra ? idSdom : idSinf;
-    var edges = new vis.DataSet([
-      { from: start.id, to: startToPoint, dashes: true },
-      { from: idSdom, to: idOdom, dashes: false },
-      { from: idOdom, to: idTAdom, dashes: false },
-      { from: idOdom, to: idTIdom, dashes: false },
-      { from: idTIdom, to: idTAdom, dashes: false },
-      { from: idTAdom, to: idLdom, dashes: false },
-      // { from: idLdom, to: bcNode.id, dashes: true },
+	const startToPoint = showNonInfra ? idSdom : idSinf;
+	var edges = new vis.DataSet([
+	  { from: start.id, to: startToPoint, dashes: true },
+	  { from: idSdom, to: idOdom, dashes: false },
+	  { from: idOdom, to: idTAdom, dashes: false },
+	  { from: idOdom, to: idTIdom, dashes: false },
+	  { from: idTIdom, to: idTAdom, dashes: false },
+	  { from: idTAdom, to: idLdom, dashes: false },
+	  // { from: idLdom, to: bcNode.id, dashes: true },
 
-      { from: idSinf, to: idSdom, dashes: true },
-      { from: idSinf, to: idOinf, dashes: false },
-      { from: idOinf, to: idTAinf, dashes: false },
-      { from: idOinf, to: idOdom, dashes: true },
-      { from: idOinf, to: idTIinf, dashes: false },
-      { from: idTIinf, to: idTAinf, dashes: false },
-      { from: idTIinf, to: idTIdom, dashes: true },
-      { from: idTAinf, to: idLinf, dashes: false },
-      { from: idTAinf, to: idTAdom, dashes: true },
-      { from: idLinf, to: idLdom, dashes: true },
-      { from: idLinf, to: bcInfraNode.id, dashes: true },
-      { from: bcInfraNode.id, to: bcNode.id, dashes: true },
-    ]);
-    if (showNonInfra) {
-      edges.add({ from: idLdom, to: bcNode.id, dashes: true });
-    } else {
-      edges.add({ from: idLinf, to: bcNode.id, dashes: true });
-    }
+	  { from: idSinf, to: idSdom, dashes: true },
+	  { from: idSinf, to: idOinf, dashes: false },
+	  { from: idOinf, to: idTAinf, dashes: false },
+	  { from: idOinf, to: idOdom, dashes: true },
+	  { from: idOinf, to: idTIinf, dashes: false },
+	  { from: idTIinf, to: idTAinf, dashes: false },
+	  { from: idTIinf, to: idTIdom, dashes: true },
+	  { from: idTAinf, to: idLinf, dashes: false },
+	  { from: idTAinf, to: idTAdom, dashes: true },
+	  { from: idLinf, to: idLdom, dashes: true },
+	  { from: idLinf, to: bcInfraNode.id, dashes: true },
+	  { from: bcInfraNode.id, to: bcNode.id, dashes: true },
+	]);
+	if (showNonInfra) {
+	  edges.add({ from: idLdom, to: bcNode.id, dashes: true });
+	} else {
+	  edges.add({ from: idLinf, to: bcNode.id, dashes: true });
+	}
   } else {
-    const startToPoint = showNonInfra ? idTIdom : idTIinf;
-    var edges = new vis.DataSet([
-      { from: start.id, to: startToPoint, dashes: true },
-      { from: idTIdom, to: idOdom, dashes: false },
-      { from: idOdom, to: idTAdom, dashes: false },
-      { from: idOdom, to: idSdom, dashes: false },
-      { from: idSdom, to: idTAdom, dashes: false },
-      { from: idTAdom, to: idLdom, dashes: false },
-      // { from: idLdom, to: bcNode.id, dashes: true },
+	const startToPoint = showNonInfra ? idTIdom : idTIinf;
+	var edges = new vis.DataSet([
+	  { from: start.id, to: startToPoint, dashes: true },
+	  { from: idTIdom, to: idOdom, dashes: false },
+	  { from: idOdom, to: idTAdom, dashes: false },
+	  { from: idOdom, to: idSdom, dashes: false },
+	  { from: idSdom, to: idTAdom, dashes: false },
+	  { from: idTAdom, to: idLdom, dashes: false },
+	  // { from: idLdom, to: bcNode.id, dashes: true },
 
-      { from: idTIinf, to: idTIdom, dashes: true },
-      { from: idTIinf, to: idOinf, dashes: false },
-      { from: idOinf, to: idTAinf, dashes: false },
-      { from: idOinf, to: idOdom, dashes: true },
-      { from: idOinf, to: idSinf, dashes: false },
-      { from: idSinf, to: idTAinf, dashes: false },
-      { from: idSinf, to: idSdom, dashes: true },
-      { from: idTAinf, to: idLinf, dashes: false },
-      { from: idTAinf, to: idTAdom, dashes: true },
-      { from: idLinf, to: idLdom, dashes: true },
-      { from: idLinf, to: bcInfraNode.id, dashes: true },
-      { from: bcInfraNode.id, to: bcNode.id, dashes: true },
-    ]);
-    if (showNonInfra) {
-      edges.add({ from: idLdom, to: bcNode.id, dashes: true });
-    } else {
-      edges.add({ from: idLinf, to: bcNode.id, dashes: true });
-    }
+	  { from: idTIinf, to: idTIdom, dashes: true },
+	  { from: idTIinf, to: idOinf, dashes: false },
+	  { from: idOinf, to: idTAinf, dashes: false },
+	  { from: idOinf, to: idOdom, dashes: true },
+	  { from: idOinf, to: idSinf, dashes: false },
+	  { from: idSinf, to: idTAinf, dashes: false },
+	  { from: idSinf, to: idSdom, dashes: true },
+	  { from: idTAinf, to: idLinf, dashes: false },
+	  { from: idTAinf, to: idTAdom, dashes: true },
+	  { from: idLinf, to: idLdom, dashes: true },
+	  { from: idLinf, to: bcInfraNode.id, dashes: true },
+	  { from: bcInfraNode.id, to: bcNode.id, dashes: true },
+	]);
+	if (showNonInfra) {
+	  edges.add({ from: idLdom, to: bcNode.id, dashes: true });
+	} else {
+	  edges.add({ from: idLinf, to: bcNode.id, dashes: true });
+	}
   }
 
   var container = document.getElementById("network_div");
   var data = {
-    nodes: nodes,
-    edges: edges,
+	nodes: nodes,
+	edges: edges,
   };
   var options = {
-    physics: true,
-    interaction: { hover: true },
-    autoResize: true,
+	physics: true,
+	interaction: { hover: true },
+	autoResize: true,
 
-    height: "100%",
-    width: "100%",
-    nodes: {
-      imagePadding: 11,
-      borderWidth: 1,
-      size: 30,
-      color: {
-        border: "#222222",
-        background: "#BBE1FA",
-      },
-      font: { color: "#000", size: 10 },
-      shadow: true,
-    },
-    edges: {
-      smooth: { type: "dynamic", forceDirection: "horizontal", roundness: 0.4 },
-      color: "gray",
-      arrows: { to: { enabled: true } },
-      shadow: true,
-    },
-    interaction: {
-      navigationButtons: true,
-      keyboard: true,
-    },
-    physics: {
-      forceAtlas2Based: {
-        springLength: -10,
-      },
-      minVelocity: 0.75,
-      solver: "forceAtlas2Based",
-      timestep: 0.53,
-    },
+	height: "100%",
+	width: "100%",
+	nodes: {
+	  imagePadding: 11,
+	  borderWidth: 1,
+	  size: 30,
+	  color: {
+		border: "#222222",
+		background: "#BBE1FA",
+	  },
+	  font: { color: "#000", size: 10 },
+	  shadow: true,
+	},
+	edges: {
+	  smooth: { type: "dynamic", forceDirection: "horizontal", roundness: 0.4 },
+	  color: "gray",
+	  arrows: { to: { enabled: true } },
+	  shadow: true,
+	},
+	interaction: {
+	  navigationButtons: true,
+	  keyboard: true,
+	},
+	physics: {
+	  forceAtlas2Based: {
+		springLength: -10,
+	  },
+	  minVelocity: 0.75,
+	  solver: "forceAtlas2Based",
+	  timestep: 0.53,
+	},
   };
   network = new vis.Network(container, data, options);
 
   network.on("click", function (params) {
-    params.event = "[original event]";
-    var selectedNodeID = this.getNodeAt(params.pointer.DOM);
-    if (selectedNodeID <= idBCdom) {
-    } else if (selectedNodeID == idBCinf) {
-      selectedView = viewBCmc;
+	params.event = "[original event]";
+	var selectedNodeID = this.getNodeAt(params.pointer.DOM);
+	if (selectedNodeID <= idBCdom) {
+	} else if (selectedNodeID == idBCinf) {
+	  selectedView = viewBCmc;
 
-      createBuildingBlocksTable(selectedView);
-      drawIntraViewsPredecessorsChart(selectedView);
+	  createBuildingBlocksTable(selectedView);
+	  drawIntraViewsPredecessorsChart(selectedView);
 
-      document.getElementById("viewDetail").innerHTML =
-        "<i>Policy: </i>" +
-        CA(selectedView.policy) +
-        "<br><i>Buisness capabilities (mission critial)</i>";
-      document.getElementById("bbDetail").innerHTML =
-        "<i>please select a builidng block</i>";
-      $("#networkBBs2").fadeIn();
-      $("#network_div2").fadeIn();
-    } else if (selectedNodeID <= idTIdom) {
-      for (let x in views) {
-        if (views[x].id == selectedNodeID) {
-          selectedView = views[x];
+	  document.getElementById("viewDetail").innerHTML =
+		"<i>Policy: </i>" +
+		CA(selectedView.policy) +
+		"<br><i>Buisness capabilities (mission critial)</i>";
+	  document.getElementById("bbDetail").innerHTML =
+		"<i>please select a builidng block</i>";
+	  $("#networkBBs2").fadeIn();
+	  $("#network_div2").fadeIn();
+	} else if (selectedNodeID <= idTIdom) {
+	  for (let x in views) {
+		if (views[x].id == selectedNodeID) {
+		  selectedView = views[x];
 
-          if (clickedDPSs.length === 0) return;
+		  if (clickedDPSs.length === 0) return;
 
-          const abbs = filterABBSBaseDPS(selectedView.bbs);
-          const newView = { ...selectedView };
-          newView.bbs = abbs;
+		  const abbs = filterABBSBaseDPS(selectedView.bbs);
+		  const newView = { ...selectedView };
+		  newView.bbs = abbs;
 
-          document.getElementById("viewDetail").innerHTML =
-            `<i>Policy:  ${CA(selectedView.policy)}</i>` +
-            `<br><i>Name: ${CA(selectedView.name)}</i>`;
+		  document.getElementById("viewDetail").innerHTML =
+			`<i>Policy:  ${CA(selectedView.policy)}</i>` +
+			`<br><i>Name: ${CA(selectedView.name)}</i>`;
 
-          const tableBBs = abbs.filter((abb) => !abb.hidden);
-          createBuildingBlocksTable({ bbs: tableBBs });
-          drawIntraViewsPredecessorsChart(newView);
+		  const tableBBs = abbs.filter((abb) => !abb.hidden);
+		  createBuildingBlocksTable({ bbs: tableBBs });
+		  drawIntraViewsPredecessorsChart(newView);
 
-          document.getElementById("bbDetail").innerHTML =
-            "<i>please select a builidng block</i>";
-          $("#networkBBs2").fadeIn();
-          $("#network_div2").fadeIn();
-          return;
-        }
-      }
-    } else if (selectedNodeID <= idTIinf) {
-      for (let x in viewsInfra) {
-        if (viewsInfra[x].id == selectedNodeID) {
-          selectedView = viewsInfra[x];
+		  document.getElementById("bbDetail").innerHTML =
+			"<i>please select a builidng block</i>";
+		  $("#networkBBs2").fadeIn();
+		  $("#network_div2").fadeIn();
+		  return;
+		}
+	  }
+	} else if (selectedNodeID <= idTIinf) {
+	  for (let x in viewsInfra) {
+		if (viewsInfra[x].id == selectedNodeID) {
+		  selectedView = viewsInfra[x];
 
-          if (clickedDPSs.length === 0) return;
-          const abbs = filterABBSBaseDPS(selectedView.bbs);
-          const newView = { ...selectedView };
-          newView.bbs = abbs;
-          const tableBBs = abbs.filter((abb) => !abb.hidden);
-          createBuildingBlocksTable({ bbs: tableBBs });
-          drawIntraViewsPredecessorsChart(newView);
+		  if (clickedDPSs.length === 0) return;
+		  const abbs = filterABBSBaseDPS(selectedView.bbs);
+		  const newView = { ...selectedView };
+		  newView.bbs = abbs;
+		  const tableBBs = abbs.filter((abb) => !abb.hidden);
+		  createBuildingBlocksTable({ bbs: tableBBs });
+		  drawIntraViewsPredecessorsChart(newView);
 
-          document.getElementById("viewDetail").innerHTML =
-            `<i>Policy:  ${CA(selectedView.policy)}</i>` +
-            `<br><i>Name: ${CA(selectedView.name)}</i>`;
-          document.getElementById("bbDetail").innerHTML =
-            "<i>please select a builidng block</i>";
-          $("#networkBBs2").fadeIn();
-          $("#network_div2").fadeIn();
-          return;
-        }
-      }
-    } else {
-      console.log("start button or undefined");
-    }
+		  document.getElementById("viewDetail").innerHTML =
+			`<i>Policy:  ${CA(selectedView.policy)}</i>` +
+			`<br><i>Name: ${CA(selectedView.name)}</i>`;
+		  document.getElementById("bbDetail").innerHTML =
+			"<i>please select a builidng block</i>";
+		  $("#networkBBs2").fadeIn();
+		  $("#network_div2").fadeIn();
+		  return;
+		}
+	  }
+	} else {
+	  console.log("start button or undefined");
+	}
   });
 }
 */
 function drawViewsPredecessorsChart(dbcData) {
-  if (network !== null) {
-    network.destroy();
-    network = null;
-  }
+	if (network !== null) {
+		network.destroy();
+		network = null;
+	}
 
-  if (dbcData.policy == "Business Agnostic") {
-    toogleInfra = false;
-  }
+	if (dbcData.policy == "Business Agnostic") {
+		toogleInfra = false;
+	}
 
-  let showNonInfra = true;
+	let showNonInfra = true;
 
-  if (
-    clickedDPSs.length > 0 &&
-    clickedDPSs.every((id) => id.startsWith("BA"))
-  ) {
-    showNonInfra = false;
-    toogleInfra = true;
-  }
+	if (
+		clickedDPSs.length > 0 &&
+		clickedDPSs.every((id) => id.startsWith("BA"))
+	) {
+		showNonInfra = false;
+		toogleInfra = true;
+	}
 
-  //var bbs = dbcData.bbs;
-  var nodes = [];
-  var edges = [];
+	//var bbs = dbcData.bbs;
+	var nodes = [];
+	var edges = [];
 
-  var color = [];
-  color.background = "#fff";
-  var bcNode = createDigitalTransformNode(
-    idBCdom,
-    "circularImage",
-    "bc.png",
-    "ID:" +
-    dbcData.ID +
-    ", " +
-    dbcData.dbc +
-    ", \nNational Digital Strategy Fit: " +
-    dbcData.strategicFit +
-    " out of 5, \nAbility to support the dBusCap: " +
-    dbcData.dbcSupportAbility +
-    " out of 5",
-    "ID:" +
-    dbcData.ID +
-    ", " +
-    dbcData.dbc +
-    ", \nNational Digital Strategy Fit: " +
-    dbcData.strategicFit +
-    " out of 5, \nAbility to support the dBusCap: " +
-    dbcData.dbcSupportAbility +
-    " out of 5",
-    color,
-    100,
-    10
-  );
-  nodes.push(bcNode);
+	var color = [];
+	color.background = "#fff";
+	var bcNode = createDigitalTransformNode(
+		idBCdom,
+		"circularImage",
+		"bc.png",
+		"ID:" +
+		dbcData.ID +
+		", " +
+		dbcData.dbc +
+		", \nNational Digital Strategy Fit: " +
+		dbcData.strategicFit +
+		" out of 5, \nAbility to support the dBusCap: " +
+		dbcData.dbcSupportAbility +
+		" out of 5",
+		"ID:" +
+		dbcData.ID +
+		", " +
+		dbcData.dbc +
+		", \nNational Digital Strategy Fit: " +
+		dbcData.strategicFit +
+		" out of 5, \nAbility to support the dBusCap: " +
+		dbcData.dbcSupportAbility +
+		" out of 5",
+		color,
+		100,
+		10
+	);
+	nodes.push(bcNode);
 
-  var color = [];
-  color.background = "#fff";
-  var start = createDigitalTransformNode(
-    100,
-    "circularImage",
-    "start.png",
-    "Start",
-    "Start",
-    color,
-    -10,
-    0
-  );
+	var color = [];
+	color.background = "#fff";
+	var start = createDigitalTransformNode(
+		100,
+		"circularImage",
+		"start.png",
+		"Start",
+		"Start",
+		color,
+		-10,
+		0
+	);
 
-  nodes.push(start);
-  let views = dbcData.views;
-  var count = 0;
-  if (showNonInfra) {
-    for (let i in views) {
-      count += 1;
-      let id = null;
-      var color = [];
-      var image = null;
-      var labelInit = null;
-      switch (String(views[i].name)) {
-        case "legal":
-          image = "legal.png";
-          labelInit = "L";
-          id = idLdom;
-          break;
-        case "organisational":
-          image = "org.png";
-          id = idOdom;
-          labelInit = "O";
-          break;
-        case "semantic":
-          image = "data.png";
-          id = idSdom;
-          labelInit = "S";
-          break;
-        case "technical-application":
-          image = "TA.png";
-          id = idTAdom;
-          labelInit = "TA";
-          break;
-        case "technical-infrastructure":
-          image = "tech.png";
-          id = idTIdom;
-          labelInit = "TI";
-          break;
-        default:
-          image = "tech.png";
-          break;
-      }
-      const currentAvgAbility = calculateAvgAbilityPerViewAndDpss(
-        views[i],
-        clickedDPSs
-      );
-      color.background = getColorPerPolicy(views[i].policy, true);
+	nodes.push(start);
+	let views = dbcData.views;
+	var count = 0;
+	if (showNonInfra) {
+		for (let i in views) {
+			count += 1;
+			let id = null;
+			var color = [];
+			var image = null;
+			var labelInit = null;
+			switch (String(views[i].name)) {
+				case "legal":
+					image = "legal.png";
+					labelInit = "L";
+					id = idLdom;
+					break;
+				case "organisational":
+					image = "org.png";
+					id = idOdom;
+					labelInit = "O";
+					break;
+				case "semantic":
+					image = "data.png";
+					id = idSdom;
+					labelInit = "S";
+					break;
+				case "technical-application":
+					image = "TA.png";
+					id = idTAdom;
+					labelInit = "TA";
+					break;
+				case "technical-infrastructure":
+					image = "tech.png";
+					id = idTIdom;
+					labelInit = "TI";
+					break;
+				default:
+					image = "tech.png";
+					break;
+			}
+			const currentAvgAbility = calculateAvgAbilityPerViewAndDpss(
+				views[i],
+				clickedDPSs
+			);
+			color.background = getColorPerPolicy(views[i].policy, true);
 
-      if (views[i].bbs.length == 0) {
-        if (labelInit === null) continue;
-        var label = labelInit + " - " + CA(dbcData.policy);
-      } else {
-        var label =
-          labelInit +
-          " - " +
-          CA(dbcData.policy) +
-          ",\n" +
-          currentAvgAbility.toFixed(1) +
-          " out of 5";
-      }
-      let node = createDigitalTransformNode(
-        id,
-        "circularImage",
-        image,
-        label,
-        label,
-        color,
-        10 * i,
-        0
-      );
-      nodes.push(node);
-    }
-  }
-  var bcInfraNode = [];
-  bcInfraNode.id = idBCinf;
+			if (views[i].bbs.length == 0) {
+				if (labelInit === null) continue;
+				var label = labelInit + " - " + CA(dbcData.policy);
+			} else {
+				var label =
+					labelInit +
+					" - " +
+					CA(dbcData.policy) +
+					",\n" +
+					currentAvgAbility.toFixed(1) +
+					" out of 5";
+			}
+			let node = createDigitalTransformNode(
+				id,
+				"circularImage",
+				image,
+				label,
+				label,
+				color,
+				10 * i,
+				0
+			);
+			nodes.push(node);
+		}
+	}
+	var bcInfraNode = [];
+	bcInfraNode.id = idBCinf;
 
-  if (toogleInfra) {
-    var color = [];
-    color.background = "#fff";
-    bcInfraNode = createDigitalTransformNode(
-      idBCinf,
-      "circularImage",
-      "bc.png",
-      "Digital business capability Infrastructure," + "\nMission Critical",
-      "Digital business capability Infrastructure," + "\nMission Critical",
-      color,
-      100,
-      50,
-      true
-    );
-    nodes.push(bcInfraNode);
+	if (toogleInfra) {
+		var color = [];
+		color.background = "#fff";
+		bcInfraNode = createDigitalTransformNode(
+			idBCinf,
+			"circularImage",
+			"bc.png",
+			"Digital business capability Infrastructure," + "\nMission Critical",
+			"Digital business capability Infrastructure," + "\nMission Critical",
+			color,
+			100,
+			50,
+			true
+		);
+		nodes.push(bcInfraNode);
 
-    for (let i in viewsInfra) {
-      let id = null;
-      var color = [];
-      var image = null;
-      var labelInit = null;
-      switch (String(viewsInfra[i].name)) {
-        case "legal":
-          image = "legal.png";
-          id = idLinf;
-          labelInit = "L";
-          break;
-        case "organisational":
-          image = "org.png";
-          id = idOinf;
-          labelInit = "O";
-          break;
-        case "semantic":
-          image = "data.png";
-          id = idSinf;
-          labelInit = "S";
-          break;
-        case "technical-application":
-          image = "TA.png";
-          id = idTAinf;
-          labelInit = "TA";
-          break;
-        case "technical-infrastructure":
-          image = "tech.png";
-          id = idTIinf;
-          labelInit = "TI";
-          break;
-        default:
-          image = "tech.png";
-          break;
-      }
+		for (let i in viewsInfra) {
+			let id = null;
+			var color = [];
+			var image = null;
+			var labelInit = null;
+			switch (String(viewsInfra[i].name)) {
+				case "legal":
+					image = "legal.png";
+					id = idLinf;
+					labelInit = "L";
+					break;
+				case "organisational":
+					image = "org.png";
+					id = idOinf;
+					labelInit = "O";
+					break;
+				case "semantic":
+					image = "data.png";
+					id = idSinf;
+					labelInit = "S";
+					break;
+				case "technical-application":
+					image = "TA.png";
+					id = idTAinf;
+					labelInit = "TA";
+					break;
+				case "technical-infrastructure":
+					image = "tech.png";
+					id = idTIinf;
+					labelInit = "TI";
+					break;
+				default:
+					image = "tech.png";
+					break;
+			}
 
-      color.background = getColorPerPolicy(viewsInfra[i].policy, true);
+			color.background = getColorPerPolicy(viewsInfra[i].policy, true);
 
-      var label = labelInit + " - Business agnostic";
+			var label = labelInit + " - Business agnostic";
 
-      let node = createDigitalTransformNode(
-        id,
-        "circularImage",
-        image,
-        label,
-        label,
-        color,
-        10 * i,
-        -10
-      );
+			let node = createDigitalTransformNode(
+				id,
+				"circularImage",
+				image,
+				label,
+				label,
+				color,
+				10 * i,
+				-10
+			);
 
-      nodes.push(node);
-    }
-  }
+			nodes.push(node);
+		}
+	}
 
-  if (busOrientation == 1) {
-    const startToPoint = showNonInfra ? idLdom : idLinf;
-    var edges = new vis.DataSet([
-      { from: start.id, to: startToPoint, dashes: true },
-      { from: idLdom, to: idOdom, dashes: false },
-      { from: idOdom, to: idSdom, dashes: false },
-      { from: idOdom, to: idTIdom, dashes: false },
-      { from: idTIdom, to: idTAdom, dashes: false },
-      { from: idSdom, to: idTAdom, dashes: false },
-      // { from: idTAdom, to: bcNode.id, dashes: true },
+	if (busOrientation == 1) {
+		const startToPoint = showNonInfra ? idLdom : idLinf;
+		var edges = new vis.DataSet([
+			{ from: start.id, to: startToPoint, dashes: true },
+			{ from: idLdom, to: idOdom, dashes: false },
+			{ from: idOdom, to: idSdom, dashes: false },
+			{ from: idOdom, to: idTIdom, dashes: false },
+			{ from: idTIdom, to: idTAdom, dashes: false },
+			{ from: idSdom, to: idTAdom, dashes: false },
+			// { from: idTAdom, to: bcNode.id, dashes: true },
 
-      { from: idLinf, to: idLdom, dashes: true },
-      { from: idLinf, to: idOinf, dashes: false },
-      { from: idLinf, to: idSinf, dashes: false },
-      { from: idOinf, to: idOdom, dashes: true },
-      { from: idOinf, to: idSinf, dashes: false },
-      { from: idOinf, to: idTIinf, dashes: false },
-      { from: idSinf, to: idSdom, dashes: true },
-      { from: idSinf, to: idTAinf, dashes: false },
-      { from: idTIinf, to: idTIdom, dashes: true },
-      { from: idTIinf, to: idTAinf, dashes: false },
-      { from: idTAinf, to: idTAdom, dashes: true },
-      { from: idTAinf, to: bcInfraNode.id, dashes: true },
-      { from: bcInfraNode.id, to: bcNode.id, dashes: true },
-    ]);
-    if (showNonInfra) {
-      edges.add({ from: idTAdom, to: bcNode.id, dashes: true });
-    } else {
-      edges.add({ from: idTAinf, to: bcNode.id, dashes: true });
-    }
-  } else if (busOrientation == 2) {
-    const startToPoint = showNonInfra ? idOdom : idOinf;
+			{ from: idLinf, to: idLdom, dashes: true },
+			{ from: idLinf, to: idOinf, dashes: false },
+			{ from: idLinf, to: idSinf, dashes: false },
+			{ from: idOinf, to: idOdom, dashes: true },
+			{ from: idOinf, to: idSinf, dashes: false },
+			{ from: idOinf, to: idTIinf, dashes: false },
+			{ from: idSinf, to: idSdom, dashes: true },
+			{ from: idSinf, to: idTAinf, dashes: false },
+			{ from: idTIinf, to: idTIdom, dashes: true },
+			{ from: idTIinf, to: idTAinf, dashes: false },
+			{ from: idTAinf, to: idTAdom, dashes: true },
+			{ from: idTAinf, to: bcInfraNode.id, dashes: true },
+			{ from: bcInfraNode.id, to: bcNode.id, dashes: true },
+		]);
+		if (showNonInfra) {
+			edges.add({ from: idTAdom, to: bcNode.id, dashes: true });
+		} else {
+			edges.add({ from: idTAinf, to: bcNode.id, dashes: true });
+		}
+	} else if (busOrientation == 2) {
+		const startToPoint = showNonInfra ? idOdom : idOinf;
 
-    var edges = new vis.DataSet([
-      { from: start.id, to: startToPoint, dashes: true },
-      { from: idOdom, to: idTIdom, dashes: false },
-      { from: idOdom, to: idSdom, dashes: false },
-      { from: idTIdom, to: idTAdom, dashes: false },
-      { from: idSdom, to: idTAdom, dashes: false },
-      { from: idTAdom, to: idLdom, dashes: false },
-      // { from: idLdom, to: bcNode.id, dashes: true },
+		var edges = new vis.DataSet([
+			{ from: start.id, to: startToPoint, dashes: true },
+			{ from: idOdom, to: idTIdom, dashes: false },
+			{ from: idOdom, to: idSdom, dashes: false },
+			{ from: idTIdom, to: idTAdom, dashes: false },
+			{ from: idSdom, to: idTAdom, dashes: false },
+			{ from: idTAdom, to: idLdom, dashes: false },
+			// { from: idLdom, to: bcNode.id, dashes: true },
 
-      { from: idOinf, to: idOdom, dashes: true },
-      { from: idOinf, to: idTIinf, dashes: false },
-      { from: idOinf, to: idSinf, dashes: false },
-      { from: idTIinf, to: idTIdom, dashes: true },
-      { from: idTIinf, to: idTAinf, dashes: false },
-      { from: idSinf, to: idTAinf, dashes: false },
-      { from: idSinf, to: idSdom, dashes: true },
-      { from: idTAinf, to: idLinf, dashes: false },
-      { from: idTAinf, to: idTAdom, dashes: true },
-      { from: idLinf, to: idLdom, dashes: true },
-      { from: idLinf, to: bcInfraNode.id, dashes: true },
-      { from: bcInfraNode.id, to: bcNode.id, dashes: true },
-    ]);
-    if (showNonInfra) {
-      edges.add({ from: idLdom, to: bcNode.id, dashes: true });
-    } else {
-      edges.add({ from: idLinf, to: bcNode.id, dashes: true });
-    }
-  } else if (busOrientation == 3) {
-    const startToPoint = showNonInfra ? idSdom : idSinf;
-    var edges = new vis.DataSet([
-      { from: start.id, to: startToPoint, dashes: true },
-      { from: idSdom, to: idOdom, dashes: false },
-      { from: idOdom, to: idTAdom, dashes: false },
-      { from: idOdom, to: idTIdom, dashes: false },
-      { from: idTIdom, to: idTAdom, dashes: false },
-      { from: idTAdom, to: idLdom, dashes: false },
-      // { from: idLdom, to: bcNode.id, dashes: true },
+			{ from: idOinf, to: idOdom, dashes: true },
+			{ from: idOinf, to: idTIinf, dashes: false },
+			{ from: idOinf, to: idSinf, dashes: false },
+			{ from: idTIinf, to: idTIdom, dashes: true },
+			{ from: idTIinf, to: idTAinf, dashes: false },
+			{ from: idSinf, to: idTAinf, dashes: false },
+			{ from: idSinf, to: idSdom, dashes: true },
+			{ from: idTAinf, to: idLinf, dashes: false },
+			{ from: idTAinf, to: idTAdom, dashes: true },
+			{ from: idLinf, to: idLdom, dashes: true },
+			{ from: idLinf, to: bcInfraNode.id, dashes: true },
+			{ from: bcInfraNode.id, to: bcNode.id, dashes: true },
+		]);
+		if (showNonInfra) {
+			edges.add({ from: idLdom, to: bcNode.id, dashes: true });
+		} else {
+			edges.add({ from: idLinf, to: bcNode.id, dashes: true });
+		}
+	} else if (busOrientation == 3) {
+		const startToPoint = showNonInfra ? idSdom : idSinf;
+		var edges = new vis.DataSet([
+			{ from: start.id, to: startToPoint, dashes: true },
+			{ from: idSdom, to: idOdom, dashes: false },
+			{ from: idOdom, to: idTAdom, dashes: false },
+			{ from: idOdom, to: idTIdom, dashes: false },
+			{ from: idTIdom, to: idTAdom, dashes: false },
+			{ from: idTAdom, to: idLdom, dashes: false },
+			// { from: idLdom, to: bcNode.id, dashes: true },
 
-      { from: idSinf, to: idSdom, dashes: true },
-      { from: idSinf, to: idOinf, dashes: false },
-      { from: idOinf, to: idTAinf, dashes: false },
-      { from: idOinf, to: idOdom, dashes: true },
-      { from: idOinf, to: idTIinf, dashes: false },
-      { from: idTIinf, to: idTAinf, dashes: false },
-      { from: idTIinf, to: idTIdom, dashes: true },
-      { from: idTAinf, to: idLinf, dashes: false },
-      { from: idTAinf, to: idTAdom, dashes: true },
-      { from: idLinf, to: idLdom, dashes: true },
-      { from: idLinf, to: bcInfraNode.id, dashes: true },
-      { from: bcInfraNode.id, to: bcNode.id, dashes: true },
-    ]);
-    if (showNonInfra) {
-      edges.add({ from: idLdom, to: bcNode.id, dashes: true });
-    } else {
-      edges.add({ from: idLinf, to: bcNode.id, dashes: true });
-    }
-  } else {
-    const startToPoint = showNonInfra ? idTIdom : idTIinf;
-    var edges = new vis.DataSet([
-      { from: start.id, to: startToPoint, dashes: true },
-      { from: idTIdom, to: idOdom, dashes: false },
-      { from: idOdom, to: idTAdom, dashes: false },
-      { from: idOdom, to: idSdom, dashes: false },
-      { from: idSdom, to: idTAdom, dashes: false },
-      { from: idTAdom, to: idLdom, dashes: false },
-      // { from: idLdom, to: bcNode.id, dashes: true },
+			{ from: idSinf, to: idSdom, dashes: true },
+			{ from: idSinf, to: idOinf, dashes: false },
+			{ from: idOinf, to: idTAinf, dashes: false },
+			{ from: idOinf, to: idOdom, dashes: true },
+			{ from: idOinf, to: idTIinf, dashes: false },
+			{ from: idTIinf, to: idTAinf, dashes: false },
+			{ from: idTIinf, to: idTIdom, dashes: true },
+			{ from: idTAinf, to: idLinf, dashes: false },
+			{ from: idTAinf, to: idTAdom, dashes: true },
+			{ from: idLinf, to: idLdom, dashes: true },
+			{ from: idLinf, to: bcInfraNode.id, dashes: true },
+			{ from: bcInfraNode.id, to: bcNode.id, dashes: true },
+		]);
+		if (showNonInfra) {
+			edges.add({ from: idLdom, to: bcNode.id, dashes: true });
+		} else {
+			edges.add({ from: idLinf, to: bcNode.id, dashes: true });
+		}
+	} else {
+		const startToPoint = showNonInfra ? idTIdom : idTIinf;
+		var edges = new vis.DataSet([
+			{ from: start.id, to: startToPoint, dashes: true },
+			{ from: idTIdom, to: idOdom, dashes: false },
+			{ from: idOdom, to: idTAdom, dashes: false },
+			{ from: idOdom, to: idSdom, dashes: false },
+			{ from: idSdom, to: idTAdom, dashes: false },
+			{ from: idTAdom, to: idLdom, dashes: false },
+			// { from: idLdom, to: bcNode.id, dashes: true },
 
-      { from: idTIinf, to: idTIdom, dashes: true },
-      { from: idTIinf, to: idOinf, dashes: false },
-      { from: idOinf, to: idTAinf, dashes: false },
-      { from: idOinf, to: idOdom, dashes: true },
-      { from: idOinf, to: idSinf, dashes: false },
-      { from: idSinf, to: idTAinf, dashes: false },
-      { from: idSinf, to: idSdom, dashes: true },
-      { from: idTAinf, to: idLinf, dashes: false },
-      { from: idTAinf, to: idTAdom, dashes: true },
-      { from: idLinf, to: idLdom, dashes: true },
-      { from: idLinf, to: bcInfraNode.id, dashes: true },
-      { from: bcInfraNode.id, to: bcNode.id, dashes: true },
-    ]);
-    if (showNonInfra) {
-      edges.add({ from: idLdom, to: bcNode.id, dashes: true });
-    } else {
-      edges.add({ from: idLinf, to: bcNode.id, dashes: true });
-    }
-  }
+			{ from: idTIinf, to: idTIdom, dashes: true },
+			{ from: idTIinf, to: idOinf, dashes: false },
+			{ from: idOinf, to: idTAinf, dashes: false },
+			{ from: idOinf, to: idOdom, dashes: true },
+			{ from: idOinf, to: idSinf, dashes: false },
+			{ from: idSinf, to: idTAinf, dashes: false },
+			{ from: idSinf, to: idSdom, dashes: true },
+			{ from: idTAinf, to: idLinf, dashes: false },
+			{ from: idTAinf, to: idTAdom, dashes: true },
+			{ from: idLinf, to: idLdom, dashes: true },
+			{ from: idLinf, to: bcInfraNode.id, dashes: true },
+			{ from: bcInfraNode.id, to: bcNode.id, dashes: true },
+		]);
+		if (showNonInfra) {
+			edges.add({ from: idLdom, to: bcNode.id, dashes: true });
+		} else {
+			edges.add({ from: idLinf, to: bcNode.id, dashes: true });
+		}
+	}
 
-  var container = document.getElementById("network_div");
-  var data = {
-    nodes: nodes,
-    edges: edges,
-  };
-  var options = {
-    physics: true,
-    interaction: { hover: true },
-    autoResize: true,
+	var container = document.getElementById("network_div");
+	var data = {
+		nodes: nodes,
+		edges: edges,
+	};
+	var options = {
+		physics: true,
+		interaction: { hover: true },
+		autoResize: true,
 
-    height: "100%",
-    width: "100%",
-    nodes: {
-      imagePadding: 11,
-      borderWidth: 1,
-      size: 30,
-      color: {
-        border: "#222222",
-        background: "#BBE1FA",
-      },
-      font: { color: "#000", size: 10 },
-      shadow: true,
-    },
-    edges: {
-      smooth: { type: "dynamic", forceDirection: "horizontal", roundness: 0.4 },
-      color: "gray",
-      arrows: { to: { enabled: true } },
-      shadow: true,
-    },
-    interaction: {
-      navigationButtons: true,
-      keyboard: true,
-    },
-    physics: {
-      forceAtlas2Based: {
-        springLength: -10,
-      },
-      minVelocity: 0.75,
-      solver: "forceAtlas2Based",
-      timestep: 0.53,
-    },
-  };
-  network = new vis.Network(container, data, options);
+		height: "100%",
+		width: "100%",
+		nodes: {
+			imagePadding: 11,
+			borderWidth: 1,
+			size: 30,
+			color: {
+				border: "#222222",
+				background: "#BBE1FA",
+			},
+			font: { color: "#000", size: 10 },
+			shadow: true,
+		},
+		edges: {
+			smooth: { type: "dynamic", forceDirection: "horizontal", roundness: 0.4 },
+			color: "gray",
+			arrows: { to: { enabled: true } },
+			shadow: true,
+		},
+		interaction: {
+			navigationButtons: true,
+			keyboard: true,
+		},
+		physics: {
+			forceAtlas2Based: {
+				springLength: -10,
+			},
+			minVelocity: 0.75,
+			solver: "forceAtlas2Based",
+			timestep: 0.53,
+		},
+	};
+	network = new vis.Network(container, data, options);
 
-  network.on("click", function (params) {
-    params.event = "[original event]";
-    var selectedNodeID = this.getNodeAt(params.pointer.DOM);
-    if (selectedNodeID <= idBCdom) {
-    } else if (selectedNodeID == idBCinf) {
-      selectedView = viewBCmc;
+	network.on("click", function (params) {
+		params.event = "[original event]";
+		var selectedNodeID = this.getNodeAt(params.pointer.DOM);
+		if (selectedNodeID <= idBCdom) {
+		} else if (selectedNodeID == idBCinf) {
+			selectedView = viewBCmc;
 
-      createBuildingBlocksTable(selectedView);
-      drawIntraViewsPredecessorsChart(selectedView);
+			createBuildingBlocksTableFromView(selectedView);
+			drawIntraViewsPredecessorsChart(selectedView);
 
-      document.getElementById("viewDetail").innerHTML =
-        "<i>Policy: </i>" +
-        CA(selectedView.policy) +
-        "<br><i>Buisness capabilities (mission critial)</i>";
-      document.getElementById("bbDetail").innerHTML =
-        "<i>please select a builidng block</i>";
-      $("#networkBBs2").fadeIn();
-      $("#network_div2").fadeIn();
-    } else if (selectedNodeID <= idTIdom) {
-      for (let x in views) {
-        if (views[x].id == selectedNodeID) {
-          selectedView = views[x];
+			document.getElementById("viewDetail").innerHTML =
+				"<i>Policy: </i>" +
+				CA(selectedView.policy) +
+				"<br><i>Buisness capabilities (mission critial)</i>";
+			document.getElementById("bbDetail").innerHTML =
+				"<i>please select a builidng block</i>";
+			$("#networkBBs2").fadeIn();
+			$("#network_div2").fadeIn();
+		} else if (selectedNodeID <= idTIdom) {
+			for (let x in views) {
+				if (views[x].id == selectedNodeID) {
+					selectedView = views[x];
 
-          if (clickedDPSs.length === 0) return;
+					if (clickedDPSs.length === 0) return;
 
-          const abbs = filterABBSBaseDPS(selectedView.bbs);
-          const newView = { ...selectedView };
-          newView.bbs = abbs;
+					const abbs = filterABBSBaseDPS(selectedView.bbs);
+					const newView = { ...selectedView };
+					newView.bbs = abbs;
 
-          document.getElementById("viewDetail").innerHTML =
-            `<i>Policy:  ${CA(selectedView.policy)}</i>` +
-            `<br><i>Name: ${CA(selectedView.name)}</i>`;
+					document.getElementById("viewDetail").innerHTML =
+						`<i>Policy:  ${CA(selectedView.policy)}</i>` +
+						`<br><i>Name: ${CA(selectedView.name)}</i>`;
 
-          const tableBBs = abbs.filter((abb) => !abb.hidden);
-          createBuildingBlocksTable({ bbs: tableBBs });
-          drawIntraViewsPredecessorsChart(newView);
+					const tableBBs = abbs.filter((abb) => !abb.hidden);
+					createBuildingBlocksTableFromView({ bbs: tableBBs });
+					drawIntraViewsPredecessorsChart(newView);
 
-          document.getElementById("bbDetail").innerHTML =
-            "<i>please select a builidng block</i>";
-          $("#networkBBs2").fadeIn();
-          $("#network_div2").fadeIn();
-          return;
-        }
-      }
-    } else if (selectedNodeID <= idTIinf) {
-      for (let x in viewsInfra) {
-        if (viewsInfra[x].id == selectedNodeID) {
-          selectedView = viewsInfra[x];
+					document.getElementById("bbDetail").innerHTML =
+						"<i>please select a builidng block</i>";
+					$("#networkBBs2").fadeIn();
+					$("#network_div2").fadeIn();
+					return;
+				}
+			}
+		} else if (selectedNodeID <= idTIinf) {
+			for (let x in viewsInfra) {
+				if (viewsInfra[x].id == selectedNodeID) {
+					selectedView = viewsInfra[x];
 
-          if (clickedDPSs.length === 0) return;
-          const abbs = filterABBSBaseDPS(selectedView.bbs);
-          const newView = { ...selectedView };
-          newView.bbs = abbs;
-          const tableBBs = abbs.filter((abb) => !abb.hidden);
-          createBuildingBlocksTable({ bbs: tableBBs });
-          drawIntraViewsPredecessorsChart(newView);
+					if (clickedDPSs.length === 0) return;
+					const abbs = filterABBSBaseDPS(selectedView.bbs);
+					const newView = { ...selectedView };
+					newView.bbs = abbs;
+					const tableBBs = abbs.filter((abb) => !abb.hidden);
+					createBuildingBlocksTableFromView({ bbs: tableBBs });
+					drawIntraViewsPredecessorsChart(newView);
 
-          document.getElementById("viewDetail").innerHTML =
-            `<i>Policy:  ${CA(selectedView.policy)}</i>` +
-            `<br><i>Name: ${CA(selectedView.name)}</i>`;
-          document.getElementById("bbDetail").innerHTML =
-            "<i>please select a builidng block</i>";
-          $("#networkBBs2").fadeIn();
-          $("#network_div2").fadeIn();
-          return;
-        }
-      }
-    } else {
-      console.log("start button or undefined");
-    }
-  });
+					document.getElementById("viewDetail").innerHTML =
+						`<i>Policy:  ${CA(selectedView.policy)}</i>` +
+						`<br><i>Name: ${CA(selectedView.name)}</i>`;
+					document.getElementById("bbDetail").innerHTML =
+						"<i>please select a builidng block</i>";
+					$("#networkBBs2").fadeIn();
+					$("#network_div2").fadeIn();
+					return;
+				}
+			}
+		} else {
+			console.log("start button or undefined");
+		}
+	});
 }
 
 const filterABBSBaseDPS = (abbs) => {
-  return abbs.map((abb) => {
-    for (let idx = 0; idx < clickedDPSs.length; idx++) {
-      let dps = clickedDPSs[idx];
-      if (abb.digPubServ.indexOf(dps) > -1) {
-        abb.hidden = false;
-        return abb;
-      }
-    }
-    abb.hidden = true;
-    return abb;
-  });
+	return abbs.map((abb) => {
+		for (let idx = 0; idx < clickedDPSs.length; idx++) {
+			let dps = clickedDPSs[idx];
+			if (abb.Digital_Public_Service.indexOf(dps) > -1) {
+				abb.hidden = false;
+				return abb;
+			}
+		}
+		abb.hidden = true;
+		return abb;
+	});
 };
 
 /**
  * Create elements for info at bbs chart
  */
 const bbsFillInfo = (details) => {
-  $("#networkBBs2-dbc-info > .info").html(`
+	$("#networkBBs2-dbc-info > .info").html(`
       <div>
         <span>ID: </span>
         <span>${details.ID}</span>
@@ -3821,11 +3283,11 @@ const filterBBTableWithMultipleDPS = (bbs) => {
   const tableBodyRows = document.querySelectorAll("#bbTable > tbody > tr");
 
   for (let rowIdx = 0; rowIdx < tableBodyRows.length; rowIdx++) {
-    let tr = tableBodyRows[rowIdx];
-    tr.setAttribute("style", "");
-    const td = tr.querySelector("td:first-child");
-    const tdValue = td.textContent;
-    if (bbsIDs.indexOf(tdValue) === -1) tr.style.display = "none";
+	let tr = tableBodyRows[rowIdx];
+	tr.setAttribute("style", "");
+	const td = tr.querySelector("td:first-child");
+	const tdValue = td.textContent;
+	if (bbsIDs.indexOf(tdValue) === -1) tr.style.display = "none";
   }
 };
 */
@@ -3834,162 +3296,164 @@ const filterBBTableWithMultipleDPS = (bbs) => {
  Create and draw bb chart
  */
 function drawIntraViewsPredecessorsChart(view) {
-  if (network2 !== null) {
-    network2.destroy();
-    network2 = null;
-  }
+	if (network2 !== null) {
+		network2.destroy();
+		network2 = null;
+	}
+	console.log(view)
 
-  var bbs = view.bbs;
+	var bbs = view.bbs;
 
-  if (bbs.length == 0 || bbs.every((bb) => bb.hidden === true)) {
-    alert(
-      "There are no building blocks available for the filter combination selected"
-    );
-    $(".networkBBs2-no-results").removeClass("d-none");
-    return;
-  }
+	if (bbs.length == 0 || bbs.every((bb) => bb.hidden === true)) {
+		alert(
+			"There are no building blocks available for the filter combination selected"
+		);
+		$(".networkBBs2-no-results").removeClass("d-none");
+		return;
+	}
 
-  $(".networkBBs2-no-results").addClass("d-none");
+	$(".networkBBs2-no-results").addClass("d-none");
 
-  var nodes = [];
-  var edges = [];
+	var nodes = [];
+	var edges = [];
 
-  for (let i in bbs) {
-    let bb = bbs[i];
+	for (let i in bbs) {
+		let bb = bbs[i];
 
-    let image;
-    if (view.name == "Buisness Capabilities (mission critial)") {
-      image = "bc.png";
-    } else {
-      image = "rank/old-" + Math.round(bb.ability) + ".png";
-    }
+		let image;
+		if (view.name == "Buisness Capabilities (mission critial)") {
+			image = "bc.png";
+		} else {
+			//image = "rank/old-" + Math.round(bb.ability) + ".png";
+			image = "rank/old-0.png";
+		}
 
-    var label = ` ${CA(bb.abb || "")
-      .replace(/.{20}\S*\s+/g, "$&@")
-      .split(/\s+@/)
-      .join("\n")}`;
+		var label = ` ${CA(bb.Architecture_Building_Block || "")
+			.replace(/.{20}\S*\s+/g, "$&@")
+			.split(/\s+@/)
+			.join("\n")}`;
 
-    const title = `<div class="network2-tooltips">
-    <div>ID: ${bb.id} </div>
-    <div>Name: ${bb.abb} </div>
-    <div>Policy Domain: ${bb.policy} </div>
-    <div>DPS: ${bb.digPubServ.join(", ")} </div>
+		const title = `<div class="network2-tooltips">
+    <div>ID: ${bb.ID} </div>
+    <div>Name: ${bb.Architecture_Building_Block} </div>
+    <div>Policy Domain: ${bb.Policy} </div>
+    <div>DPS: ${bb.Digital_Public_Service.join(", ")} </div>
     <div>Ability to support: ${bb.ability} </div>
   </div>`;
 
-    var color = [];
-    color.background = "#fff";
+		var color = [];
+		color.background = "#fff";
 
-    let node = createDigitalTransformNode(
-      bb.id,
-      "circularImage",
-      image,
-      label,
-      title,
-      color
-    );
+		let node = createDigitalTransformNode(
+			bb.id,
+			"circularImage",
+			image,
+			label,
+			title,
+			color
+		);
 
-    node.dps = bb.digPubServ;
-    node.hidden = bb.hidden;
+		node.dps = bb.Digital_Public_Service;
+		node.hidden = bb.hidden;
 
-    nodes.push(node);
+		nodes.push(node);
 
-    var childs = bb.successors;
-    for (let y in childs) {
-      var childID = childs[y];
-      var edge = [];
-      edge.from = bb.id;
-      edge.to = childID;
-      edges.push(edge);
-    }
-  }
+		var childs = bb.successors;
+		for (let y in childs) {
+			var childID = childs[y];
+			var edge = [];
+			edge.from = bb.id;
+			edge.to = childID;
+			edges.push(edge);
+		}
+	}
 
-  network2Nodes = new vis.DataSet(nodes);
+	network2Nodes = new vis.DataSet(nodes);
 
-  var container = document.getElementById("network_div2");
-  var data = {
-    nodes: network2Nodes,
-    edges: edges,
-  };
-  var options = {
-    physics: true,
-    interaction: { hover: true },
-    height: "100%",
-    width: "100%",
-    nodes: {
-      imagePadding: 11,
-      borderWidth: 1,
-      size: 30,
-      color: {
-        border: "#222222",
-        background: "#BBE1FA",
-      },
-      font: {
-        color: "#000",
-        size: 10,
-      },
+	var container = document.getElementById("network_div2");
+	var data = {
+		nodes: network2Nodes,
+		edges: edges,
+	};
+	var options = {
+		physics: true,
+		interaction: { hover: true },
+		height: "100%",
+		width: "100%",
+		nodes: {
+			imagePadding: 11,
+			borderWidth: 1,
+			size: 30,
+			color: {
+				border: "#222222",
+				background: "#BBE1FA",
+			},
+			font: {
+				color: "#000",
+				size: 10,
+			},
 
-      shadow: true,
-    },
-    edges: {
-      smooth: { type: "dynamic", forceDirection: "horizontal", roundness: 0.4 },
-      color: "gray",
-      arrows: { to: { enabled: true } },
-    },
-    interaction: {
-      navigationButtons: true,
-      keyboard: true,
-    },
-    physics: {
-      forceAtlas2Based: {
-        springLength: -5,
-      },
-      minVelocity: 0.75,
-      solver: "forceAtlas2Based",
-      timestep: 0.53,
-    },
-  };
+			shadow: true,
+		},
+		edges: {
+			smooth: { type: "dynamic", forceDirection: "horizontal", roundness: 0.4 },
+			color: "gray",
+			arrows: { to: { enabled: true } },
+		},
+		interaction: {
+			navigationButtons: true,
+			keyboard: true,
+		},
+		physics: {
+			forceAtlas2Based: {
+				springLength: -5,
+			},
+			minVelocity: 0.75,
+			solver: "forceAtlas2Based",
+			timestep: 0.53,
+		},
+	};
 
-  network2 = new vis.Network(container, data, options);
-  network2.on("click", function (params) {
-    params.event = "[original event]";
-    var selectedNodeID = this.getNodeAt(params.pointer.DOM);
-    var bbs = selectedView.bbs;
-    for (let x in bbs) {
-      if (bbs[x].id == selectedNodeID) {
-        if (bbs[x].area == null) {
-          document.getElementById("bbDetail").innerHTML =
-            `<i>ID: ${bbs[x].id}</i>` +
-            `<br><i>name: ${bbs[x].abb}</i>` +
-            "</i>";
-          "<br><i>Ability to support the dBusCap: " + bbs[x].ability + "</i>";
-        } else {
-          document.getElementById("bbDetail").innerHTML =
-            `<i>ID: ${bbs[x].id}</i>` +
-            `<br><i>Area: ${bbs[x].area}</i>` +
-            "<br><i>Ability to support the dBusCap: " +
-            bbs[x].ability +
-            "</i>";
-        }
+	network2 = new vis.Network(container, data, options);
+	network2.on("click", function (params) {
+		params.event = "[original event]";
+		var selectedNodeID = this.getNodeAt(params.pointer.DOM);
+		var bbs = selectedView.bbs;
+		for (let x in bbs) {
+			if (bbs[x].id == selectedNodeID) {
+				if (bbs[x].area == null) {
+					document.getElementById("bbDetail").innerHTML =
+						`<i>ID: ${bbs[x].id}</i>` +
+						`<br><i>name: ${bbs[x].abb}</i>` +
+						"</i>";
+					"<br><i>Ability to support the dBusCap: " + bbs[x].ability + "</i>";
+				} else {
+					document.getElementById("bbDetail").innerHTML =
+						`<i>ID: ${bbs[x].id}</i>` +
+						`<br><i>Area: ${bbs[x].area}</i>` +
+						"<br><i>Ability to support the dBusCap: " +
+						bbs[x].ability +
+						"</i>";
+				}
 
-        return;
-      }
-    }
-  });
+				return;
+			}
+		}
+	});
 
-  network2.once("beforeDrawing", function () {
-    network2.focus(1, {
-      scale: 10,
-    });
-  });
-  network2.once("afterDrawing", function () {
-    network2.fit({
-      animation: {
-        duration: 1300,
-        easingFunction: "easeInQuad",
-      },
-    });
-  });
+	network2.once("beforeDrawing", function () {
+		network2.focus(1, {
+			scale: 10,
+		});
+	});
+	network2.once("afterDrawing", function () {
+		network2.fit({
+			animation: {
+				duration: 1300,
+				easingFunction: "easeInQuad",
+			},
+		});
+	});
 }
 
 function filterBBTableByID() { }
@@ -3998,87 +3462,87 @@ function filterBBTableByID() { }
  * 
  Create bb table
  */
-function createBuildingBlocksTable(bc) {
-  let table = document.getElementById("bbTable");
-  table.innerHTML = "";
-  let thead = table.createTHead();
-  let row = thead.insertRow();
+function createBuildingBlocksTableDEPRECATED(bc) {
+	let table = document.getElementById("bbTable");
+	table.innerHTML = "";
+	let thead = table.createTHead();
+	let row = thead.insertRow();
 
-  let th1 = thWithTextNode("ID");
-  let th2 = thWithTextNode("View");
-  let th3 = thWithTextNode("Area");
-  let th4 = thWithTextNode("Name");
-  let th5 = thWithTextNode("Description");
-  let th6 = thWithTextNode("Ability to support the dBusCap");
-  let th7 = thWithTextNode("IDs' successors");
-  let th8 = thWithTextNode("Digital Public service");
+	let th1 = thWithTextNode("ID");
+	let th2 = thWithTextNode("View");
+	let th3 = thWithTextNode("Area");
+	let th4 = thWithTextNode("Name");
+	let th5 = thWithTextNode("Description");
+	let th6 = thWithTextNode("Ability to support the dBusCap");
+	let th7 = thWithTextNode("IDs' successors");
+	let th8 = thWithTextNode("Digital Public service");
 
-  row.appendChild(th1);
-  row.appendChild(th2);
-  row.appendChild(th3);
-  row.appendChild(th4);
-  row.appendChild(th5);
-  row.appendChild(th6);
-  row.appendChild(th7);
-  row.appendChild(th8);
+	row.appendChild(th1);
+	row.appendChild(th2);
+	row.appendChild(th3);
+	row.appendChild(th4);
+	row.appendChild(th5);
+	row.appendChild(th6);
+	row.appendChild(th7);
+	row.appendChild(th8);
 
-  let body = document.createElement("tbody");
-  table.appendChild(body);
+	let body = document.createElement("tbody");
+	table.appendChild(body);
 
-  var bbs = Array.from(new Set(bc.bbs));
-  currentBBTableBody = bbs;
+	var bbs = Array.from(new Set(bc.bbs));
+	currentBBTableBody = bbs;
 
-  var dBusCapId = bc['id'];
+	var dBusCapId = bc['id'];
 
-  if (dBusCapId === undefined) {
-    dBusCapId = document.getElementById("dps-network-bc-info").getElementsByTagName('p')[0].textContent.split(' ')[1];
-  }
+	if (dBusCapId === undefined) {
+		dBusCapId = document.getElementById("dps-network-bc-info").getElementsByTagName('p')[0].textContent.split(' ')[1];
+	}
 
-  for (var k in bbs) {
+	for (var k in bbs) {
 
-    // search for the ability based on both the abb and dBusCap ids
-    let abbId = bbs[k]['id'];
-    let currentAbility = 0;
-    try {
-      currentAbility = customBBs.find(function (el) {
-        return el.id === `${abbId} - ${dBusCapId}`;
-      })['Ability to support the dBusCap'];
-      currentBBTableBody[k]['ability'] = currentAbility;
-    }
-    // if no abb exists, search in the bcList
-    catch (err) {
-      currentAbility = bcList[dBusCapId]['bbs'].find(function (el) {
-        return el.id === abbId;
-      })['ability'];
-      currentBBTableBody[k]['ability'] = currentAbility;
-    }
+		// search for the ability based on both the abb and dBusCap ids
+		let abbId = bbs[k]['id'];
+		let currentAbility = 0;
+		try {
+			currentAbility = customBBs.find(function (el) {
+				return el.id === `${abbId} - ${dBusCapId}`;
+			})['Ability to support the dBusCap'];
+			currentBBTableBody[k]['ability'] = currentAbility;
+		}
+		// if no abb exists, search in the bcList
+		catch (err) {
+			currentAbility = bcList[dBusCapId]['bbs'].find(function (el) {
+				return el.id === abbId;
+			})['ability'];
+			currentBBTableBody[k]['ability'] = currentAbility;
+		}
 
-    let row = body.insertRow();
+		let row = body.insertRow();
 
-    row.insertCell().appendChild(document.createTextNode(bbs[k].id));
+		row.insertCell().appendChild(document.createTextNode(bbs[k].id));
 
-    row.insertCell().appendChild(document.createTextNode(bbs[k].view));
+		row.insertCell().appendChild(document.createTextNode(bbs[k].view));
 
-    row.insertCell().appendChild(document.createTextNode(bbs[k].area));
+		row.insertCell().appendChild(document.createTextNode(bbs[k].area));
 
-    row.insertCell().appendChild(document.createTextNode(bbs[k].abb));
+		row.insertCell().appendChild(document.createTextNode(bbs[k].abb));
 
-    row.insertCell().appendChild(document.createTextNode(bbs[k].description));
+		row.insertCell().appendChild(document.createTextNode(bbs[k].description));
 
-    row.insertCell().appendChild(document.createTextNode(currentAbility)); //bbs[k].ability));
+		row.insertCell().appendChild(document.createTextNode(currentAbility)); //bbs[k].ability));
 
-    let succs = bbs[k].successors.join(", ");
+		let succs = bbs[k].successors.join(", ");
 
-    let digPubServs = bbs[k].digPubServ.join(", ");
+		let digPubServs = bbs[k].Digital_Public_Service.join(", ");
 
-    row.insertCell().appendChild(document.createTextNode(succs));
+		row.insertCell().appendChild(document.createTextNode(succs));
 
-    row.insertCell().appendChild(document.createTextNode(digPubServs));
-  }
+		row.insertCell().appendChild(document.createTextNode(digPubServs));
+	}
 }
 
 document
-  .querySelector("#policy-filter-span")
+	.querySelector("#policy-filter-span")
 // .addEventListener("click", function () {
 //   this.classList.toggle("goog-combobox-active");
 //   let div = this.querySelector("#policy-filter-span > div");
@@ -4092,28 +3556,28 @@ document
 let xAxisValues = document.querySelectorAll("#policy-filter-span > div > div");
 
 for (let i = 0; i < xAxisValues.length; i++) {
-  xAxisValues[i].addEventListener("click", function () {
-    let text = xAxisValues[i].textContent;
-    filterXAxis(xAxisValues[i].getAttribute("value"), text.trim());
-  });
+	xAxisValues[i].addEventListener("click", function () {
+		let text = xAxisValues[i].textContent;
+		filterXAxis(xAxisValues[i].getAttribute("value"), text.trim());
+	});
 }
 /**
  * Change the bubble chart's x axis
  */
 const filterXAxis = function (value, valueToShow) {
-  if (value === "National digital strategy Fit") {
-    order = [0, 1, 2, 3, 4, 5];
-  } else if (value === "Expected public value") {
-    order = [0, 5, 2, 3, 4, 1];
-  }
+	if (value === "National digital strategy Fit") {
+		order = [0, 1, 2, 3, 4, 5];
+	} else if (value === "Expected public value") {
+		order = [0, 5, 2, 3, 4, 1];
+	}
 
-  document
-    .querySelector("#policy-filter-span > input ")
-    .setAttribute("placeholder", valueToShow);
+	document
+		.querySelector("#policy-filter-span > input ")
+		.setAttribute("placeholder", valueToShow);
 
-  view.setColumns(order);
+	view.setColumns(order);
 
-  drawBusinessCapabilityChart(quadrantWidth());
+	drawBusinessCapabilityChart(quadrantWidth());
 };
 
 /**
@@ -4121,87 +3585,87 @@ const filterXAxis = function (value, valueToShow) {
  */
 const dpsSelectDivList = document.querySelector(".dps-select-div ul");
 dpsSelectDivList.addEventListener("click", (e) => {
-  const element = e.target;
-  let input;
-  let checked;
-  if (element.tagName !== "INPUT") {
-    input = element.parentElement.querySelector("input");
-    checked = !input.checked;
-  } else {
-    input = element;
-    checked = input.checked;
-  }
+	const element = e.target;
+	let input;
+	let checked;
+	if (element.tagName !== "INPUT") {
+		input = element.parentElement.querySelector("input");
+		checked = !input.checked;
+	} else {
+		input = element;
+		checked = input.checked;
+	}
 
-  input.checked = checked;
-  if (element.tagName !== "INPUT") {
-    let event = new Event("change", { bubbles: true });
-    element.dispatchEvent(event);
-  }
+	input.checked = checked;
+	if (element.tagName !== "INPUT") {
+		let event = new Event("change", { bubbles: true });
+		element.dispatchEvent(event);
+	}
 });
 
 const filteringDpsNetwork = (dpss) => {
-  let temp = new vis.DataSet();
+	let temp = new vis.DataSet();
 
-  DPSNetNodes.forEach((node) => {
-    DPSNetNodes.update({ id: node.id, hidden: false });
-    temp.add({ ...node, hidden: false });
-  });
+	DPSNetNodes.forEach((node) => {
+		DPSNetNodes.update({ id: node.id, hidden: false });
+		temp.add({ ...node, hidden: false });
+	});
 
-  if (dpss.length === 0) {
-    DPSNetNodes.clear();
-    temp.forEach((node) => DPSNetNodes.add(node));
-    return;
-  }
-  temp = new vis.DataSet();
-  DPSNetNodes.forEach((node) => {
-    let hidden;
-    if (dpss.indexOf(node.dpsID) > -1) {
-      hidden = false;
-    } else {
-      hidden = true;
-    }
-    node.hidden = hidden;
-    temp.add({ ...node, hidden });
-    DPSNetNodes.update({ id: node.id, hidden: hidden });
-  });
+	if (dpss.length === 0) {
+		DPSNetNodes.clear();
+		temp.forEach((node) => DPSNetNodes.add(node));
+		return;
+	}
+	temp = new vis.DataSet();
+	DPSNetNodes.forEach((node) => {
+		let hidden;
+		if (dpss.indexOf(node.dpsID) > -1) {
+			hidden = false;
+		} else {
+			hidden = true;
+		}
+		node.hidden = hidden;
+		temp.add({ ...node, hidden });
+		DPSNetNodes.update({ id: node.id, hidden: hidden });
+	});
 
-  DPSNetNodes.clear();
-  temp.forEach((node) => DPSNetNodes.add(node));
+	DPSNetNodes.clear();
+	temp.forEach((node) => DPSNetNodes.add(node));
 };
 
 dpsSelectDivList.addEventListener("change", (e) => {
-  const dpsElements = dpsSelectDivList.querySelectorAll("input:checked");
-  const dps = [];
-  for (let idx = 0; idx < dpsElements.length; idx++) {
-    dps.push(dpsElements[idx].getAttribute("data-dig-pub-service"));
-  }
+	const dpsElements = dpsSelectDivList.querySelectorAll("input:checked");
+	const dps = [];
+	for (let idx = 0; idx < dpsElements.length; idx++) {
+		dps.push(dpsElements[idx].getAttribute("data-dig-pub-service"));
+	}
 
-  const { dps: allBcDps } = clickedBC;
-  const dpsNames = [];
-  clickedDPSs = dps;
+	const { dps: allBcDps } = clickedBC;
+	const dpsNames = [];
+	clickedDPSs = dps;
 
-  dps.forEach((dp) => {
-    dpsNames.push(allBcDps.filter((ps) => ps.id === dp)[0].name);
-  });
+	dps.forEach((dp) => {
+		dpsNames.push(allBcDps.filter((ps) => ps.id === dp)[0].name);
+	});
 
-  bbsMultipleDPSInfo(dpsNames);
+	bbsMultipleDPSInfo(dpsNames);
 
-  let filteredBBSs;
+	let filteredBBSs;
 
-  if (dps.length > 0) {
-    filteredBBSs = clickedBC.bbs.filter((bb) => {
-      for (let idx = 0; idx < bb.digPubServ.length; idx++) {
-        if (dps.indexOf(bb.digPubServ[idx]) > -1) return true;
-      }
-      return false;
-    });
-  } else {
-    filteredBBSs = clickedBC.bbs;
-  }
-  createBuildingBlocksTable({ bbs: filteredBBSs });
-  filternetwork2(dps);
-  filteringDpsNetwork(dps);
-  drawViewsPredecessorsChart(selectedDBC, dps);
+	if (dps.length > 0) {
+		filteredBBSs = clickedBC.bbs.filter((bb) => {
+			for (let idx = 0; idx < bb.Digital_Public_Service.length; idx++) {
+				if (dps.indexOf(bb.Digital_Public_Service[idx]) > -1) return true;
+			}
+			return false;
+		});
+	} else {
+		filteredBBSs = clickedBC.bbs;
+	}
+	createBuildingBlocksTableFromView({ bbs: filteredBBSs });
+	filternetwork2(dps);
+	filteringDpsNetwork(dps);
+	drawViewsPredecessorsChart(selectedDBC, dps);
 });
 
 /**
@@ -4209,58 +3673,57 @@ dpsSelectDivList.addEventListener("change", (e) => {
  Write dps info next to bb chart
  */
 const bbsMultipleDPSInfo = (names) => {
-  names = names.map((name) => `<li>${name}</li>`).join("\n");
-  $("#networkBBs2-dps-info > .info").html(
-    `<ul class="networkBBs2-dps-info-list" >
+	names = names.map((name) => `<li>${name}</li>`).join("\n");
+	$("#networkBBs2-dps-info > .info").html(
+		`<ul class="networkBBs2-dps-info-list" >
       ${names}
     </ul>`
-  );
+	);
 };
 
 $(document).on("scroll", function () {
-  let scrollDistance = $(this).scrollTop();
-  let bbStart = $("#bb-div").offset().top;
-  let windowHeight = $(window).height();
+	let scrollDistance = $(this).scrollTop();
+	let bbStart = $("#bb-div").offset().top;
+	let windowHeight = $(window).height();
 
-  if (bbStart === 0) return;
+	if (bbStart === 0) return;
 
-  if (scrollDistance >= bbStart - windowHeight) {
-    $(".scroll-to-dps").fadeIn().css({ display: "flex" });
-  } else {
-    $(".scroll-to-dps").fadeOut();
-  }
+	if (scrollDistance >= bbStart - windowHeight) {
+		$(".scroll-to-dps").fadeIn().css({ display: "flex" });
+	} else {
+		$(".scroll-to-dps").fadeOut();
+	}
 });
 
 $(".scroll-to-dps").on("click", function () {
-  scrollToElement("#networkBBs");
+	scrollToElement("#networkBBs");
 });
 
 
 function createCSV(selectedValue, bcList) {
-  let currentBcList;
-  if (selectedValue) {
-    currentBcList = { [selectedValue]: bcList[selectedValue] };
-  } else {
-    currentBcList = bcList;
-  }
+	let currentBcList;
+	if (selectedValue) {
+		currentBcList = { [selectedValue]: bcList[selectedValue] };
+	} else {
+		currentBcList = bcList;
+	}
 
-  const encuestaResultados = [];
-  for (let clave in currentBcList) {
-    const resultado = currentBcList[clave];
-    encuestaResultados.push(resultado);
-  }
-  // Este código obtiene los resultados de la encuesta y los almacena en un array llamado encuestaResultados
-  let encuestaCSV = "Pregunta 1, Pregunta 2, Pregunta 3\n";
-  encuestaResultados.forEach((resultado) => {
-    const respuesta = `"${resultado.pregunta1}", "${resultado.pregunta2}", "${resultado.pregunta3}"\n`;
-    encuestaCSV += respuesta;
-  });
-  // Descarga del archivo en CSV
-  const blob = new Blob([encuestaCSV], { type: "text/csv;charset=utf-8;" });
-  const enlace = document.createElement("a");
-  enlace.setAttribute("href", URL.createObjectURL(blob));
-  enlace.setAttribute("download", "resultados_encuesta.csv");
-  document.body.appendChild(enlace);
-  enlace.click();
+	const encuestaResultados = [];
+	for (let clave in currentBcList) {
+		const resultado = currentBcList[clave];
+		encuestaResultados.push(resultado);
+	}
+	// Este código obtiene los resultados de la encuesta y los almacena en un array llamado encuestaResultados
+	let encuestaCSV = "Pregunta 1, Pregunta 2, Pregunta 3\n";
+	encuestaResultados.forEach((resultado) => {
+		const respuesta = `"${resultado.pregunta1}", "${resultado.pregunta2}", "${resultado.pregunta3}"\n`;
+		encuestaCSV += respuesta;
+	});
+	// Descarga del archivo en CSV
+	const blob = new Blob([encuestaCSV], { type: "text/csv;charset=utf-8;" });
+	const enlace = document.createElement("a");
+	enlace.setAttribute("href", URL.createObjectURL(blob));
+	enlace.setAttribute("download", "resultados_encuesta.csv");
+	document.body.appendChild(enlace);
+	enlace.click();
 }
-

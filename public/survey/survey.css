@@ -379,6 +379,7 @@
   /* Estilos para reemplazar el aspecto por defecto del checkbox */
   -webkit-appearance: none;
   -moz-appearance: none;
+  appearance: none;
   width: 16px;
   height: 16px;
   border: 2px solid #ccc;
@@ -539,6 +540,7 @@
       overflow: hidden;
       height: 5px;  /* Ajustado */
       -webkit-appearance: none;
+      appearance: none;
       background-color: #ddd;
     }
     &::-webkit-slider-runnable-track {
