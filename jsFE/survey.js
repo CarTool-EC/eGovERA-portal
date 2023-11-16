@@ -1,8 +1,6 @@
 import "regenerator-runtime/runtime";
 
 import FILES from "./requestSurvey";
-import "./roadmap";
-import "./pdfCreation";
 
 let converter = new showdown.Converter();
 let resultsToSave = {};
