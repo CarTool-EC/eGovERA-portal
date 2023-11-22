@@ -503,6 +503,9 @@ function renderChart(data) {
 			type: 'radar',
 			data: data,
 			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				aspectRatio: 1,
 				scale: {
 					ticks: {
 						beginAtZero: true
@@ -545,7 +548,8 @@ const quadrantLines = {
 };
 
 
-//CONFIGURACION DE LA TABLA DE BURBUJASSS
+//CONFIGURACION DE LA GRAFICO DE BURBUJAS
+
 //config quadrant block
 const quadConfig = {
 	type: "bubble",
