@@ -2,9 +2,20 @@ import "regenerator-runtime/runtime";
 import 'chartjs-plugin-annotation';
 import { Grid } from "gridjs";
 import FILES from "./requestSurvey";
+import { getABBs, getDBCs, getDPSs } from '../tmp/dbpedia';
 
-
-
+getABBs().then(data => {
+	jsonABBs = data; 
+	// console.log("ABBs: ", data);
+});
+getDBCs().then(data => {
+	jsonDBCs = data;
+	// console.log("DBC: ", data);
+});
+getDPSs().then(data => {
+	jsonDPSs = data; 
+	// console.log("DPS: ", data);
+});
 
 let demo = true;
 google.charts.load("current", {
@@ -48,9 +59,9 @@ let fileContent = {};
 //let inputBCJSON;
 //let inputBBJSON;
 //let inputDPSJSON;
-let jsonDBCs = null;
-let jsonDPSs = null;
-let jsonABBs = null;
+let jsonDBCs = [];
+let jsonDPSs = [];
+let jsonABBs = [];
 export {clickedDPSs};
 let myChart;
 const hAxisLabes = {
@@ -359,10 +370,6 @@ async function callBackForRequest(response, json) {
 	// createBusinessCapabilityTable();
 	// drawBusinessCapabilityChart();
 	// resizeQuandrant();
-	const jsonFiles = await FILES;
-	jsonABBs = jsonFiles[0];
-	jsonDBCs = jsonFiles[1];
-	jsonDPSs = jsonFiles[2];
 
 	const tableData = processSurveyResult(json);
 	let originalData = [...tableData];
@@ -664,7 +671,7 @@ function updateXAxis(choice) {
 
 function renderQuadrantChart(chartData) {
 	quadConfig.data = chartData;
-	console.log(quadConfig);
+	// console.log(quadConfig);
 	if (!quadChart) {
 		quadChart = new Chart(document.getElementById("quadrantChart").getContext("2d"), quadConfig);
 	} else {
@@ -733,7 +740,7 @@ function createBuildingBlocksTableFromDBC(dbcData) {
 	table.innerHTML = "";
 	let thead = table.createTHead();
 	let headRow = thead.insertRow();
-	["ID", "View", "Area", "Architecture Building Block", "Description", "IDs' successors", "Digital Public service"].forEach(text => {
+	["ID", "View", "Policy", "Architecture building block", "Description", "IDs' successors", "Digital public service"].forEach(text => {
 		let th = document.createElement("th");
 		th.appendChild(document.createTextNode(text));
 		headRow.appendChild(th);
@@ -743,27 +750,52 @@ function createBuildingBlocksTableFromDBC(dbcData) {
 	table.appendChild(tbody);
 
 	relevantABBs.forEach(abb => {
-		var successors = [];
-		var abbDPS = []
-		abb.successors.forEach(element => successors.push(prettyfyUri(element)));
-		abb["Digital_Public_Service"].forEach(element => abbDPS.push(prettyfyUri(element)));
+		var successorsListElement = document.createElement("ul");
+		successorsListElement.classList.add("tableLinkList");
+		var abbDPSListElement = document.createElement("ul");
+		abbDPSListElement.classList.add("tableLinkList");
+		abb.successors.forEach(element => {
+			var link = document.createElement("a");
+			link.setAttribute("href", element);
+			link.setAttribute("target", "_blank");
+			link.appendChild(document.createTextNode(prettyfyUri(element)));
+
+			var listElement = document.createElement("li");
+			listElement.append(link);
+			successorsListElement.appendChild(listElement);
+		});
+		abb["Digital_Public_Service"].forEach(element => {
+			var link = document.createElement("a");
+			link.setAttribute("href", element);
+			link.setAttribute("target", "_blank");
+			link.appendChild(document.createTextNode(prettyfyUri(element)));
+
+			var listElement = document.createElement("li");
+			listElement.append(link);
+			abbDPSListElement.appendChild(listElement);
+		});
 		let row = tbody.insertRow()
-		row.insertCell().appendChild(document.createTextNode(prettyfyUri(abb.ID)|| ""));
+
+		let idLink = document.createElement("a");
+		idLink.setAttribute("href", abb.ID);
+		idLink.setAttribute("target", "_blank");
+		idLink.appendChild(document.createTextNode(prettyfyUri(abb.ID)));
+
+		row.insertCell().appendChild(idLink);
 		row.insertCell().appendChild(document.createTextNode(abb.View || ""));
-		row.insertCell().appendChild(document.createTextNode(abb.Area || ""));
+		row.insertCell().appendChild(document.createTextNode(abb.Policy || ""));
 		row.insertCell().appendChild(document.createTextNode(abb.Architecture_Building_Block || ""));
 		row.insertCell().appendChild(document.createTextNode(abb.Description || ""));
-		row.insertCell().appendChild(document.createTextNode(successors.join("\n") || ""));
-		row.insertCell().appendChild(document.createTextNode(abbDPS.join("\n") || ""));
+		row.insertCell().appendChild(successorsListElement);
+		row.insertCell().appendChild(abbDPSListElement);
 	});
-	console.log(relevantABBs);
 }
 
 function prettyfyUri(uri) {
 	if (uri.includes("egovera")) {
-		return uri.replace("http://data.europa.eu/dr8/egovera/", "egovera:");
+		return uri.replace("http://data.europa.eu/dr8/egovera/", "");
 	} else {
-		return uri.replace("http://data.europa.eu/dr8/", "eira:");
+		return uri.replace("http://data.europa.eu/dr8/", "");
 	}
 }
 
@@ -892,19 +924,20 @@ function processSurveyResult(json) {
 
 function populateDBCDropdown(data) {
 	const dropdown = document.getElementById('dbcFilter');
-
 	data.forEach(entry => {
-		const option = document.createElement('option');
-		option.value = entry.id;
-		option.textContent = entry.dbc;
-		dropdown.appendChild(option);
+		if (dropdown.options.length <= data.length) {
+			const option = document.createElement('option');
+			option.value = entry.ID;
+			option.textContent = entry.dbc;
+			dropdown.appendChild(option);
+		}
 	});
 }
 
 
 
 document.getElementById('dbcFilter').addEventListener('change', function (e) {
-	console.log("Dropdown change detected:", e.target.value);
+	// console.log("Dropdown change detected:", e.target.value);
 
 	const selectedValue = e.target.value;
 	applyDBCFilters(selectedValue);
@@ -914,12 +947,11 @@ function applyDBCFilters(filterValue) {
 	let filteredData = editedData;
 	currentlyFilteredDBC = filterValue;
 
-
-	console.log("Values in editedData:", editedData.map(entry => entry.dbc));
-	console.log("Trying to match filterValue:", filterValue);
+	// console.log("Values in editedData:", editedData.map(entry => entry.dbc));
+	// console.log("Trying to match filterValue:", filterValue);
 
 	if (filterValue !== 'all') {
-		filteredData = editedData.filter(entry => entry.dbc === filterValue);
+		filteredData = editedData.filter(entry => entry.ID === filterValue);
 	}
 
 
@@ -1600,9 +1632,6 @@ function selectHandler(evt) {
 	dbcData.views.push(view);
 
 	selectedDBC = dbcData;
-	//console.log("DBC NAME:", dbcName);
-	//console.log("DBC ID .:", dbcData.ID);
-	//console.log("DBC DATA:", dbcData);
 
 	$("#networkBBs2").fadeOut();
 	$("#network_div").fadeOut(function () {
@@ -2803,7 +2832,7 @@ function drawViewsPredecessorsChart(dbcData) {
 		network.destroy();
 		network = null;
 	}
-
+	
 	if (dbcData.policy == "Business Agnostic") {
 		toogleInfra = false;
 	}
@@ -3304,11 +3333,10 @@ function drawIntraViewsPredecessorsChart(view) {
 		network2.destroy();
 		network2 = null;
 	}
-	console.log(view)
 
 	var bbs = view.bbs;
-
-	if (bbs.length == 0 || bbs.every((bb) => bb.hidden === true)) {
+	// if (bbs.length == 0 || bbs.every((bb) => bb.hidden === true)) {
+	if (bbs.length == 0) {
 		alert(
 			"There are no building blocks available for the filter combination selected"
 		);
@@ -3349,7 +3377,7 @@ function drawIntraViewsPredecessorsChart(view) {
 		color.background = "#fff";
 
 		let node = createDigitalTransformNode(
-			bb.id,
+			bb.ID,
 			"circularImage",
 			image,
 			label,
@@ -3358,7 +3386,8 @@ function drawIntraViewsPredecessorsChart(view) {
 		);
 
 		node.dps = bb.Digital_Public_Service;
-		node.hidden = bb.hidden;
+		// node.hidden = bb.hidden;
+		node.hidden = false;
 
 		nodes.push(node);
 
@@ -3366,7 +3395,7 @@ function drawIntraViewsPredecessorsChart(view) {
 		for (let y in childs) {
 			var childID = childs[y];
 			var edge = [];
-			edge.from = bb.id;
+			edge.from = bb.ID;
 			edge.to = childID;
 			edges.push(edge);
 		}
@@ -3424,16 +3453,16 @@ function drawIntraViewsPredecessorsChart(view) {
 		var selectedNodeID = this.getNodeAt(params.pointer.DOM);
 		var bbs = selectedView.bbs;
 		for (let x in bbs) {
-			if (bbs[x].id == selectedNodeID) {
+			if (bbs[x].ID == selectedNodeID) {
 				if (bbs[x].area == null) {
 					document.getElementById("bbDetail").innerHTML =
-						`<i>ID: ${bbs[x].id}</i>` +
+						`<i>ID: ${bbs[x].ID}</i>` +
 						`<br><i>name: ${bbs[x].abb}</i>` +
 						"</i>";
 					"<br><i>Ability to support the dBusCap: " + bbs[x].ability + "</i>";
 				} else {
 					document.getElementById("bbDetail").innerHTML =
-						`<i>ID: ${bbs[x].id}</i>` +
+						`<i>ID: ${bbs[x].ID}</i>` +
 						`<br><i>Area: ${bbs[x].area}</i>` +
 						"<br><i>Ability to support the dBusCap: " +
 						bbs[x].ability +

@@ -33,7 +33,7 @@ function footer() {
   ]);
 
   const copyrightContainer = customElement("div");
-  copyrightContainer.innerHTML = "Copyright &copy; European Commission 2023";
+  copyrightContainer.innerHTML = "Copyright &copy; European Commission 2024";
 
   const fileContainer = customElement("div");
   const fileLink = customElement("a", [], {

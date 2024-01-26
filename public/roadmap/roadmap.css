@@ -653,3 +653,9 @@ td[contenteditable="true"]:hover {
   text-align: left;
   display: block;
 }
+
+.tableLinkList {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}

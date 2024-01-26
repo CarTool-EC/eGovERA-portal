@@ -2,6 +2,7 @@
  * Imports
  */
 const express = require("express");
+const { createProxyMiddleware } = require('http-proxy-middleware');
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const compression = require("compression");
@@ -24,7 +25,7 @@ const port = process.env.PORT || 3000;
  * Middlewares
  */
 app.use(express.static("public"));
-app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(
   session({
@@ -33,6 +34,8 @@ app.use(
     saveUninitialized: false,
   })
 );
+
+app.use("/repositories/EIRA", createProxyMiddleware({target: 'http://98852ae.online-server.cloud:7200' }));
 
 app.use(
   compression({
@@ -47,6 +50,7 @@ app.use(
 app.use("/", homeRouter);
 app.use("/api/backoffice", backofficeRouter);
 app.use("/api/login", loginRouter);
+
 
 app.use("*", (req, res) => {
   res.status(404);

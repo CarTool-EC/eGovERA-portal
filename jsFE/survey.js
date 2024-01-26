@@ -1,6 +1,24 @@
 import "regenerator-runtime/runtime";
 
 import FILES from "./requestSurvey";
+import { getABBs, getDBCs, getDPSs } from '../tmp/dbpedia';
+
+getABBs().then(data => {
+	jsonABBs = data;
+	// console.log("ABBs: ", jsonABBs);
+});
+getDBCs().then(data => {
+	jsonDBCs = data;
+	// console.log("DBCs: ", jsonDBCs);
+});
+getDPSs().then(data => {
+	jsonDPSs = data;
+	// console.log("DPSs: ", jsonDPSs);
+});
+
+let jsonABBs = [];
+let jsonDBCs = [];
+let jsonDPSs = [];
 
 let converter = new showdown.Converter();
 let resultsToSave = {};
@@ -1454,7 +1472,8 @@ async function validateForm() {
 			event.stopPropagation();
 			form.classList.add("was-validated");
 		} else {
-			let response = await FILES;
+			// let response = await FILES;
+			let response = [jsonABBs, jsonDBCs, jsonDPSs];
 			callBackForRequest(response);
 		}
 	}
@@ -1882,11 +1901,10 @@ function renderSurvey(response) {
 
 function createSurveyPages(response) {
 	let pages = [];
-
 	if (response.length >= 3) {
 		let abbList = response[0];
 		let dbcList = response[1];
-		let responses = response[3];
+		let dpsList = response[2];
 
 		let initialPage = {
 			name: 'Strategic Fit',
@@ -1912,8 +1930,6 @@ function createSurveyPages(response) {
 			]
 		});
 		dbcList.forEach(dbc => {
-
-
 			let radioIndex = 0;
 			initialPage.elements.push({
 				type: 'panel',
@@ -1953,9 +1969,6 @@ function createSurveyPages(response) {
 		pages.push(initialPage);
 		//Adds "elements" property to the DBCs so to fill it when processing the ABB list
 		dbcList.forEach(function (dbc, index, array) { dbc.elements = addViewsToDbc(); array[index] = dbc });
-
-		let dpsList = response[2];
-
 
 		//ABB elements are added to the DBC list so to create the panel structure needed by SurveyJS
 		let index = 0
@@ -2136,8 +2149,16 @@ function extractDpsFromDbc(DBC, DpsList, abbList) {
 		html: `<h6>Requirement ${specificABB.Architecture_Building_Block} Assessment Summary</h6>`
 	})
 
-	const sumScores = scoreNames.map(score => `(iif({${score}} = "none" or {${score}} = null, 0, {${score}}))`).join(" + ");
-	const divisor = scoreNames.length;
+	let sumScores = scoreNames.map(score => `(iif({${score}} = "none" or {${score}} = null, 0, {${score}}))`).join(" + ");
+	let divisor = scoreNames.length;
+
+	if (DBC.Digital_Public_Services.length == 0) {
+		sumScores = `0`;
+		divisor = `1`;
+	} else {
+		sumScores = scoreNames.map(score => `(iif({${score}} = "none" or {${score}} = null, 0, {${score}}))`).join(" + ");
+		divisor = scoreNames.length;
+	};
 	const expressionString = `(${sumScores}) / ${divisor}`;
 	processedDps.push({
 		name: DBC.Name.concat(' - ', DBC.ID,' - Total Score'),
@@ -2660,7 +2681,6 @@ function getStrategicFitTooltip(policy) {
  */
 function surveyFirstPage(name, bcList, policy) {
 	let title;
-	//console.log(bcList, policy);
 	let formattedPolicy = policy.toLowerCase().split(" ").join("-");
 	if (formattedPolicy === "business-agnostic") {
 		title = `<span>National Digital Strategy Fit</span><span data-toggle="tooltip" data-html="true" title="${getStrategicFitTooltip(
@@ -2737,7 +2757,8 @@ document
 			doLoadState = true;
 			Object.assign(currentState, content);
 
-			let response = await FILES;
+			// let response = await FILES;
+			let response = [jsonABBs, jsonDBCs, jsonDPSs];
 			callBackForRequest(response);
 		});
 		reader.readAsText(file);
